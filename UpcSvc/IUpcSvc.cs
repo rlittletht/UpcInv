@@ -13,6 +13,7 @@ namespace UpcSvc
     public interface IUpcSvc
     {
         [OperationContract]
+        [WebInvoke(Method = "GET", BodyStyle = WebMessageBodyStyle.Wrapped)]
         string GetData(int value);
 
         [OperationContract]
