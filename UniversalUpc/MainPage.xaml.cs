@@ -17,9 +17,13 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using TCore.StatusBox;
+using UniversalUpc.UpcSvc;
 using ZXing;
 using ZXing.Common;
 using ZXing.Mobile;
+using UpcService = UniversalUpc.UpcSvc;
+
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -32,6 +36,8 @@ namespace UniversalUpc
     {
         private Scanner m_ups;
         private UpcAlert m_upca;
+        private UpcInvCore m_upccCore;
+        private TCore.StatusBox.StatusBox m_sb;
 
         public MainPage()
         {
@@ -39,6 +45,9 @@ namespace UniversalUpc
 
             m_ups = new Scanner(this.Dispatcher, scannerControl);
             m_upca = new UpcAlert();
+            m_sb = new StatusBox();
+            m_upccCore = new UpcInvCore(m_upca, m_sb);
+            m_sb.Initialize(recStatus, m_upca);
         }
 
         private void DisplayResult(Result result)
@@ -54,11 +63,43 @@ namespace UniversalUpc
                 }
         }
 
+        private void DispatchScanCode(Result result)
+        {
+            if (result == null)
+                {
+                m_upca.Play(UpcAlert.AlertType.BadInfo);
+                ebScanCode.Text = "";
+                }
+            else
+                {
+                string sCode = m_upccCore.SEnsureEan13(result.Text);
+                ebScanCode.Text = sCode;
+                m_upccCore.DvdInfoRetrieve(sCode, (sScanCode, dvdi) =>
+                    {
+                    if (dvdi != null)
+                        {
+                        ebTitle.Text = dvdi.Title;
+                        m_sb.AddMessage(String.Format("{0}: LastScan: {1}", dvdi.Title, dvdi.LastScan.ToString()), UpcAlert.AlertType.GoodInfo);
+                        }
+                    else
+                        {
+                        ebTitle.Text = "";
+                        m_sb.AddMessage("code not found", UpcAlert.AlertType.BadInfo);
+                        }
+                    });
+                }
+        }
         private async void ToggleScan(object sender, RoutedEventArgs e)
         {
             m_ups.SetupScanner(null, true);
-            m_ups.StartScanner(DisplayResult);
+            m_ups.StartScanner(DispatchScanCode);
         }
+
+        private async void CmdTest1(object sender, RoutedEventArgs e)
+        {
+            m_sb.AddMessage("testing", UpcAlert.AlertType.None);
+        }
+
 
         private void txtStatus_ContextCanceled(UIElement sender, RoutedEventArgs args)
         {

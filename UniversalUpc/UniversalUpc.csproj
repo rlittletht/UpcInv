@@ -90,6 +90,23 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="project.json" />
+    <None Include="Properties\ServiceReferences.Designer.ClientConfig" />
+    <None Include="Service References\UpcSvc\UniversalUpc.UpcSvc.USR_DvdInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\UpcSvc\UniversalUpc.UpcSvc.USR_String.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\UpcSvc\UpcSvc.wsdl" />
+    <None Include="Service References\UpcSvc\UpcSvc.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\UpcSvc\UpcSvc1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\UpcSvc\UpcSvc2.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="UniversalUpc_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +118,12 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scanner.cs" />
+    <Compile Include="Service References\UpcSvc\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="StatusBox.cs" />
     <Compile Include="UpcAlert.cs" />
     <Compile Include="UpcInvCore.cs" />
   </ItemGroup>
@@ -123,6 +146,13 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <None Include="Service References\UpcSvc\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\UpcSvc\configuration.svcinfo" />
+    <None Include="Service References\UpcSvc\configuration91.svcinfo" />
+    <None Include="Service References\UpcSvc\UpcSvc.disco" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -147,6 +177,12 @@
       <Project>{24b441f2-cbe9-4405-9fd0-72ebcbea0ec3}</Project>
       <Name>zxing.portable</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\UpcSvc\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

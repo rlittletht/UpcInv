@@ -11,7 +11,11 @@ using Windows.UI.Core;
 
 namespace UniversalUpc
 {
-    public class UpcAlert
+    public interface IAlert
+    {
+        void DoAlert(UpcAlert.AlertType at);
+    }
+    public class UpcAlert : IAlert
     {
         public enum AlertType
             {
@@ -19,7 +23,8 @@ namespace UniversalUpc
             BadInfo,
             Halt,
             Duplicate,
-			Drink
+			Drink,
+            None
             };
 
         private Dictionary<AlertType, MediaElement> m_mpAlertMedia;
@@ -50,15 +55,18 @@ namespace UniversalUpc
             LoadEffects();
         }
 
-        public async void Play(AlertType at)
+        public void DoAlert(AlertType at)
         {
-            MediaElement me = m_mpAlertMedia[at];
+            Play(at);
+        }
 
-            await me.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                me.Stop();
-                me.Play();
-                });
+        public void Play(AlertType at)
+        {
+            if (at == AlertType.None)
+                return;
+
+            MediaElement me = m_mpAlertMedia[at];
+            me.Play();
         }
 #if none
         void DoAlert(AlertType at, string s)

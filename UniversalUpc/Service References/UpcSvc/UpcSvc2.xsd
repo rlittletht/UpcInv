@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/UpcSvc" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/UpcSvc" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="USR_String">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TTCSROfstring">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="USR_String" nillable="true" type="tns:USR_String" />
+  <xs:complexType name="TTCSROfstring">
+    <xs:annotation>
+      <xs:appinfo>
+        <GenericType Name="TTCSROf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+          <GenericParameter Name="string" Namespace="http://www.w3.org/2001/XMLSchema" />
+        </GenericType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TCSRBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TheValue" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TTCSROfstring" nillable="true" type="tns:TTCSROfstring" />
+  <xs:complexType name="TCSRBase">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CorrelationID" type="ser:guid" />
+      <xs:element minOccurs="0" name="Reason" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Result" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TCSRBase" nillable="true" type="tns:TCSRBase" />
+  <xs:complexType name="USR_DvdInfo">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TTCSROfDvdInfo9_SjqeMlk">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="USR_DvdInfo" nillable="true" type="tns:USR_DvdInfo" />
+  <xs:complexType name="TTCSROfDvdInfo9_SjqeMlk">
+    <xs:annotation>
+      <xs:appinfo>
+        <GenericType Name="TTCSROf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+          <GenericParameter Name="DvdInfo" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" />
+        </GenericType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TCSRBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TheValue" nillable="true" type="tns:DvdInfo" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TTCSROfDvdInfo9_SjqeMlk" nillable="true" type="tns:TTCSROfDvdInfo9_SjqeMlk" />
+  <xs:complexType name="DvdInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Code" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FirstScan" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="LastScan" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Location" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DvdInfo" nillable="true" type="tns:DvdInfo" />
+</xs:schema>

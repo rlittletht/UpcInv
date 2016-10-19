@@ -28,7 +28,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;PRODUCTION</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -65,6 +65,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="contracts.cs" />
     <Compile Include="UpcSvc.svc.cs">
       <DependentUpon>UpcSvc.svc</DependentUpon>
     </Compile>
@@ -76,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="SecretSettings.config" />
+    <None Include="Properties\PublishProfiles\Local%28Majestix%29.pubxml" />
     <None Include="Properties\PublishProfiles\thetasoft2 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\thetasoft2 - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
@@ -84,6 +86,24 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\liblet\cs\sql\sql.csproj">
+      <Project>{d2383c17-0d82-41b0-8c18-a14253c050c7}</Project>
+      <Name>sql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\liblet\cs\StatusResult\StatusResult.csproj">
+      <Project>{0fe8c023-8694-4e19-9fb0-ea38e5b8798b}</Project>
+      <Name>StatusResult</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\liblet\cs\TCore.Exceptions\TCore.Exceptions.csproj">
+      <Project>{cc88c933-98af-4c54-832a-1c4f587aaa54}</Project>
+      <Name>TCore.Exceptions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\liblet\cs\TCore.Logging\Logging.csproj">
+      <Project>{ee681c45-8416-4de7-9e62-ae1371a7de9a}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

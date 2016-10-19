@@ -63,7 +63,10 @@
         <StackPanel Grid.Row="2">
             <!--<Grid HorizontalAlignment="Left" Height="559" Margin="10,71,0,0" VerticalAlignment="Top" Width="340"> -->
             <!--<CaptureElement Name="previewVideo" VerticalAlignment="Center"/>-->
-            <Button Height="Auto" Content="Scan" x:Name="pbScan" Click="ToggleScan" />
+            <StackPanel Orientation="Horizontal">
+                <Button Height="Auto" Content="Scan" x:Name="pbScan" Click="ToggleScan" />
+                <Button Height="Auto" Content="Test1" x:Name="pbTest1" Click="CmdTest1" />
+            </StackPanel>
             <my:ZXingScannerControl x:Name="scannerControl" Height="200"/>
             <TextBlock Height="Auto" x:Name="txtStatus" Text="Status Here"/>
         </StackPanel>
