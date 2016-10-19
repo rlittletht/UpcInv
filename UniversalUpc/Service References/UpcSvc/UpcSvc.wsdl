@@ -19,6 +19,12 @@
   <wsdl:message name="IUpcSvc_GetDvdScanInfo_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetDvdScanInfoResponse" />
   </wsdl:message>
+  <wsdl:message name="IUpcSvc_UpdateUpcLastScanDate_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateUpcLastScanDate" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_UpdateUpcLastScanDate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateUpcLastScanDateResponse" />
+  </wsdl:message>
   <wsdl:portType name="IUpcSvc">
     <wsdl:operation name="GetLastScanDate">
       <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/GetLastScanDate" message="tns:IUpcSvc_GetLastScanDate_InputMessage" />
@@ -27,6 +33,10 @@
     <wsdl:operation name="GetDvdScanInfo">
       <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/GetDvdScanInfo" message="tns:IUpcSvc_GetDvdScanInfo_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/GetDvdScanInfoResponse" message="tns:IUpcSvc_GetDvdScanInfo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUpcLastScanDate">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDate" message="tns:IUpcSvc_UpdateUpcLastScanDate_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDateResponse" message="tns:IUpcSvc_UpdateUpcLastScanDate_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IUpcSvc" type="tns:IUpcSvc">
@@ -42,6 +52,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetDvdScanInfo">
       <soap:operation soapAction="http://tempuri.org/IUpcSvc/GetDvdScanInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUpcLastScanDate">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDate" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

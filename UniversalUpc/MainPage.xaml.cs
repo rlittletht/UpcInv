@@ -79,7 +79,21 @@ namespace UniversalUpc
                     if (dvdi != null)
                         {
                         ebTitle.Text = dvdi.Title;
-                        m_sb.AddMessage(String.Format("{0}: LastScan: {1}", dvdi.Title, dvdi.LastScan.ToString()), UpcAlert.AlertType.GoodInfo);
+                        // check for a dupe/too soon last scan (within 1 hour)
+                        if (dvdi.LastScan > DateTime.Now.AddHours(-1))
+                            {
+                            m_sb.AddMessage(String.Format("{0}: Duplicate?! LastScan was {1}", dvdi.Title, dvdi.LastScan.ToString()), UpcAlert.AlertType.Duplicate);
+                            return;
+                            }
+
+                        // now update the last scan date
+                        m_upccCore.UpdateScanDate(sScanCode, (_sScanCode, fSucceeded) =>
+                            {
+                            if (fSucceeded)
+                                m_sb.AddMessage(String.Format("{0}: Updated LastScan (was {1})", dvdi.Title, dvdi.LastScan.ToString()), UpcAlert.AlertType.GoodInfo);
+                            else
+                                m_sb.AddMessage(String.Format("{0}: Failed to update last scan!", dvdi.Title), UpcAlert.AlertType.BadInfo);
+                            });
                         }
                     else
                         {
@@ -89,6 +103,7 @@ namespace UniversalUpc
                     });
                 }
         }
+
         private async void ToggleScan(object sender, RoutedEventArgs e)
         {
             m_ups.SetupScanner(null, true);

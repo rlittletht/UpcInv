@@ -19,5 +19,14 @@ namespace UpcSvc
         [OperationContract]
         [WebInvoke(Method = "GET", BodyStyle = WebMessageBodyStyle.Wrapped)]
         USR_DvdInfo GetDvdScanInfo(string sScanCode);       
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", BodyStyle = WebMessageBodyStyle.Wrapped)]
+        USR UpdateUpcLastScanDate(string sScanCode, string sTitle);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", BodyStyle = WebMessageBodyStyle.Wrapped)]
+        string FetchTitleFromGenericUPC(string sCode);
+
     }
 }

@@ -75,5 +75,15 @@ namespace UniversalUpc
 
             del(sScanCode, dvdInfo);
         }
+
+        public delegate void ContinueWithUpdateScanDateDelegate(string sScanCode, bool fSucceeded);
+
+        public async void UpdateScanDate(string sScanCode, ContinueWithUpdateScanDateDelegate del)
+        {
+            EnsureServiceConnection();
+            UpcService.USR usr = await m_usc.UpdateUpcLastScanDateAsync(sScanCode, "");
+
+            del(sScanCode, usr.Result);
+        }
     }
 }

@@ -91,6 +91,9 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="project.json" />
     <None Include="Properties\ServiceReferences.Designer.ClientConfig" />
+    <None Include="Service References\UpcSvc\UniversalUpc.UpcSvc.USR.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\UpcSvc\UniversalUpc.UpcSvc.USR_DvdInfo.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>

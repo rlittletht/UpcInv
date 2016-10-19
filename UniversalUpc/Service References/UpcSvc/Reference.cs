@@ -18,9 +18,10 @@ namespace UniversalUpc.UpcSvc {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="TCSRBase", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.TTCSROfDvdInfo9_SjqeMlk))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.TUSROfDvdInfo9_SjqeMlk))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_DvdInfo))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.TTCSROfstring))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.TUSROfstring))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_String))]
     public partial class TCSRBase : object, System.ComponentModel.INotifyPropertyChanged {
         
@@ -81,9 +82,9 @@ namespace UniversalUpc.UpcSvc {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="TTCSROfDvdInfo9_SjqeMlk", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="TUSROfDvdInfo9_SjqeMlk", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_DvdInfo))]
-    public partial class TTCSROfDvdInfo9_SjqeMlk : UniversalUpc.UpcSvc.TCSRBase {
+    public partial class TUSROfDvdInfo9_SjqeMlk : UniversalUpc.UpcSvc.TCSRBase {
         
         private UniversalUpc.UpcSvc.DvdInfo TheValueField;
         
@@ -104,14 +105,20 @@ namespace UniversalUpc.UpcSvc {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="USR_DvdInfo", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
-    public partial class USR_DvdInfo : UniversalUpc.UpcSvc.TTCSROfDvdInfo9_SjqeMlk {
+    public partial class USR_DvdInfo : UniversalUpc.UpcSvc.TUSROfDvdInfo9_SjqeMlk {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="TTCSROfstring", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="USR", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    public partial class USR : UniversalUpc.UpcSvc.TCSRBase {
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="TUSROfstring", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_String))]
-    public partial class TTCSROfstring : UniversalUpc.UpcSvc.TCSRBase {
+    public partial class TUSROfstring : UniversalUpc.UpcSvc.TCSRBase {
         
         private string TheValueField;
         
@@ -132,7 +139,7 @@ namespace UniversalUpc.UpcSvc {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="USR_String", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
-    public partial class USR_String : UniversalUpc.UpcSvc.TTCSROfstring {
+    public partial class USR_String : UniversalUpc.UpcSvc.TUSROfstring {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -234,6 +241,9 @@ namespace UniversalUpc.UpcSvc {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/GetDvdScanInfo", ReplyAction="http://tempuri.org/IUpcSvc/GetDvdScanInfoResponse")]
         System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_DvdInfo> GetDvdScanInfoAsync(string sScanCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDate", ReplyAction="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDateResponse")]
+        System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> UpdateUpcLastScanDateAsync(string sScanCode, string sTitle);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -285,6 +295,10 @@ namespace UniversalUpc.UpcSvc {
         
         public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_DvdInfo> GetDvdScanInfoAsync(string sScanCode) {
             return base.Channel.GetDvdScanInfoAsync(sScanCode);
+        }
+        
+        public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> UpdateUpcLastScanDateAsync(string sScanCode, string sTitle) {
+            return base.Channel.UpdateUpcLastScanDateAsync(sScanCode, sTitle);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync() {

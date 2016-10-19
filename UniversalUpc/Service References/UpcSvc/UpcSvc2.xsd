@@ -3,16 +3,16 @@
   <xs:import schemaLocation="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
   <xs:complexType name="USR_String">
     <xs:complexContent mixed="false">
-      <xs:extension base="tns:TTCSROfstring">
+      <xs:extension base="tns:TUSROfstring">
         <xs:sequence />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   <xs:element name="USR_String" nillable="true" type="tns:USR_String" />
-  <xs:complexType name="TTCSROfstring">
+  <xs:complexType name="TUSROfstring">
     <xs:annotation>
       <xs:appinfo>
-        <GenericType Name="TTCSROf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+        <GenericType Name="TUSROf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
           <GenericParameter Name="string" Namespace="http://www.w3.org/2001/XMLSchema" />
         </GenericType>
       </xs:appinfo>
@@ -25,7 +25,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element name="TTCSROfstring" nillable="true" type="tns:TTCSROfstring" />
+  <xs:element name="TUSROfstring" nillable="true" type="tns:TUSROfstring" />
   <xs:complexType name="TCSRBase">
     <xs:sequence>
       <xs:element minOccurs="0" name="CorrelationID" type="ser:guid" />
@@ -36,16 +36,16 @@
   <xs:element name="TCSRBase" nillable="true" type="tns:TCSRBase" />
   <xs:complexType name="USR_DvdInfo">
     <xs:complexContent mixed="false">
-      <xs:extension base="tns:TTCSROfDvdInfo9_SjqeMlk">
+      <xs:extension base="tns:TUSROfDvdInfo9_SjqeMlk">
         <xs:sequence />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   <xs:element name="USR_DvdInfo" nillable="true" type="tns:USR_DvdInfo" />
-  <xs:complexType name="TTCSROfDvdInfo9_SjqeMlk">
+  <xs:complexType name="TUSROfDvdInfo9_SjqeMlk">
     <xs:annotation>
       <xs:appinfo>
-        <GenericType Name="TTCSROf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+        <GenericType Name="TUSROf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
           <GenericParameter Name="DvdInfo" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" />
         </GenericType>
       </xs:appinfo>
@@ -58,7 +58,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element name="TTCSROfDvdInfo9_SjqeMlk" nillable="true" type="tns:TTCSROfDvdInfo9_SjqeMlk" />
+  <xs:element name="TUSROfDvdInfo9_SjqeMlk" nillable="true" type="tns:TUSROfDvdInfo9_SjqeMlk" />
   <xs:complexType name="DvdInfo">
     <xs:sequence>
       <xs:element minOccurs="0" name="Code" nillable="true" type="xs:string" />
@@ -69,4 +69,12 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="DvdInfo" nillable="true" type="tns:DvdInfo" />
+  <xs:complexType name="USR">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TCSRBase">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="USR" nillable="true" type="tns:USR" />
 </xs:schema>

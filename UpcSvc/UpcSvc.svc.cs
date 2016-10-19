@@ -6,6 +6,9 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
+using System.Web.UI;
+using HtmlAgilityPack;
+using ScrapySharp.Network;
 using TCore;
 using TCore.Logging;
 
@@ -41,9 +44,9 @@ namespace UpcSvc
         }
 
         delegate T DelegateReader<T>(SqlReader sqlr, CorrelationID crid);
-        delegate T DelegateFromTCSR<T>(USR usr);
+        delegate T DelegateFromUSR<T>(USR usr);
 
-        T DoGenericQueryDelegateRead<T>(string sQuery, DelegateReader<T> delegateReader, DelegateFromTCSR<T> delegateFromTcsr)
+        T DoGenericQueryDelegateRead<T>(string sQuery, DelegateReader<T> delegateReader, DelegateFromUSR<T> delegateFromUsr)
         {
             LocalSqlHolder lsh = null;
             CorrelationID crid = new CorrelationID();
@@ -53,32 +56,40 @@ namespace UpcSvc
                 lsh = new LocalSqlHolder(null, crid, SqlConnectionStatic);
                 string sCmd = sQuery;
 
-                SqlReader sqlr = new SqlReader(lsh);
-                try
+                if (delegateReader == null)
                     {
-                    if (sqlr.FExecuteQuery(sCmd, SqlConnectionStatic))
-                        {
-                        if (!sqlr.Reader.Read())
-                            return delegateFromTcsr(USR.FromSR(SR.FailedCorrelate("scan code not found", crid)));
-
-                        return delegateReader(sqlr, crid);
-                        }
+                    // just execute as a command
+                    return delegateFromUsr(USR.FromSR(TCore.Sql.ExecuteNonQuery(lsh, sCmd, SqlConnectionStatic)));
                     }
-                catch (Exception e)
+                else
                     {
-                    sqlr.Close();
-                    return delegateFromTcsr(USR.FromSR(SR.FailedCorrelate(e, crid)));
+                    SqlReader sqlr = new SqlReader(lsh);
+                    try
+                        {
+                        if (sqlr.FExecuteQuery(sCmd, SqlConnectionStatic))
+                            {
+                            if (!sqlr.Reader.Read())
+                                return delegateFromUsr(USR.FromSR(SR.FailedCorrelate("scan code not found", crid)));
+
+                            return delegateReader(sqlr, crid);
+                            }
+                        }
+                    catch (Exception e)
+                        {
+                        sqlr.Close();
+                        return delegateFromUsr(USR.FromSR(SR.FailedCorrelate(e, crid)));
+                        }
                     }
                 }
             catch (Exception e)
                 {
-                return delegateFromTcsr(USR.FromSR(SR.FailedCorrelate(e, crid)));
+                return delegateFromUsr(USR.FromSR(SR.FailedCorrelate(e, crid)));
                 }
             finally
                 {
                 lsh?.Close();
                 }
-            return delegateFromTcsr(USR.FromSR(SR.FailedCorrelate("unknown", crid)));
+            return delegateFromUsr(USR.FromSR(SR.FailedCorrelate("unknown", crid)));
         } 
 
         USR_String ReaderLastScanDateDelegate(SqlReader sqlr, CorrelationID crid)
@@ -122,8 +133,8 @@ namespace UpcSvc
             DvdInfo dvdi = new DvdInfo();
 
             dvdi.Code = sqlr.Reader.GetString(0);
-            dvdi.FirstScan = sqlr.Reader.GetDateTime(1);
-            dvdi.LastScan = sqlr.Reader.GetDateTime(2);
+            dvdi.LastScan = sqlr.Reader.GetDateTime(1);
+            dvdi.FirstScan = sqlr.Reader.GetDateTime(2);
             dvdi.Title = sqlr.Reader.GetString(3);
 
             USR_DvdInfo usrd = USR_DvdInfo.FromTCSR(USR.SuccessCorrelate(crid));
@@ -142,5 +153,45 @@ namespace UpcSvc
 
             return DoGenericQueryDelegateRead(sFullQuery, ReaderGetDvdScanInfoDelegate, USR_DvdInfo.FromTCSR);
         }
+
+        USR FromUSR(USR usr)
+        {
+            return usr;
+        }
+
+        public string FetchTitleFromGenericUPC(string sCode)
+        {
+            if (sCode.Length == 13)
+                sCode = sCode.Substring(1);
+
+            try
+                {
+                ScrapingBrowser sbr = new ScrapingBrowser();
+                sbr.AllowAutoRedirect = false;
+                sbr.AllowMetaRedirect = false;
+
+                WebPage wp = sbr.NavigateToPage(new Uri("http://www.searchupc.com/upc/" + sCode));
+
+                HtmlNodeCollection nodes = wp.Html.SelectNodes("//table[@id='searchresultdata']");
+                HtmlNodeCollection nodesTr = nodes[0].SelectNodes("tr");
+
+                if (nodesTr == null || nodesTr.Count != 2)
+                    {
+                    return "!!NO TITLE FOUND";
+                    }
+                return nodesTr[1].ChildNodes[1].InnerText;
+
+                }
+            catch
+                {
+                return "!!NO TITLE FOUND";
+                }
+        }
+        public USR UpdateUpcLastScanDate(string sScanCode, string sTitle)
+        {
+            string sCmd = String.Format("sp_updatescan '{0}', '{1}', '{2}'", sScanCode, Sql.Sqlify(sTitle), DateTime.Now.ToString());
+            return DoGenericQueryDelegateRead(sCmd, null, FromUSR);
+        }
+
     }
 }
