@@ -19,11 +19,23 @@
   <wsdl:message name="IUpcSvc_GetDvdScanInfo_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetDvdScanInfoResponse" />
   </wsdl:message>
+  <wsdl:message name="IUpcSvc_CreateDvd_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateDvd" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_CreateDvd_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateDvdResponse" />
+  </wsdl:message>
   <wsdl:message name="IUpcSvc_UpdateUpcLastScanDate_InputMessage">
     <wsdl:part name="parameters" element="tns:UpdateUpcLastScanDate" />
   </wsdl:message>
   <wsdl:message name="IUpcSvc_UpdateUpcLastScanDate_OutputMessage">
     <wsdl:part name="parameters" element="tns:UpdateUpcLastScanDateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_FetchTitleFromGenericUPC_InputMessage">
+    <wsdl:part name="parameters" element="tns:FetchTitleFromGenericUPC" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_FetchTitleFromGenericUPC_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FetchTitleFromGenericUPCResponse" />
   </wsdl:message>
   <wsdl:portType name="IUpcSvc">
     <wsdl:operation name="GetLastScanDate">
@@ -34,9 +46,17 @@
       <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/GetDvdScanInfo" message="tns:IUpcSvc_GetDvdScanInfo_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/GetDvdScanInfoResponse" message="tns:IUpcSvc_GetDvdScanInfo_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="CreateDvd">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/CreateDvd" message="tns:IUpcSvc_CreateDvd_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/CreateDvdResponse" message="tns:IUpcSvc_CreateDvd_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="UpdateUpcLastScanDate">
       <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDate" message="tns:IUpcSvc_UpdateUpcLastScanDate_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDateResponse" message="tns:IUpcSvc_UpdateUpcLastScanDate_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FetchTitleFromGenericUPC">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/FetchTitleFromGenericUPC" message="tns:IUpcSvc_FetchTitleFromGenericUPC_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/FetchTitleFromGenericUPCResponse" message="tns:IUpcSvc_FetchTitleFromGenericUPC_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IUpcSvc" type="tns:IUpcSvc">
@@ -59,8 +79,26 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="CreateDvd">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/CreateDvd" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="UpdateUpcLastScanDate">
       <soap:operation soapAction="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FetchTitleFromGenericUPC">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/FetchTitleFromGenericUPC" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

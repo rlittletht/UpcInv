@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Media;
@@ -84,6 +85,26 @@ namespace UniversalUpc
             UpcService.USR usr = await m_usc.UpdateUpcLastScanDateAsync(sScanCode, "");
 
             del(sScanCode, usr.Result);
+        }
+
+        public delegate void ContinueWithFetchTitleDelegate(string sScanCode, string sTitle);
+
+        public async void FetchTitleFromGenericUPC(string sScanCode, ContinueWithFetchTitleDelegate del)
+        {
+            EnsureServiceConnection();
+            string sTitle = await m_usc.FetchTitleFromGenericUPCAsync(sScanCode);
+
+            del(sScanCode, sTitle);
+        }
+
+        public delegate void ContinueWithCreateDvdDelegate(string sScanCode, string sTitle, bool fResult);
+
+        public async void CreateDvd(string sScanCode, string sTitle, ContinueWithCreateDvdDelegate del)
+        {
+            EnsureServiceConnection();
+            UpcService.USR usr = await m_usc.CreateDvdAsync(sScanCode, sTitle);
+
+            del(sScanCode, sTitle, usr.Result);
         }
     }
 }

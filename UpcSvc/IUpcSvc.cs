@@ -22,11 +22,18 @@ namespace UpcSvc
 
         [OperationContract]
         [WebInvoke(Method = "GET", BodyStyle = WebMessageBodyStyle.Wrapped)]
+        USR CreateDvd(string sScanCode, string sTitle);       
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", BodyStyle = WebMessageBodyStyle.Wrapped)]
         USR UpdateUpcLastScanDate(string sScanCode, string sTitle);
 
         [OperationContract]
         [WebInvoke(Method = "GET", BodyStyle = WebMessageBodyStyle.Wrapped)]
         string FetchTitleFromGenericUPC(string sCode);
 
+        [OperationContract]
+        [WebInvoke(Method = "GET", BodyStyle = WebMessageBodyStyle.Wrapped)]
+        USR TestLog();
     }
 }

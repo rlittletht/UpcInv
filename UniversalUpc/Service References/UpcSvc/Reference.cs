@@ -242,8 +242,14 @@ namespace UniversalUpc.UpcSvc {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/GetDvdScanInfo", ReplyAction="http://tempuri.org/IUpcSvc/GetDvdScanInfoResponse")]
         System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_DvdInfo> GetDvdScanInfoAsync(string sScanCode);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/CreateDvd", ReplyAction="http://tempuri.org/IUpcSvc/CreateDvdResponse")]
+        System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> CreateDvdAsync(string sScanCode, string sTitle);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDate", ReplyAction="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDateResponse")]
         System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> UpdateUpcLastScanDateAsync(string sScanCode, string sTitle);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/FetchTitleFromGenericUPC", ReplyAction="http://tempuri.org/IUpcSvc/FetchTitleFromGenericUPCResponse")]
+        System.Threading.Tasks.Task<string> FetchTitleFromGenericUPCAsync(string sCode);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -297,8 +303,16 @@ namespace UniversalUpc.UpcSvc {
             return base.Channel.GetDvdScanInfoAsync(sScanCode);
         }
         
+        public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> CreateDvdAsync(string sScanCode, string sTitle) {
+            return base.Channel.CreateDvdAsync(sScanCode, sTitle);
+        }
+        
         public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> UpdateUpcLastScanDateAsync(string sScanCode, string sTitle) {
             return base.Channel.UpdateUpcLastScanDateAsync(sScanCode, sTitle);
+        }
+        
+        public System.Threading.Tasks.Task<string> FetchTitleFromGenericUPCAsync(string sCode) {
+            return base.Channel.FetchTitleFromGenericUPCAsync(sCode);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync() {

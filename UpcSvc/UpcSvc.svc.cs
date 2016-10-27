@@ -187,11 +187,43 @@ namespace UpcSvc
                 return "!!NO TITLE FOUND";
                 }
         }
+
         public USR UpdateUpcLastScanDate(string sScanCode, string sTitle)
         {
-            string sCmd = String.Format("sp_updatescan '{0}', '{1}', '{2}'", sScanCode, Sql.Sqlify(sTitle), DateTime.Now.ToString());
+            string sCmd = String.Format("sp_updatescan '{0}', '{1}', '{2}'", Sql.Sqlify(sScanCode), Sql.Sqlify(sTitle), DateTime.Now.ToString());
             return DoGenericQueryDelegateRead(sCmd, null, FromUSR);
         }
 
+        public USR CreateDvd(string sScanCode, string sTitle)
+        {
+            string sNow = DateTime.Now.ToString();
+
+            string sCmd = String.Format("sp_createdvd '{0}', '{1}', '{2}', '{3}', 'D'", Sql.Sqlify(sScanCode), Sql.Sqlify(sTitle), sNow, sNow);
+            return DoGenericQueryDelegateRead(sCmd, null, FromUSR);
+        }
+
+        public USR TestLog()
+        {
+            LogProvider lp = new LogProvider("UpcSvc");
+            CorrelationID crid = new CorrelationID();
+
+            lp.LogEvent(crid, EventType.Verbose, "TestLoggingEnter");
+
+            USR sr = USR.FromSRCorrelate(SR.Failed("test failure"), crid);
+            lp.LogEvent(crid, EventType.Critical, "Critical test");
+            lp.LogEvent(crid, EventType.Warning, "Warning test");
+            lp.LogEvent(crid, EventType.Information, "Information test");
+            lp.LogEvent(crid, EventType.Error, "Error test");
+            lp.LogEvent(crid, EventType.Verbose, "Verbose test");
+            lp.LogEvent(crid, EventType.Verbose, "TestLoggingEnter2");
+            
+
+            sr.Log(lp, "sr.Log test");
+            sr.Log(lp, "sr.Log My paramaterized test {0} after param", 911);
+            if (lp.FShouldLog(EventType.Verbose))
+                sr.Reason = "Verbose is logging";
+
+            return sr;
+        }
     }
 }

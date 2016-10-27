@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{6430A3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{4517830F-4898-40D5-8447-720D70EE8568}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCore.Logging(Universal)", "..\liblet\cs\TCore.Logging\TCore.Logging(Universal)\TCore.Logging(Universal).csproj", "{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AzureRelease|Any CPU = AzureRelease|Any CPU
@@ -509,6 +511,54 @@ Global
 		{EE681C45-8416-4DE7-9E62-AE1371A7DE9A}.Release|x64.Build.0 = Release|Any CPU
 		{EE681C45-8416-4DE7-9E62-AE1371A7DE9A}.Release|x86.ActiveCfg = Release|Any CPU
 		{EE681C45-8416-4DE7-9E62-AE1371A7DE9A}.Release|x86.Build.0 = Release|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureRelease|Any CPU.Build.0 = Release|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureRelease|ARM.ActiveCfg = Release|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureRelease|ARM.Build.0 = Release|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureRelease|x64.ActiveCfg = Release|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureRelease|x64.Build.0 = Release|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureRelease|x86.ActiveCfg = Release|x86
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureRelease|x86.Build.0 = Release|x86
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureStagingDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureStagingDebug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureStagingDebug|ARM.ActiveCfg = Debug|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureStagingDebug|ARM.Build.0 = Debug|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureStagingDebug|x64.ActiveCfg = Debug|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureStagingDebug|x64.Build.0 = Debug|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureStagingDebug|x86.ActiveCfg = Debug|x86
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.AzureStagingDebug|x86.Build.0 = Debug|x86
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Debug|ARM.ActiveCfg = Debug|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Debug|ARM.Build.0 = Debug|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Debug|x64.ActiveCfg = Debug|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Debug|x64.Build.0 = Debug|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Debug|x86.ActiveCfg = Debug|x86
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Debug|x86.Build.0 = Debug|x86
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalDebug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalDebug|ARM.ActiveCfg = Debug|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalDebug|ARM.Build.0 = Debug|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalDebug|x64.ActiveCfg = Debug|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalDebug|x64.Build.0 = Debug|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalDebug|x86.ActiveCfg = Debug|x86
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalDebug|x86.Build.0 = Debug|x86
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalStaging|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalStaging|Any CPU.Build.0 = Release|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalStaging|ARM.ActiveCfg = Release|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalStaging|ARM.Build.0 = Release|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalStaging|x64.ActiveCfg = Release|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalStaging|x64.Build.0 = Release|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalStaging|x86.ActiveCfg = Release|x86
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.LocalStaging|x86.Build.0 = Release|x86
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Release|ARM.ActiveCfg = Release|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Release|ARM.Build.0 = Release|ARM
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Release|x64.ActiveCfg = Release|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Release|x64.Build.0 = Release|x64
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Release|x86.ActiveCfg = Release|x86
+		{8CC42025-D8E2-4254-ACAF-4CAA05C1EF7F}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
