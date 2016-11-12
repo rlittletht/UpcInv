@@ -24,6 +24,7 @@ namespace UniversalUpc
             Halt,
             Duplicate,
 			Drink,
+            UPCScanBeep,
             None
             };
 
@@ -47,6 +48,7 @@ namespace UniversalUpc
             m_mpAlertMedia.Add(AlertType.Drink, await LoadSoundFile("hicup_392.wav"));
             m_mpAlertMedia.Add(AlertType.BadInfo, await LoadSoundFile("Ding.wav"));
             m_mpAlertMedia.Add(AlertType.Halt, await LoadSoundFile("Ding.wav"));
+            m_mpAlertMedia.Add(AlertType.UPCScanBeep, await LoadSoundFile("263133__pan14__tone-beep.wav"));
         }
         public UpcAlert()
         {

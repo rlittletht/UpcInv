@@ -64,11 +64,41 @@
       <xs:element minOccurs="0" name="Code" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="FirstScan" type="xs:dateTime" />
       <xs:element minOccurs="0" name="LastScan" type="xs:dateTime" />
-      <xs:element minOccurs="0" name="Location" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="DvdInfo" nillable="true" type="tns:DvdInfo" />
+  <xs:complexType name="USR_DvdInfoList">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TUSROfArrayOfDvdInfo9_SjqeMlk">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="USR_DvdInfoList" nillable="true" type="tns:USR_DvdInfoList" />
+  <xs:complexType name="TUSROfArrayOfDvdInfo9_SjqeMlk">
+    <xs:annotation>
+      <xs:appinfo>
+        <GenericType Name="TUSROf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+          <GenericParameter Name="ArrayOfDvdInfo" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" />
+        </GenericType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TCSRBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TheValue" nillable="true" type="tns:ArrayOfDvdInfo" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TUSROfArrayOfDvdInfo9_SjqeMlk" nillable="true" type="tns:TUSROfArrayOfDvdInfo9_SjqeMlk" />
+  <xs:complexType name="ArrayOfDvdInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="DvdInfo" nillable="true" type="tns:DvdInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfDvdInfo" nillable="true" type="tns:ArrayOfDvdInfo" />
   <xs:complexType name="USR">
     <xs:complexContent mixed="false">
       <xs:extension base="tns:TCSRBase">
@@ -77,4 +107,106 @@
     </xs:complexContent>
   </xs:complexType>
   <xs:element name="USR" nillable="true" type="tns:USR" />
+  <xs:complexType name="USR_BookInfo">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TUSROfBookInfo9_SjqeMlk">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="USR_BookInfo" nillable="true" type="tns:USR_BookInfo" />
+  <xs:complexType name="TUSROfBookInfo9_SjqeMlk">
+    <xs:annotation>
+      <xs:appinfo>
+        <GenericType Name="TUSROf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+          <GenericParameter Name="BookInfo" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" />
+        </GenericType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TCSRBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TheValue" nillable="true" type="tns:BookInfo" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TUSROfBookInfo9_SjqeMlk" nillable="true" type="tns:TUSROfBookInfo9_SjqeMlk" />
+  <xs:complexType name="BookInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Code" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FirstScan" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="LastScan" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Location" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BookInfo" nillable="true" type="tns:BookInfo" />
+  <xs:complexType name="USR_BookInfoList">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TUSROfArrayOfBookInfo9_SjqeMlk">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="USR_BookInfoList" nillable="true" type="tns:USR_BookInfoList" />
+  <xs:complexType name="TUSROfArrayOfBookInfo9_SjqeMlk">
+    <xs:annotation>
+      <xs:appinfo>
+        <GenericType Name="TUSROf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+          <GenericParameter Name="ArrayOfBookInfo" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" />
+        </GenericType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TCSRBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TheValue" nillable="true" type="tns:ArrayOfBookInfo" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TUSROfArrayOfBookInfo9_SjqeMlk" nillable="true" type="tns:TUSROfArrayOfBookInfo9_SjqeMlk" />
+  <xs:complexType name="ArrayOfBookInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="BookInfo" nillable="true" type="tns:BookInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfBookInfo" nillable="true" type="tns:ArrayOfBookInfo" />
+  <xs:complexType name="USR_WineInfo">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TUSROfWineInfo9_SjqeMlk">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="USR_WineInfo" nillable="true" type="tns:USR_WineInfo" />
+  <xs:complexType name="TUSROfWineInfo9_SjqeMlk">
+    <xs:annotation>
+      <xs:appinfo>
+        <GenericType Name="TUSROf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+          <GenericParameter Name="WineInfo" Namespace="http://schemas.datacontract.org/2004/07/UpcSvc" />
+        </GenericType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TCSRBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TheValue" nillable="true" type="tns:WineInfo" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TUSROfWineInfo9_SjqeMlk" nillable="true" type="tns:TUSROfWineInfo9_SjqeMlk" />
+  <xs:complexType name="WineInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Code" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FirstScan" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="LastScan" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Notes" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Vintage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Wine" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WineInfo" nillable="true" type="tns:WineInfo" />
 </xs:schema>

@@ -34,6 +34,11 @@ namespace UniversalUpc
                 });
         }
 
+        public void StopScanner()
+        {
+            m_scannerControl.StopScanning();
+        }
+
         public ScanCompleteDelegate m_scdNotify;
 
         public delegate void ScanCompleteDelegate(ZXing.Result result);

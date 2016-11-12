@@ -39,6 +39,11 @@ namespace UniversalUpc
         private UpcAlert m_upca;
         private UpcInvCore m_upccCore;
         private TCore.StatusBox.StatusBox m_sb;
+        private bool m_fScannerOn;
+        private bool m_fScannerSetup;
+        private bool m_fCheckOnly;
+
+        private UpcInvCore.ADAS m_adasCurrent;
 
         private LogProvider m_lp;
         public MainPage()
@@ -50,13 +55,28 @@ namespace UniversalUpc
             m_ups = new Scanner(this.Dispatcher, scannerControl);
             m_upca = new UpcAlert();
             m_sb = new StatusBox();
-            m_upccCore = new UpcInvCore(m_upca, m_sb);
+            m_upccCore = new UpcInvCore(m_upca, m_sb, m_lp);
             m_plsProcessing = new List<string>();
 
             m_sb.Initialize(recStatus, m_upca);
+            AdjustUIForMediaType(m_adasCurrent);
         }
 
         private List<string> m_plsProcessing;
+
+        UpcInvCore.ADAS AdasFromDropdownItem(ComboBoxItem cbi)
+        {
+            if (String.Compare((string)cbi.Tag, "dvd") == 0)
+                return UpcInvCore.ADAS.DVD;
+            else if (String.Compare((string)cbi.Tag, "book") == 0)
+                return UpcInvCore.ADAS.Book;
+            else if (String.Compare((string)cbi.Tag, "wine") == 0)
+                return UpcInvCore.ADAS.Wine;
+            else if (String.Compare((string)cbi.Tag, "upc") == 0)
+                return UpcInvCore.ADAS.Generic;
+
+            throw new Exception("illegal ADAS combobox item");
+        }
 
         void FinishCode(string sCode, CorrelationID crid)
         {
@@ -108,119 +128,205 @@ namespace UniversalUpc
                 }
         }
 
+        /*----------------------------------------------------------------------------
+        	%%Function: DispatchScanCode
+        	%%Qualified: UniversalUpc.MainPage.DispatchScanCode
+        	%%Contact: rlittle
+        	
+            Handle the scanner dispatching a scan code to us.
+
+            For now, this is just a DVD scan code, but later will handle others...
+        ----------------------------------------------------------------------------*/
         private void DispatchScanCode(Result result)
         {
             CorrelationID crid = new CorrelationID();
 
             m_lp.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", result?.Text);
+
             if (result == null)
                 {
                 m_upca.Play(UpcAlert.AlertType.BadInfo);
+                m_lp.LogEvent(crid, EventType.Error, "result == null");
                 ebScanCode.Text = "";
+                return;
                 }
-            else
-                {
-                string sCode = m_upccCore.SEnsureEan13(result.Text);
 
-                m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", result.Text);
-                if (!FAddProcessingCode(sCode, crid))
-                    return; // already processing this code...
+            m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
 
-                m_lp.LogEvent(crid, EventType.Verbose, "Continuing with processing for {0}...Checking for DvdInfo from service", result.Text);
-                ebScanCode.Text = sCode;
-                m_upccCore.DvdInfoRetrieve(sCode, (sScanCode, dvdi) =>
-                    {
-                    if (dvdi != null)
-                        {
-                        m_lp.LogEvent(crid, EventType.Verbose, "Service returned info for {0}", sScanCode);
-                        ebTitle.Text = dvdi.Title;
-                        // check for a dupe/too soon last scan (within 1 hour)
-                        if (dvdi.LastScan > DateTime.Now.AddHours(-1))
-                            {
-                            m_lp.LogEvent(crid, EventType.Verbose, "Avoiding duplicate scan for {0}", sScanCode);
-                            m_sb.AddMessage(String.Format("{0}: Duplicate?! LastScan was {1}", dvdi.Title, dvdi.LastScan.ToString()), UpcAlert.AlertType.Duplicate);
-                            FinishCode(sScanCode, crid);
-                            return;
-                            }
-
-                        m_lp.LogEvent(crid, EventType.Verbose, "Calling service to update scan date for {0}", sScanCode);
-
-                        // now update the last scan date
-                        m_upccCore.UpdateScanDate(sScanCode, (_sScanCode, fSucceeded) =>
-                            {
-                            if (fSucceeded)
-                                {
-                                m_lp.LogEvent(crid, EventType.Verbose, "Successfully updated last scan for {0}", _sScanCode);
-                                m_sb.AddMessage(String.Format("{0}: Updated LastScan (was {1})", dvdi.Title, dvdi.LastScan.ToString()), UpcAlert.AlertType.GoodInfo);
-                                }
-                            else
-                                {
-                                m_lp.LogEvent(crid, EventType.Error, "Failed to update last scan for {0}", _sScanCode);
-                                m_sb.AddMessage(String.Format("{0}: Failed to update last scan!", dvdi.Title), UpcAlert.AlertType.BadInfo);
-                                }
-
-                            FinishCode(sScanCode, crid);
-                            });
-                        }
-                    else
-                        {
-                        // not found, so lookup
-                        ebScanCode.Text = sCode;
-                        m_lp.LogEvent(crid, EventType.Verbose, "No DVD info for scan code {0}, looking up...", sScanCode);
-
-                        m_sb.AddMessage(String.Format("looking up code {0}", sCode), UpcAlert.AlertType.None);
-                        m_upccCore.FetchTitleFromGenericUPC(sCode, (_sTitleScan, sTitle) =>
-                            {
-                            if (sTitle == "" || sTitle.Substring(0, 2) == "!!")
-                                {
-                                m_lp.LogEvent(crid, EventType.Verbose, "Service did not return a title for {0}", sScanCode);
-
-                                m_sb.AddMessage(String.Format("Couldn't find title for {0}: {1}", _sTitleScan, sTitle), UpcAlert.AlertType.BadInfo);
-                                FinishCode(sScanCode, crid);
-                                return;
-                                }
-
-                            m_lp.LogEvent(crid, EventType.Verbose, "Service returned title {0} for code {1}. Adding title.", sTitle, sScanCode);
-
-                            m_upccCore.CreateDvd(_sTitleScan, sTitle, (_sCreateScan, _sCreateTitle, fResult) =>
-                                {
-                                if (fResult)
-                                    {
-                                    m_lp.LogEvent(crid, EventType.Verbose, "Successfully added title for {0}", sScanCode);
-
-                                    m_sb.AddMessage(String.Format("Added title for {0}: {1}", _sTitleScan, sTitle), UpcAlert.AlertType.GoodInfo);
-                                    }
-                                else
-                                    {
-                                    m_lp.LogEvent(crid, EventType.Error, "Failed to add title for {0}", sScanCode);
-
-                                    m_sb.AddMessage(String.Format("Couldn't create DVD title for {0}: {1}", _sTitleScan, sTitle), UpcAlert.AlertType.BadInfo);
-                                    }
-                                FinishCode(sScanCode, crid);
-                                });
-
-                            });
-                        }
-                    });
-                }
+            if (m_adasCurrent == UpcInvCore.ADAS.DVD)
+                DispatchDvdScanCode(result, crid);
+            else if (m_adasCurrent == UpcInvCore.ADAS.Book)
+                DispatchBookScanCode(result, crid);
+            else if (m_adasCurrent == UpcInvCore.ADAS.Wine)
+                DispatchWineScanCode(result, crid);
         }
 
+        void DispatchWineScanCode(Result result, CorrelationID crid)
+        {
+            string sScanCode = result.Text;
+
+            // guard against reentrancy on the same scan code.
+            m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", sScanCode);
+            if (!FAddProcessingCode(sScanCode, crid))
+                return;
+
+            // now handle this scan code
+
+            ebScanCode.Text = sScanCode;
+
+            // The removal of the reentrancy guard will happen asynchronously
+            m_upccCore.DoHandleWineScanCode(ebScanCode.Text, ebNotes.Text, crid, (cridDel, sTitle, fResult) =>
+                {
+                ebTitle.Text = sTitle ?? "!!TITLE NOT FOUND";
+                m_lp.LogEvent(cridDel, fResult ? EventType.Information : EventType.Error, "FinalScanCodeCleanup: {0}: {1}", fResult, sTitle);
+                FinishCode(sScanCode, cridDel);
+                });
+        }
+        void DispatchBookScanCode(Result result, CorrelationID crid)
+        {
+            string sIsbn13 = m_upccCore.SEnsureIsbn13(result.Text);
+
+            if (sIsbn13.StartsWith("!!"))
+                {
+                m_lp.LogEvent(crid, EventType.Error, sIsbn13);
+                m_sb.AddMessage(UpcAlert.AlertType.BadInfo, sIsbn13);
+                return;
+                }
+
+            // guard against reentrancy on the same scan code.
+            m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", sIsbn13);
+            if (!FAddProcessingCode(sIsbn13, crid))
+                return;
+
+            // now handle this scan code
+
+            ebScanCode.Text = sIsbn13;
+
+            // The removal of the reentrancy guard will happen asynchronously
+            m_upccCore.DoHandleBookScanCode(ebScanCode.Text, ebLocation.Text, crid, (cridDel, sTitle, fResult) =>
+                {
+                ebTitle.Text = sTitle ?? "!!TITLE NOT FOUND";
+                m_lp.LogEvent(cridDel, fResult ? EventType.Information : EventType.Error, "FinalScanCodeCleanup: {0}: {1}", fResult, sTitle);
+                FinishCode(sIsbn13, cridDel);
+                });
+        }
+
+        private void DispatchDvdScanCode(Result result, CorrelationID crid)
+        {
+            string sCode = m_upccCore.SEnsureEan13(result.Text);
+
+            // guard against reentrancy on the same scan code.
+            m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", sCode);
+            if (!FAddProcessingCode(sCode, crid))
+                return;
+
+            // now handle this scan code
+
+            ebScanCode.Text = sCode;
+
+            // The removal of the reentrancy guard will happen asynchronously
+            m_upccCore.DoHandleDvdScanCode(sCode, crid, (cridDel, sTitle, fResult) =>
+                {
+                ebTitle.Text = sTitle ?? "!!TITLE NOT FOUND";
+                m_lp.LogEvent(cridDel, fResult ? EventType.Information : EventType.Error, "FinalScanCodeCleanup: {0}: {1}", fResult, sTitle);
+                FinishCode(sCode, cridDel);
+                });
+        }
 
         private async void ToggleScan(object sender, RoutedEventArgs e)
         {
-            m_ups.SetupScanner(null, true);
-            m_ups.StartScanner(DispatchScanCode);
+            if (m_fScannerOn == false)
+                {
+                if (!m_fScannerSetup)
+                    {
+                    m_fScannerSetup = true;
+                    m_ups.SetupScanner(null, true);
+                    }
+                m_ups.StartScanner(DispatchScanCode);
+                m_fScannerOn = true;
+                }
+            else
+                {
+                m_ups.StopScanner();
+                m_fScannerOn = false;
+                }
         }
 
-        private async void CmdTest1(object sender, RoutedEventArgs e)
+        /*----------------------------------------------------------------------------
+        	%%Function: DoManual
+        	%%Qualified: UniversalUpc.MainPage.DoManual
+        	%%Contact: rlittle
+        	
+            take the current title and scan code and create an entry for it.
+        ----------------------------------------------------------------------------*/
+        private async void DoManual(object sender, RoutedEventArgs e)
         {
-            m_sb.AddMessage("testing", UpcAlert.AlertType.None);
+            string sTitle = ebTitle.Text;
+
+            if (m_fCheckOnly)
+                {
+                m_upccCore.DoCheckDvdTitleInventory(sTitle, new CorrelationID());
+                return;
+                }
+            if (sTitle.StartsWith("!!"))
+                {
+                m_sb.AddMessage(UpcAlert.AlertType.BadInfo, "Can't add title with leading error text '!!'");
+                return;
+                }
+
+            CorrelationID crid = new CorrelationID();
+
+            bool fResult = await m_upccCore.DoCreateDvdTitle(ebScanCode.Text, sTitle, crid);
+
+            if (fResult)
+                m_sb.AddMessage(UpcAlert.AlertType.GoodInfo, "Added {0} as {1}", ebScanCode.Text, sTitle);
+            else
+                m_sb.AddMessage(UpcAlert.AlertType.Halt, "FAILED  to Added {0} as {1}", ebScanCode.Text, sTitle);
         }
 
-
-        private void txtStatus_ContextCanceled(UIElement sender, RoutedEventArgs args)
+        private void SetNewMediaType(object sender, RoutedEventArgs e)
         {
+            m_adasCurrent = AdasFromDropdownItem(cbMediaType.SelectedItem as ComboBoxItem);
+            AdjustUIForMediaType(m_adasCurrent);
+        }
 
+        void AdjustUIForMediaType(UpcInvCore.ADAS adas)
+        {
+            if (txtLocation == null || ebLocation == null || ebNotes == null)
+                return;
+
+            switch (adas)
+                {
+                case UpcInvCore.ADAS.Book:
+                    txtLocation.Visibility = Visibility.Visible;
+                    ebLocation.Visibility = Visibility.Visible;
+                    ebNotes.Visibility = Visibility.Collapsed;
+                    break;
+                case UpcInvCore.ADAS.Wine:
+                    txtLocation.Visibility = Visibility.Collapsed;
+                    ebLocation.Visibility = Visibility.Collapsed;
+                    ebNotes.Visibility = Visibility.Visible;
+                    break;
+                case UpcInvCore.ADAS.DVD:
+                    txtLocation.Visibility = Visibility.Collapsed;
+                    ebLocation.Visibility = Visibility.Collapsed;
+                    ebNotes.Visibility = Visibility.Collapsed;
+                    break;
+                case UpcInvCore.ADAS.Generic:
+                    txtLocation.Visibility = Visibility.Collapsed;
+                    ebLocation.Visibility = Visibility.Collapsed;
+                    ebNotes.Visibility = Visibility.Collapsed;
+                    break;
+                }
+        }
+        private void DoCheckChange(object sender, RoutedEventArgs e)
+        {
+            m_fCheckOnly = cbCheckOnly.IsChecked ?? false;
+        }
+
+        private void OnLocationGotFocus(object sender, RoutedEventArgs e)
+        {
+            ebLocation.Select(0, ebLocation.Text.Length);
         }
     }
 }

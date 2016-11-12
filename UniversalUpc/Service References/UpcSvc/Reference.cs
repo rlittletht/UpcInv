@@ -20,7 +20,15 @@ namespace UniversalUpc.UpcSvc {
     [System.Runtime.Serialization.DataContractAttribute(Name="TCSRBase", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.TUSROfDvdInfo9_SjqeMlk))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_DvdInfo))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.TUSROfArrayOfDvdInfo9_SjqeMlk))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_DvdInfoList))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.TUSROfBookInfo9_SjqeMlk))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_BookInfo))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.TUSROfArrayOfBookInfo9_SjqeMlk))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_BookInfoList))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.TUSROfWineInfo9_SjqeMlk))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_WineInfo))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.TUSROfstring))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_String))]
     public partial class TCSRBase : object, System.ComponentModel.INotifyPropertyChanged {
@@ -110,8 +118,120 @@ namespace UniversalUpc.UpcSvc {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="TUSROfArrayOfDvdInfo9_SjqeMlk", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_DvdInfoList))]
+    public partial class TUSROfArrayOfDvdInfo9_SjqeMlk : UniversalUpc.UpcSvc.TCSRBase {
+        
+        private UniversalUpc.UpcSvc.DvdInfo[] TheValueField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public UniversalUpc.UpcSvc.DvdInfo[] TheValue {
+            get {
+                return this.TheValueField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.TheValueField, value) != true)) {
+                    this.TheValueField = value;
+                    this.RaisePropertyChanged("TheValue");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="USR_DvdInfoList", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    public partial class USR_DvdInfoList : UniversalUpc.UpcSvc.TUSROfArrayOfDvdInfo9_SjqeMlk {
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="USR", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
     public partial class USR : UniversalUpc.UpcSvc.TCSRBase {
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="TUSROfBookInfo9_SjqeMlk", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_BookInfo))]
+    public partial class TUSROfBookInfo9_SjqeMlk : UniversalUpc.UpcSvc.TCSRBase {
+        
+        private UniversalUpc.UpcSvc.BookInfo TheValueField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public UniversalUpc.UpcSvc.BookInfo TheValue {
+            get {
+                return this.TheValueField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.TheValueField, value) != true)) {
+                    this.TheValueField = value;
+                    this.RaisePropertyChanged("TheValue");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="USR_BookInfo", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    public partial class USR_BookInfo : UniversalUpc.UpcSvc.TUSROfBookInfo9_SjqeMlk {
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="TUSROfArrayOfBookInfo9_SjqeMlk", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_BookInfoList))]
+    public partial class TUSROfArrayOfBookInfo9_SjqeMlk : UniversalUpc.UpcSvc.TCSRBase {
+        
+        private UniversalUpc.UpcSvc.BookInfo[] TheValueField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public UniversalUpc.UpcSvc.BookInfo[] TheValue {
+            get {
+                return this.TheValueField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.TheValueField, value) != true)) {
+                    this.TheValueField = value;
+                    this.RaisePropertyChanged("TheValue");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="USR_BookInfoList", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    public partial class USR_BookInfoList : UniversalUpc.UpcSvc.TUSROfArrayOfBookInfo9_SjqeMlk {
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="TUSROfWineInfo9_SjqeMlk", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_WineInfo))]
+    public partial class TUSROfWineInfo9_SjqeMlk : UniversalUpc.UpcSvc.TCSRBase {
+        
+        private UniversalUpc.UpcSvc.WineInfo TheValueField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public UniversalUpc.UpcSvc.WineInfo TheValue {
+            get {
+                return this.TheValueField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.TheValueField, value) != true)) {
+                    this.TheValueField = value;
+                    this.RaisePropertyChanged("TheValue");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="USR_WineInfo", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    public partial class USR_WineInfo : UniversalUpc.UpcSvc.TUSROfWineInfo9_SjqeMlk {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -146,6 +266,81 @@ namespace UniversalUpc.UpcSvc {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="DvdInfo", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
     public partial class DvdInfo : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string CodeField;
+        
+        private System.DateTime FirstScanField;
+        
+        private System.DateTime LastScanField;
+        
+        private string TitleField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Code {
+            get {
+                return this.CodeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.CodeField, value) != true)) {
+                    this.CodeField = value;
+                    this.RaisePropertyChanged("Code");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime FirstScan {
+            get {
+                return this.FirstScanField;
+            }
+            set {
+                if ((this.FirstScanField.Equals(value) != true)) {
+                    this.FirstScanField = value;
+                    this.RaisePropertyChanged("FirstScan");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime LastScan {
+            get {
+                return this.LastScanField;
+            }
+            set {
+                if ((this.LastScanField.Equals(value) != true)) {
+                    this.LastScanField = value;
+                    this.RaisePropertyChanged("LastScan");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Title {
+            get {
+                return this.TitleField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.TitleField, value) != true)) {
+                    this.TitleField = value;
+                    this.RaisePropertyChanged("Title");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="BookInfo", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    public partial class BookInfo : object, System.ComponentModel.INotifyPropertyChanged {
         
         private string CodeField;
         
@@ -232,6 +427,111 @@ namespace UniversalUpc.UpcSvc {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="WineInfo", Namespace="http://schemas.datacontract.org/2004/07/UpcSvc")]
+    public partial class WineInfo : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string CodeField;
+        
+        private System.DateTime FirstScanField;
+        
+        private System.DateTime LastScanField;
+        
+        private string NotesField;
+        
+        private string VintageField;
+        
+        private string WineField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Code {
+            get {
+                return this.CodeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.CodeField, value) != true)) {
+                    this.CodeField = value;
+                    this.RaisePropertyChanged("Code");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime FirstScan {
+            get {
+                return this.FirstScanField;
+            }
+            set {
+                if ((this.FirstScanField.Equals(value) != true)) {
+                    this.FirstScanField = value;
+                    this.RaisePropertyChanged("FirstScan");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime LastScan {
+            get {
+                return this.LastScanField;
+            }
+            set {
+                if ((this.LastScanField.Equals(value) != true)) {
+                    this.LastScanField = value;
+                    this.RaisePropertyChanged("LastScan");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Notes {
+            get {
+                return this.NotesField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NotesField, value) != true)) {
+                    this.NotesField = value;
+                    this.RaisePropertyChanged("Notes");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Vintage {
+            get {
+                return this.VintageField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VintageField, value) != true)) {
+                    this.VintageField = value;
+                    this.RaisePropertyChanged("Vintage");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Wine {
+            get {
+                return this.WineField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.WineField, value) != true)) {
+                    this.WineField = value;
+                    this.RaisePropertyChanged("Wine");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="UpcSvc.IUpcSvc")]
     public interface IUpcSvc {
@@ -242,14 +542,41 @@ namespace UniversalUpc.UpcSvc {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/GetDvdScanInfo", ReplyAction="http://tempuri.org/IUpcSvc/GetDvdScanInfoResponse")]
         System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_DvdInfo> GetDvdScanInfoAsync(string sScanCode);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/GetDvdScanInfosFromTitle", ReplyAction="http://tempuri.org/IUpcSvc/GetDvdScanInfosFromTitleResponse")]
+        System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_DvdInfoList> GetDvdScanInfosFromTitleAsync(string sTitleSubstring);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/CreateDvd", ReplyAction="http://tempuri.org/IUpcSvc/CreateDvdResponse")]
         System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> CreateDvdAsync(string sScanCode, string sTitle);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/GetBookScanInfo", ReplyAction="http://tempuri.org/IUpcSvc/GetBookScanInfoResponse")]
+        System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_BookInfo> GetBookScanInfoAsync(string sScanCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/GetBookScanInfosFromTitle", ReplyAction="http://tempuri.org/IUpcSvc/GetBookScanInfosFromTitleResponse")]
+        System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_BookInfoList> GetBookScanInfosFromTitleAsync(string sTitleSubstring);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/CreateBook", ReplyAction="http://tempuri.org/IUpcSvc/CreateBookResponse")]
+        System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> CreateBookAsync(string sScanCode, string sTitle, string sLocation);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/UpdateBookScan", ReplyAction="http://tempuri.org/IUpcSvc/UpdateBookScanResponse")]
+        System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> UpdateBookScanAsync(string sScanCode, string sTitle, string sLocation);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/GetWineScanInfo", ReplyAction="http://tempuri.org/IUpcSvc/GetWineScanInfoResponse")]
+        System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_WineInfo> GetWineScanInfoAsync(string sScanCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/DrinkWine", ReplyAction="http://tempuri.org/IUpcSvc/DrinkWineResponse")]
+        System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> DrinkWineAsync(string sScanCode, string sWine, string sVintage, string sNotes);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDate", ReplyAction="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDateResponse")]
         System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> UpdateUpcLastScanDateAsync(string sScanCode, string sTitle);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/FetchTitleFromGenericUPC", ReplyAction="http://tempuri.org/IUpcSvc/FetchTitleFromGenericUPCResponse")]
         System.Threading.Tasks.Task<string> FetchTitleFromGenericUPCAsync(string sCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/FetchTitleFromISBN13", ReplyAction="http://tempuri.org/IUpcSvc/FetchTitleFromISBN13Response")]
+        System.Threading.Tasks.Task<string> FetchTitleFromISBN13Async(string sCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUpcSvc/TestLog", ReplyAction="http://tempuri.org/IUpcSvc/TestLogResponse")]
+        System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> TestLogAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -303,8 +630,36 @@ namespace UniversalUpc.UpcSvc {
             return base.Channel.GetDvdScanInfoAsync(sScanCode);
         }
         
+        public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_DvdInfoList> GetDvdScanInfosFromTitleAsync(string sTitleSubstring) {
+            return base.Channel.GetDvdScanInfosFromTitleAsync(sTitleSubstring);
+        }
+        
         public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> CreateDvdAsync(string sScanCode, string sTitle) {
             return base.Channel.CreateDvdAsync(sScanCode, sTitle);
+        }
+        
+        public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_BookInfo> GetBookScanInfoAsync(string sScanCode) {
+            return base.Channel.GetBookScanInfoAsync(sScanCode);
+        }
+        
+        public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_BookInfoList> GetBookScanInfosFromTitleAsync(string sTitleSubstring) {
+            return base.Channel.GetBookScanInfosFromTitleAsync(sTitleSubstring);
+        }
+        
+        public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> CreateBookAsync(string sScanCode, string sTitle, string sLocation) {
+            return base.Channel.CreateBookAsync(sScanCode, sTitle, sLocation);
+        }
+        
+        public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> UpdateBookScanAsync(string sScanCode, string sTitle, string sLocation) {
+            return base.Channel.UpdateBookScanAsync(sScanCode, sTitle, sLocation);
+        }
+        
+        public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR_WineInfo> GetWineScanInfoAsync(string sScanCode) {
+            return base.Channel.GetWineScanInfoAsync(sScanCode);
+        }
+        
+        public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> DrinkWineAsync(string sScanCode, string sWine, string sVintage, string sNotes) {
+            return base.Channel.DrinkWineAsync(sScanCode, sWine, sVintage, sNotes);
         }
         
         public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> UpdateUpcLastScanDateAsync(string sScanCode, string sTitle) {
@@ -313,6 +668,14 @@ namespace UniversalUpc.UpcSvc {
         
         public System.Threading.Tasks.Task<string> FetchTitleFromGenericUPCAsync(string sCode) {
             return base.Channel.FetchTitleFromGenericUPCAsync(sCode);
+        }
+        
+        public System.Threading.Tasks.Task<string> FetchTitleFromISBN13Async(string sCode) {
+            return base.Channel.FetchTitleFromISBN13Async(sCode);
+        }
+        
+        public System.Threading.Tasks.Task<UniversalUpc.UpcSvc.USR> TestLogAsync() {
+            return base.Channel.TestLogAsync();
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync() {

@@ -19,11 +19,53 @@
   <wsdl:message name="IUpcSvc_GetDvdScanInfo_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetDvdScanInfoResponse" />
   </wsdl:message>
+  <wsdl:message name="IUpcSvc_GetDvdScanInfosFromTitle_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDvdScanInfosFromTitle" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_GetDvdScanInfosFromTitle_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDvdScanInfosFromTitleResponse" />
+  </wsdl:message>
   <wsdl:message name="IUpcSvc_CreateDvd_InputMessage">
     <wsdl:part name="parameters" element="tns:CreateDvd" />
   </wsdl:message>
   <wsdl:message name="IUpcSvc_CreateDvd_OutputMessage">
     <wsdl:part name="parameters" element="tns:CreateDvdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_GetBookScanInfo_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetBookScanInfo" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_GetBookScanInfo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetBookScanInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_GetBookScanInfosFromTitle_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetBookScanInfosFromTitle" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_GetBookScanInfosFromTitle_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetBookScanInfosFromTitleResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_CreateBook_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateBook" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_CreateBook_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateBookResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_UpdateBookScan_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateBookScan" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_UpdateBookScan_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateBookScanResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_GetWineScanInfo_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetWineScanInfo" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_GetWineScanInfo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetWineScanInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_DrinkWine_InputMessage">
+    <wsdl:part name="parameters" element="tns:DrinkWine" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_DrinkWine_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DrinkWineResponse" />
   </wsdl:message>
   <wsdl:message name="IUpcSvc_UpdateUpcLastScanDate_InputMessage">
     <wsdl:part name="parameters" element="tns:UpdateUpcLastScanDate" />
@@ -37,6 +79,18 @@
   <wsdl:message name="IUpcSvc_FetchTitleFromGenericUPC_OutputMessage">
     <wsdl:part name="parameters" element="tns:FetchTitleFromGenericUPCResponse" />
   </wsdl:message>
+  <wsdl:message name="IUpcSvc_FetchTitleFromISBN13_InputMessage">
+    <wsdl:part name="parameters" element="tns:FetchTitleFromISBN13" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_FetchTitleFromISBN13_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FetchTitleFromISBN13Response" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_TestLog_InputMessage">
+    <wsdl:part name="parameters" element="tns:TestLog" />
+  </wsdl:message>
+  <wsdl:message name="IUpcSvc_TestLog_OutputMessage">
+    <wsdl:part name="parameters" element="tns:TestLogResponse" />
+  </wsdl:message>
   <wsdl:portType name="IUpcSvc">
     <wsdl:operation name="GetLastScanDate">
       <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/GetLastScanDate" message="tns:IUpcSvc_GetLastScanDate_InputMessage" />
@@ -46,9 +100,37 @@
       <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/GetDvdScanInfo" message="tns:IUpcSvc_GetDvdScanInfo_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/GetDvdScanInfoResponse" message="tns:IUpcSvc_GetDvdScanInfo_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="GetDvdScanInfosFromTitle">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/GetDvdScanInfosFromTitle" message="tns:IUpcSvc_GetDvdScanInfosFromTitle_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/GetDvdScanInfosFromTitleResponse" message="tns:IUpcSvc_GetDvdScanInfosFromTitle_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="CreateDvd">
       <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/CreateDvd" message="tns:IUpcSvc_CreateDvd_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/CreateDvdResponse" message="tns:IUpcSvc_CreateDvd_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookScanInfo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/GetBookScanInfo" message="tns:IUpcSvc_GetBookScanInfo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/GetBookScanInfoResponse" message="tns:IUpcSvc_GetBookScanInfo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookScanInfosFromTitle">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/GetBookScanInfosFromTitle" message="tns:IUpcSvc_GetBookScanInfosFromTitle_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/GetBookScanInfosFromTitleResponse" message="tns:IUpcSvc_GetBookScanInfosFromTitle_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateBook">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/CreateBook" message="tns:IUpcSvc_CreateBook_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/CreateBookResponse" message="tns:IUpcSvc_CreateBook_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateBookScan">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/UpdateBookScan" message="tns:IUpcSvc_UpdateBookScan_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/UpdateBookScanResponse" message="tns:IUpcSvc_UpdateBookScan_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetWineScanInfo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/GetWineScanInfo" message="tns:IUpcSvc_GetWineScanInfo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/GetWineScanInfoResponse" message="tns:IUpcSvc_GetWineScanInfo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DrinkWine">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/DrinkWine" message="tns:IUpcSvc_DrinkWine_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/DrinkWineResponse" message="tns:IUpcSvc_DrinkWine_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="UpdateUpcLastScanDate">
       <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/UpdateUpcLastScanDate" message="tns:IUpcSvc_UpdateUpcLastScanDate_InputMessage" />
@@ -57,6 +139,14 @@
     <wsdl:operation name="FetchTitleFromGenericUPC">
       <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/FetchTitleFromGenericUPC" message="tns:IUpcSvc_FetchTitleFromGenericUPC_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/FetchTitleFromGenericUPCResponse" message="tns:IUpcSvc_FetchTitleFromGenericUPC_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FetchTitleFromISBN13">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/FetchTitleFromISBN13" message="tns:IUpcSvc_FetchTitleFromISBN13_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/FetchTitleFromISBN13Response" message="tns:IUpcSvc_FetchTitleFromISBN13_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="TestLog">
+      <wsdl:input wsaw:Action="http://tempuri.org/IUpcSvc/TestLog" message="tns:IUpcSvc_TestLog_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IUpcSvc/TestLogResponse" message="tns:IUpcSvc_TestLog_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IUpcSvc" type="tns:IUpcSvc">
@@ -79,8 +169,71 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetDvdScanInfosFromTitle">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/GetDvdScanInfosFromTitle" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="CreateDvd">
       <soap:operation soapAction="http://tempuri.org/IUpcSvc/CreateDvd" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookScanInfo">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/GetBookScanInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookScanInfosFromTitle">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/GetBookScanInfosFromTitle" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateBook">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/CreateBook" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateBookScan">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/UpdateBookScan" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWineScanInfo">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/GetWineScanInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DrinkWine">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/DrinkWine" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -99,6 +252,24 @@
     </wsdl:operation>
     <wsdl:operation name="FetchTitleFromGenericUPC">
       <soap:operation soapAction="http://tempuri.org/IUpcSvc/FetchTitleFromGenericUPC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FetchTitleFromISBN13">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/FetchTitleFromISBN13" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestLog">
+      <soap:operation soapAction="http://tempuri.org/IUpcSvc/TestLog" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

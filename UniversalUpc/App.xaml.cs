@@ -38,6 +38,7 @@ namespace UniversalUpc
         {
             Microsoft.HockeyApp.HockeyClient.Current.Configure("fbe774bd2ff04afdaa0f74910bc2867a");
             m_lp = new LogProvider("test.log");
+
             UnhandledException += (sender, e1) =>
             {
                 if (global::System.Diagnostics.Debugger.IsAttached) global::System.Diagnostics.Debugger.Break();

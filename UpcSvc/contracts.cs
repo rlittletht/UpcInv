@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using TCore.Logging;
 
@@ -248,6 +249,56 @@ namespace UpcSvc
     {
         private string m_sCode;
         private string m_sTitle;
+
+        private DateTime m_dttmFirstScan;
+        private DateTime m_dttmLastScan;
+
+        [DataMember]
+        public string Code { get { return m_sCode; } set { m_sCode = value; } }
+
+        [DataMember]
+        public string Title { get { return m_sTitle; } set { m_sTitle = value; } }
+
+        [DataMember]
+        public DateTime FirstScan { get { return m_dttmFirstScan; } set { m_dttmFirstScan = value; } }
+
+        [DataMember]
+        public DateTime LastScan { get { return m_dttmLastScan; } set { m_dttmLastScan = value; } }
+    }
+
+    [DataContract]
+    public class USR_DvdInfo : TUSR<DvdInfo>
+    {
+        public static USR_DvdInfo FromTCSR(USR usr)
+        {
+            USR_DvdInfo usrs = new USR_DvdInfo();
+            usrs.Reason = usr.Reason;
+            usrs.Result = usr.Result;
+            usrs.CorrelationID = usr.CorrelationID;
+
+            return usrs;
+        }   
+    }
+
+    [DataContract]
+    public class USR_DvdInfoList : TUSR<List<DvdInfo>>
+    {
+        public static USR_DvdInfoList FromTCSR(USR usr)
+        {
+            USR_DvdInfoList usrs = new USR_DvdInfoList();
+            usrs.Reason = usr.Reason;
+            usrs.Result = usr.Result;
+            usrs.CorrelationID = usr.CorrelationID;
+
+            return usrs;
+        }   
+    }
+
+    [DataContract]
+    public class BookInfo
+    {
+        private string m_sCode;
+        private string m_sTitle;
         private string m_sLocation;
 
         private DateTime m_dttmFirstScan;
@@ -270,11 +321,11 @@ namespace UpcSvc
     }
 
     [DataContract]
-    public class USR_DvdInfo : TUSR<DvdInfo>
+    public class USR_BookInfo : TUSR<BookInfo>
     {
-        public static USR_DvdInfo FromTCSR(USR usr)
+        public static USR_BookInfo FromTCSR(USR usr)
         {
-            USR_DvdInfo usrs = new USR_DvdInfo();
+            USR_BookInfo usrs = new USR_BookInfo();
             usrs.Reason = usr.Reason;
             usrs.Result = usr.Result;
             usrs.CorrelationID = usr.CorrelationID;
@@ -282,4 +333,63 @@ namespace UpcSvc
             return usrs;
         }   
     }
+
+    [DataContract]
+    public class USR_BookInfoList : TUSR<List<BookInfo>>
+    {
+        public static USR_BookInfoList FromTCSR(USR usr)
+        {
+            USR_BookInfoList usrs = new USR_BookInfoList();
+            usrs.Reason = usr.Reason;
+            usrs.Result = usr.Result;
+            usrs.CorrelationID = usr.CorrelationID;
+
+            return usrs;
+        }   
+    }
+
+    [DataContract]
+    public class WineInfo
+    {
+        private string m_sCode;
+        private string m_sWine;
+        private string m_sNotes;
+        private string m_sVintage;
+
+        private DateTime m_dttmFirstScan;
+        private DateTime m_dttmLastScan;
+
+        [DataMember]
+        public string Code { get { return m_sCode; } set { m_sCode = value; } }
+
+        [DataMember]
+        public string Wine { get { return m_sWine; } set { m_sWine = value; } }
+
+        [DataMember]
+        public string Notes { get { return m_sNotes; } set { m_sNotes = value; } }
+
+        [DataMember]
+        public string Vintage { get { return m_sVintage; } set { m_sVintage = value; } }
+
+        [DataMember]
+        public DateTime FirstScan { get { return m_dttmFirstScan; } set { m_dttmFirstScan = value; } }
+
+        [DataMember]
+        public DateTime LastScan { get { return m_dttmLastScan; } set { m_dttmLastScan = value; } }
+    }
+
+    [DataContract]
+    public class USR_WineInfo : TUSR<WineInfo>
+    {
+        public static USR_WineInfo FromTCSR(USR usr)
+        {
+            USR_WineInfo usrw = new USR_WineInfo();
+            usrw.Reason = usr.Reason;
+            usrw.Result = usr.Result;
+            usrw.CorrelationID = usr.CorrelationID;
+
+            return usrw;
+        }   
+    }
+
 }

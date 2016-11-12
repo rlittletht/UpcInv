@@ -11,7 +11,7 @@ namespace TCore.StatusBox
 {
     public interface IStatusReporting
     {
-        void AddMessage(string s, UpcAlert.AlertType at);
+        void AddMessage(UpcAlert.AlertType at, string sMessage, params object[] rgo);
     }
 
     class StatusBox : IStatusReporting
@@ -29,7 +29,7 @@ namespace TCore.StatusBox
             m_fInit = true;
         }
 
-        public void AddMessage(string s, UpcAlert.AlertType at)
+        public void AddMessage(UpcAlert.AlertType at, string sMessage, params object[] rgo)
         {
             if (!m_fInit)
                 return;
@@ -38,6 +38,7 @@ namespace TCore.StatusBox
 
             string s2;
 
+            string s = String.Format(sMessage, rgo);
             iDoc.GetText(TextGetOptions.None, out s2);
             s = s + "\r" + s2;
 
