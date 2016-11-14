@@ -166,19 +166,21 @@ namespace UniversalUpc
                 return;
                 }
 
+            string sResultText = result.Text;
+
             m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
 
             if (m_adasCurrent == UpcInvCore.ADAS.DVD)
-                DispatchDvdScanCode(result, crid);
+                DispatchDvdScanCode(sResultText, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Book)
-                DispatchBookScanCode(result, crid);
+                DispatchBookScanCode(sResultText, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Wine)
-                DispatchWineScanCode(result, crid);
+                DispatchWineScanCode(sResultText, crid);
         }
 
-        void DispatchWineScanCode(Result result, CorrelationID crid)
+        void DispatchWineScanCode(string sResultText, CorrelationID crid)
         {
-            string sScanCode = result.Text;
+            string sScanCode = sResultText;
 
             // guard against reentrancy on the same scan code.
             m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", sScanCode);
@@ -197,9 +199,9 @@ namespace UniversalUpc
                 FinishCode(sScanCode, cridDel);
                 });
         }
-        void DispatchBookScanCode(Result result, CorrelationID crid)
+        void DispatchBookScanCode(string sResultText, CorrelationID crid)
         {
-            string sIsbn13 = m_upccCore.SEnsureIsbn13(result.Text);
+            string sIsbn13 = m_upccCore.SEnsureIsbn13(sResultText);
 
             if (sIsbn13.StartsWith("!!"))
                 {
@@ -226,9 +228,9 @@ namespace UniversalUpc
                 });
         }
 
-        private void DispatchDvdScanCode(Result result, CorrelationID crid)
+        private void DispatchDvdScanCode(string sResultText, CorrelationID crid)
         {
-            string sCode = m_upccCore.SEnsureEan13(result.Text);
+            string sCode = m_upccCore.SEnsureEan13(sResultText);
 
             // guard against reentrancy on the same scan code.
             m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", sCode);
