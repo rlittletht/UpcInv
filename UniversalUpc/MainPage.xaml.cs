@@ -144,15 +144,15 @@ namespace UniversalUpc
         }
         
         /*----------------------------------------------------------------------------
-        	%%Function: DispatchScanCode
-        	%%Qualified: UniversalUpc.MainPage.DispatchScanCode
+        	%%Function: ScannerControlDispatchScanCode
+        	%%Qualified: UniversalUpc.MainPage.ScannerControlDispatchScanCode
         	%%Contact: rlittle
         	
             Handle the scanner dispatching a scan code to us.
 
             For now, this is just a DVD scan code, but later will handle others...
         ----------------------------------------------------------------------------*/
-        private void DispatchScanCode(Result result)
+        private void ScannerControlDispatchScanCode(Result result)
         {
             CorrelationID crid = new CorrelationID();
 
@@ -168,6 +168,20 @@ namespace UniversalUpc
 
             string sResultText = result.Text;
 
+            DispatchScanCode(sResultText, crid);
+        }
+
+        /*----------------------------------------------------------------------------
+        	%%Function: DispatchScanCode
+        	%%Qualified: UniversalUpc.MainPage.DispatchScanCode
+        	%%Contact: rlittle
+        	
+            dispatch the given scan code, regardless of whether or not it was 
+            automatically scanned (from the camera) or it was typed in (possibly
+            from an attached wand scanner)
+        ----------------------------------------------------------------------------*/
+        private void DispatchScanCode(string sResultText, CorrelationID crid)
+        {
             m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
 
             if (m_adasCurrent == UpcInvCore.ADAS.DVD)
@@ -259,7 +273,7 @@ namespace UniversalUpc
                     m_fScannerSetup = true;
                     m_ups.SetupScanner(null, true);
                     }
-                m_ups.StartScanner(DispatchScanCode);
+                m_ups.StartScanner(ScannerControlDispatchScanCode);
                 m_fScannerOn = true;
                 }
             else
