@@ -363,6 +363,18 @@ namespace UniversalUpc
 
         private void OnCodeKeyUp(object sender, KeyRoutedEventArgs e)
         {
+            if (e.Key == VirtualKey.Enter)
+                {
+                CorrelationID crid = new CorrelationID();
+                string sResultText = ebScanCode.Text;
+
+                m_lp.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", sResultText);
+
+                DispatchScanCode(sResultText, crid);
+                e.Handled = true;
+                return;
+                }
+
             e.Handled = false;
         }
     }
