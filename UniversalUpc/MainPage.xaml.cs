@@ -192,6 +192,12 @@ namespace UniversalUpc
                 DispatchWineScanCode(sResultText, crid);
         }
 
+        void SetFocus(TextBox eb, bool fWantKeyboard)
+        {
+            eb.Focus(fWantKeyboard ? FocusState.Pointer : FocusState.Programmatic);
+            eb.Select(0, eb.Text.Length);
+        }
+
         void DispatchWineScanCode(string sResultText, CorrelationID crid)
         {
             string sScanCode = sResultText;
@@ -208,11 +214,22 @@ namespace UniversalUpc
             // The removal of the reentrancy guard will happen asynchronously
             m_upccCore.DoHandleWineScanCode(ebScanCode.Text, ebNotes.Text, crid, (cridDel, sTitle, fResult) =>
                 {
-                ebTitle.Text = sTitle ?? "!!TITLE NOT FOUND";
+                if (sTitle == null)
+                    {
+                    ebTitle.Text = "!!TITLE NOT FOUND";
+                    SetFocus(ebTitle, true);
+                    }
+                else
+                    {
+                    ebTitle.Text = sTitle;
+                    SetFocus(ebScanCode, false);
+                    }
+
                 m_lp.LogEvent(cridDel, fResult ? EventType.Information : EventType.Error, "FinalScanCodeCleanup: {0}: {1}", fResult, sTitle);
                 FinishCode(sScanCode, cridDel);
                 });
         }
+
         void DispatchBookScanCode(string sResultText, CorrelationID crid)
         {
             string sIsbn13 = m_upccCore.SEnsureIsbn13(sResultText);
@@ -236,7 +253,16 @@ namespace UniversalUpc
             // The removal of the reentrancy guard will happen asynchronously
             m_upccCore.DoHandleBookScanCode(ebScanCode.Text, ebLocation.Text, crid, (cridDel, sTitle, fResult) =>
                 {
-                ebTitle.Text = sTitle ?? "!!TITLE NOT FOUND";
+                if (sTitle == null)
+                    {
+                    ebTitle.Text = "!!TITLE NOT FOUND";
+                    SetFocus(ebTitle, true);
+                    }
+                else
+                    {
+                    ebTitle.Text = sTitle;
+                    SetFocus(ebScanCode, false);
+                    }
                 m_lp.LogEvent(cridDel, fResult ? EventType.Information : EventType.Error, "FinalScanCodeCleanup: {0}: {1}", fResult, sTitle);
                 FinishCode(sIsbn13, cridDel);
                 });
@@ -258,7 +284,17 @@ namespace UniversalUpc
             // The removal of the reentrancy guard will happen asynchronously
             m_upccCore.DoHandleDvdScanCode(sCode, crid, (cridDel, sTitle, fResult) =>
                 {
-                ebTitle.Text = sTitle ?? "!!TITLE NOT FOUND";
+                if (sTitle == null)
+                    {
+                    ebTitle.Text = "!!TITLE NOT FOUND";
+                    SetFocus(ebTitle, true);
+                    }
+                else
+                    {
+                    ebTitle.Text = sTitle;
+                    SetFocus(ebScanCode, false);
+                    }
+
                 m_lp.LogEvent(cridDel, fResult ? EventType.Information : EventType.Error, "FinalScanCodeCleanup: {0}: {1}", fResult, sTitle);
                 FinishCode(sCode, cridDel);
                 });
