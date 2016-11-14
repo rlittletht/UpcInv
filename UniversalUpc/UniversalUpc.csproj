@@ -18,7 +18,7 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>UniversalUpc_TemporaryKey.pfx</PackageCertificateKeyFile>
     <HockeyAppResourceId>fbe774bd2ff04afdaa0f74910bc2867a</HockeyAppResourceId>
-    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>arm</AppxBundlePlatforms>
   </PropertyGroup>
@@ -160,10 +160,43 @@
     <Content Include="Assets\dvds3.png" />
     <Content Include="Assets\Exclamation.wav" />
     <Content Include="Assets\hicup_392.wav" />
+    <Content Include="Assets\SplashScreen.scale-100.jpg" />
+    <Content Include="Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\SplashScreen.scale-200.jpg" />
+    <Content Include="Assets\SplashScreen.scale-400.jpg" />
+    <Content Include="Assets\Square150x150Logo.scale-100.png" />
     <Content Include="Assets\Square71x71Logo.scale-100.png" />
     <Content Include="Assets\Square71x71Logo.scale-200.png" />
     <Content Include="Assets\Square71x71Logo.scale-400.png" />
     <Content Include="Assets\upc1.png" />
+    <Content Include="Assets\UPCLogo_Square44x44.scale-100.png" />
+    <Content Include="Assets\UPCLogo_Square44x44.scale-125.png" />
+    <Content Include="Assets\UPCLogo_Square44x44.scale-150.png" />
+    <Content Include="Assets\UPCLogo_Square44x44.scale-200.png" />
+    <Content Include="Assets\UPCLogo_Square44x44.scale-400.png" />
+    <Content Include="Assets\UPCLogo_Square_150x150.scale-100.png" />
+    <Content Include="Assets\UPCLogo_Square_150x150.scale-125.png" />
+    <Content Include="Assets\UPCLogo_Square_150x150.scale-150.png" />
+    <Content Include="Assets\UPCLogo_Square_150x150.scale-200.png" />
+    <Content Include="Assets\UPCLogo_Square_150x150.scale-400.png" />
+    <Content Include="Assets\UPCLogo_Square_310x150.scale-100.png" />
+    <Content Include="Assets\UPCLogo_Square_310x150.scale-200.png" />
+    <Content Include="Assets\UPCLogo_Square_71x71.scale-100.png" />
+    <Content Include="Assets\UPCLogo_Square_71x71.scale-125.png" />
+    <Content Include="Assets\UPCLogo_Square_71x71.scale-150.png" />
+    <Content Include="Assets\UPCLogo_Square_71x71.scale-200.png" />
+    <Content Include="Assets\UPCLogo_Square_71x71.scale-400.png" />
+    <Content Include="Assets\UPCLogo_Wide310x150.scale-100.jpg" />
+    <Content Include="Assets\UPCLogo_Wide310x150.scale-125.jpg" />
+    <Content Include="Assets\UPCLogo_Wide310x150.scale-150.jpg" />
+    <Content Include="Assets\UPCLogo_Wide310x150.scale-200.jpg" />
+    <Content Include="Assets\UPCLogo_Wide310x150.scale-400.jpg" />
+    <Content Include="Assets\UPCStoreLogo.scale-100.png" />
+    <Content Include="Assets\UPCStoreLogo.scale-125.png" />
+    <Content Include="Assets\UPCStoreLogo.scale-150.png" />
+    <Content Include="Assets\UPCStoreLogo.scale-200.png" />
+    <Content Include="Assets\UPCStoreLogo.scale-400.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-400.jpg" />
     <Content Include="Assets\wine1.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />

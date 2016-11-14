@@ -324,9 +324,10 @@ namespace UniversalUpc
             m_fCheckOnly = cbCheckOnly.IsChecked ?? false;
         }
 
-        private void OnLocationGotFocus(object sender, RoutedEventArgs e)
+        private void OnEnterSelectAll(object sender, RoutedEventArgs e)
         {
-            ebLocation.Select(0, ebLocation.Text.Length);
+            TextBox eb = (TextBox) sender;
+            eb.Select(0, eb.Text.Length);
         }
     }
 }
