@@ -62,7 +62,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock Text="Code: " Grid.Row="0" Grid.Column="0"/>
-            <TextBox Grid.Row="0" Grid.Column="2" x:Name="ebScanCode" Text="" GotFocus="OnEnterSelectAll"/>
+            <TextBox Grid.Row="0" Grid.Column="2" x:Name="ebScanCode" Text="" GotFocus="OnEnterSelectAll" KeyUp="OnCodeKeyUp"/>
             <ComboBox x:Name="cbMediaType" Grid.Row="0" Grid.Column="4" Grid.RowSpan="3" Height="70" SelectedIndex="0" BorderThickness="0" SelectionChanged="SetNewMediaType">
                 <ComboBoxItem Tag="dvd">
                     <Image Source="{StaticResource dvdIcon}" Width="50" Height="50"/>

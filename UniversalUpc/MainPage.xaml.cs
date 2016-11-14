@@ -5,9 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Capture;
+using Windows.Perception.Spatial;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -60,6 +63,18 @@ namespace UniversalUpc
 
             m_sb.Initialize(recStatus, m_upca);
             AdjustUIForMediaType(m_adasCurrent);
+            AdjustUIForAvailableHardware();
+        }
+
+        async Task AdjustUIForAvailableHardware()
+        {
+            DeviceInformationCollection devices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+
+            if (devices.Count > 0)
+                return;
+
+            scannerControl.Visibility = Visibility.Collapsed;
+            pbScan.Visibility = Visibility.Collapsed;
         }
 
         private List<string> m_plsProcessing;
@@ -127,7 +142,7 @@ namespace UniversalUpc
                 txtStatus.Text = "result = null";
                 }
         }
-
+        
         /*----------------------------------------------------------------------------
         	%%Function: DispatchScanCode
         	%%Qualified: UniversalUpc.MainPage.DispatchScanCode
@@ -328,6 +343,11 @@ namespace UniversalUpc
         {
             TextBox eb = (TextBox) sender;
             eb.Select(0, eb.Text.Length);
+        }
+
+        private void OnCodeKeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            e.Handled = false;
         }
     }
 }
