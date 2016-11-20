@@ -4,6 +4,7 @@
 # ignore secret configs (passwords and such)
 *secret*.config
 *secret*.resx
+*.cscfg
 
 # User-specific files
 *.suo
@@ -177,6 +178,7 @@ Generated_Code/
 # because we have git ;-)
 _UpgradeReport_Files/
 Backup*/
+Bak/
 UpgradeLog*.XML
 UpgradeLog*.htm
 
