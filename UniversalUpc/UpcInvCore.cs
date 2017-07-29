@@ -534,7 +534,6 @@ namespace UniversalUpc
         }
         #endregion
 
-
         #region Book Client
         /*----------------------------------------------------------------------------
         	%%Function: DoHandleBookScanCode

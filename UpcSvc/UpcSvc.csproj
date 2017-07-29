@@ -45,18 +45,9 @@
       <HintPath>..\packages\FSharp.Core.4.0.0.1\lib\net40\FSharp.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.4.9.4, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.4.9.4\lib\Net45\HtmlAgilityPack.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="ScrapySharp.Core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ScrapySharp.2.6.2\lib\net45\ScrapySharp.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ScrapySharpAsync, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ScrapySharp.2.6.2\lib\net45\ScrapySharpAsync.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="nunit.framework, Version=3.7.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.7.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Runtime.Caching" />
@@ -124,6 +115,10 @@
     <ProjectReference Include="..\..\liblet\cs\TCore.Logging\Logging.csproj">
       <Project>{ee681c45-8416-4de7-9e62-ae1371a7de9a}</Project>
       <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\liblet\cs\TCore.Scrappy\TCore.Scrappy.csproj">
+      <Project>{43787649-7722-45cb-886d-c5c5f78d473a}</Project>
+      <Name>TCore.Scrappy</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

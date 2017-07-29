@@ -332,9 +332,16 @@ namespace UniversalUpc
 
             if (m_fCheckOnly)
                 {
-                m_upccCore.DoCheckDvdTitleInventory(sTitle, new CorrelationID());
+                if (m_adasCurrent == UpcInvCore.ADAS.DVD)
+                    m_upccCore.DoCheckDvdTitleInventory(sTitle, new CorrelationID());
+                else if (m_adasCurrent == UpcInvCore.ADAS.Book)
+                    m_upccCore.DoCheckBookTitleInventory(sTitle, new CorrelationID());
+                else if (m_adasCurrent == UpcInvCore.ADAS.Wine)
+                    m_sb.AddMessage(UpcAlert.AlertType.BadInfo, "No manual operation available for Wine");
+
                 return;
                 }
+
             if (sTitle.StartsWith("!!"))
                 {
                 m_sb.AddMessage(UpcAlert.AlertType.BadInfo, "Can't add title with leading error text '!!'");
@@ -343,7 +350,14 @@ namespace UniversalUpc
 
             CorrelationID crid = new CorrelationID();
 
-            bool fResult = await m_upccCore.DoCreateDvdTitle(ebScanCode.Text, sTitle, crid);
+            bool fResult = false;
+
+            if (m_adasCurrent == UpcInvCore.ADAS.DVD)
+                fResult = await m_upccCore.DoCreateDvdTitle(ebScanCode.Text, sTitle, crid);
+            else if (m_adasCurrent == UpcInvCore.ADAS.Book)
+                fResult = await m_upccCore.DoCreateBookTitle(ebScanCode.Text, sTitle, ebLocation.Text, crid);
+            else if (m_adasCurrent == UpcInvCore.ADAS.Wine)
+                m_sb.AddMessage(UpcAlert.AlertType.BadInfo, "No manual operation available for Wine");
 
             if (fResult)
                 m_sb.AddMessage(UpcAlert.AlertType.GoodInfo, "Added {0} as {1}", ebScanCode.Text, sTitle);

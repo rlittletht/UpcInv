@@ -1,6 +1,6 @@
-MainPackage=D:\dev\UpcInv\UniversalUpc\bin\ARM\Debug\UniversalUpc_1.0.6.0_ARM_Debug.appx
-SymbolPackage=D:\dev\UpcInv\UniversalUpc\AppPackages\UniversalUpc_1.0.6.0_Debug_Test\UniversalUpc_1.0.6.0_ARM_Debug.appxsym
-ResourcePack=D:\dev\UpcInv\UniversalUpc\bin\ARM\Debug\UniversalUpc_1.0.6.0_scale-100.appx
-ResourcePack=D:\dev\UpcInv\UniversalUpc\bin\ARM\Debug\UniversalUpc_1.0.6.0_scale-125.appx
-ResourcePack=D:\dev\UpcInv\UniversalUpc\bin\ARM\Debug\UniversalUpc_1.0.6.0_scale-150.appx
-ResourcePack=D:\dev\UpcInv\UniversalUpc\bin\ARM\Debug\UniversalUpc_1.0.6.0_scale-400.appx
+MainPackage=D:\dev\UpcInv\UniversalUpc\bin\ARM\Debug\UniversalUpc_1.0.9.0_ARM_Debug.appx
+SymbolPackage=D:\dev\UpcInv\UniversalUpc\AppPackages\UniversalUpc_1.0.9.0_Debug_Test\UniversalUpc_1.0.9.0_ARM_Debug.appxsym
+ResourcePack=D:\dev\UpcInv\UniversalUpc\bin\ARM\Debug\UniversalUpc_1.0.9.0_scale-100.appx
+ResourcePack=D:\dev\UpcInv\UniversalUpc\bin\ARM\Debug\UniversalUpc_1.0.9.0_scale-125.appx
+ResourcePack=D:\dev\UpcInv\UniversalUpc\bin\ARM\Debug\UniversalUpc_1.0.9.0_scale-150.appx
+ResourcePack=D:\dev\UpcInv\UniversalUpc\bin\ARM\Debug\UniversalUpc_1.0.9.0_scale-400.appx

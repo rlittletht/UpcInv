@@ -10,8 +10,7 @@ using System.ServiceModel.Web;
 using System.Text;
 using System.Web.UI;
 using System.Xml;
-using HtmlAgilityPack;
-using ScrapySharp.Network;
+using NUnit.Framework;
 using TCore;
 using TCore.Logging;
 
@@ -445,6 +444,12 @@ namespace UpcSvc
         }
 
         #region UPC Lookup
+
+        public string FetchTitleFromGenericUPC(string sCode)
+        {
+            return TCore.Scrappy.GenericUPC.FetchTitleFromUPC(sCode);
+        }
+#if no
         public string FetchTitleFromGenericUPC(string sCode)
         {
             if (sCode.Length == 13)
@@ -473,17 +478,15 @@ namespace UpcSvc
                 return "!!NO TITLE FOUND";
                 }
         }
-
+#endif
         const string sRequestTemplate = "http://isbndb.com/api/books.xml?access_key={0}&index1=isbn&value1={1}";
 
         public string FetchTitleFromISBN13(string sCode)
         {
-            string sIsbn;
             string sTitle = "!!NO TITLE FOUND";
+            string sReq = String.Format(sRequestTemplate, GetIsbnDbAccessKey(), sCode);
 
-            sIsbn = sCode;
-
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(String.Format(sRequestTemplate, GetIsbnDbAccessKey(), sIsbn));
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sReq);
             if (req != null)
                 {
                 HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
@@ -503,7 +506,7 @@ namespace UpcSvc
                             if (node == null)
                                 {
                                 // try again scraping from bn.com...this is notoriously fragile, so its our last resort.
-                                sTitle = "!!NO TITLE FOUND"; // SScrapeISBN(sIsbn);
+                                sTitle = "!!NO TITLE FOUND" +sReq + dom.InnerXml; // SScrapeISBN(sIsbn);
                                 }
                             else
                                 {
@@ -521,7 +524,7 @@ namespace UpcSvc
             return sTitle;
             
         }
-        #endregion
+#endregion
 
 
         public USR TestLog()

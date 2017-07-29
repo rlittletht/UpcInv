@@ -122,10 +122,10 @@ namespace UniversalUpc.UpcSvc {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_DvdInfoList))]
     public partial class TUSROfArrayOfDvdInfo9_SjqeMlk : UniversalUpc.UpcSvc.TCSRBase {
         
-        private UniversalUpc.UpcSvc.DvdInfo[] TheValueField;
+        private System.Collections.ObjectModel.ObservableCollection<UniversalUpc.UpcSvc.DvdInfo> TheValueField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public UniversalUpc.UpcSvc.DvdInfo[] TheValue {
+        public System.Collections.ObjectModel.ObservableCollection<UniversalUpc.UpcSvc.DvdInfo> TheValue {
             get {
                 return this.TheValueField;
             }
@@ -184,10 +184,10 @@ namespace UniversalUpc.UpcSvc {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(UniversalUpc.UpcSvc.USR_BookInfoList))]
     public partial class TUSROfArrayOfBookInfo9_SjqeMlk : UniversalUpc.UpcSvc.TCSRBase {
         
-        private UniversalUpc.UpcSvc.BookInfo[] TheValueField;
+        private System.Collections.ObjectModel.ObservableCollection<UniversalUpc.UpcSvc.BookInfo> TheValueField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public UniversalUpc.UpcSvc.BookInfo[] TheValue {
+        public System.Collections.ObjectModel.ObservableCollection<UniversalUpc.UpcSvc.BookInfo> TheValue {
             get {
                 return this.TheValueField;
             }
