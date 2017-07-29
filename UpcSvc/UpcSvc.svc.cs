@@ -443,86 +443,16 @@ namespace UpcSvc
             return usr;
         }
 
-        #region UPC Lookup
+#region UPC Lookup
 
         public string FetchTitleFromGenericUPC(string sCode)
         {
             return TCore.Scrappy.GenericUPC.FetchTitleFromUPC(sCode);
         }
-#if no
-        public string FetchTitleFromGenericUPC(string sCode)
-        {
-            if (sCode.Length == 13)
-                sCode = sCode.Substring(1);
-
-            try
-                {
-                ScrapingBrowser sbr = new ScrapingBrowser();
-                sbr.AllowAutoRedirect = false;
-                sbr.AllowMetaRedirect = false;
-
-                WebPage wp = sbr.NavigateToPage(new Uri("http://www.searchupc.com/upc/" + sCode));
-
-                HtmlNodeCollection nodes = wp.Html.SelectNodes("//table[@id='searchresultdata']");
-                HtmlNodeCollection nodesTr = nodes[0].SelectNodes("tr");
-
-                if (nodesTr == null || nodesTr.Count != 2)
-                    {
-                    return "!!NO TITLE FOUND";
-                    }
-                return nodesTr[1].ChildNodes[1].InnerText;
-
-                }
-            catch
-                {
-                return "!!NO TITLE FOUND";
-                }
-        }
-#endif
-        const string sRequestTemplate = "http://isbndb.com/api/books.xml?access_key={0}&index1=isbn&value1={1}";
 
         public string FetchTitleFromISBN13(string sCode)
         {
-            string sTitle = "!!NO TITLE FOUND";
-            string sReq = String.Format(sRequestTemplate, GetIsbnDbAccessKey(), sCode);
-
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sReq);
-            if (req != null)
-                {
-                HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-
-                if (resp != null)
-                    {
-                    Stream stm = resp.GetResponseStream();
-                    if (stm != null)
-                        {
-                        System.Xml.XmlDocument dom = new System.Xml.XmlDocument();
-
-                        try
-                            {
-                            dom.Load(stm);
-
-                            XmlNode node = dom.SelectSingleNode("/ISBNdb/BookList/BookData/Title");
-                            if (node == null)
-                                {
-                                // try again scraping from bn.com...this is notoriously fragile, so its our last resort.
-                                sTitle = "!!NO TITLE FOUND" +sReq + dom.InnerXml; // SScrapeISBN(sIsbn);
-                                }
-                            else
-                                {
-                                sTitle = node.InnerText;
-                                }
-                            }
-                        catch (Exception exc)
-                            {
-                            sTitle = "!!NO TITLE FOUND: (" + exc.Message + ")";
-                            }
-                        }
-                    }
-                }
-
-            return sTitle;
-            
+            return TCore.Scrappy.GenericISBN.FetchTitleFromISBN13(sCode, GetIsbnDbAccessKey());
         }
 #endregion
 
