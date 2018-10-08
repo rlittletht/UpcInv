@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?wsdl" docRef="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+</discovery>

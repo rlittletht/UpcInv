@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Results>
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?xsd=xsd0" filename="UpcSvc.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?wsdl" filename="UpcSvc.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?xsd=xsd1" filename="UpcSvc0.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?xsd=xsd2" filename="UpcSvc1.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.DiscoveryDocumentReference" url="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?disco" filename="UpcSvc.disco" />
+  </Results>
+</DiscoveryClientResultsFile>

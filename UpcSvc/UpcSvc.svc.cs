@@ -13,6 +13,7 @@ using System.Xml;
 using NUnit.Framework;
 using TCore;
 using TCore.Logging;
+using TCore.Scrappy.BarnesAndNoble;
 
 namespace UpcSvc
 {
@@ -253,8 +254,8 @@ namespace UpcSvc
         public USR_BookInfoList GetBookScanInfosFromTitle(string sTitleSubstring)
         {
             SqlWhere sqlw = new SqlWhere();
-            sqlw.AddAliases(s_mpDvdAlias);
-            sqlw.Add(String.Format("$$upc_book$$.Title like '%{0}%'", Sql.Sqlify(sTitleSubstring)), SqlWhere.Op.And);
+            sqlw.AddAliases(s_mpBookAlias);
+            sqlw.Add(String.Format("$$upc_books$$.Title like '%{0}%'", Sql.Sqlify(sTitleSubstring)), SqlWhere.Op.And);
 
             string sFullQuery = String.Format("SELECT {0}", sqlw.GetWhere(s_sQueryBook));
 
@@ -452,7 +453,19 @@ namespace UpcSvc
 
         public string FetchTitleFromISBN13(string sCode)
         {
-            return TCore.Scrappy.GenericISBN.FetchTitleFromISBN13(sCode, GetIsbnDbAccessKey());
+            string sTitle = TCore.Scrappy.GenericISBN.FetchTitleFromISBN13(sCode, GetIsbnDbAccessKey());
+
+            if (!sTitle.StartsWith("!!NO TITLE FOUND"))
+                return sTitle;
+
+            // fallback to BN
+            Book.BookElement book = new Book.BookElement(sCode);
+            string sError;
+
+            if (!Book.FScrapeBook(book, out sError))
+                return "!!NO TITLE FOUND: " + sError;
+
+            return book.Title;
         }
 #endregion
 
