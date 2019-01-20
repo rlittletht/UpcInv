@@ -10,6 +10,9 @@ namespace Bulker
     {
         static void Main(string[] args)
         {
+            Bulker bulker = new Bulker();
+
+            bulker.Run(args);
         }
     }
 }

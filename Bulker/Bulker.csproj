@@ -33,6 +33,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="cmdline, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TCore.CmdLine.1.0.0\lib\net40\cmdline.dll</HintPath>
+    </Reference>
+    <Reference Include="sql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TCore.Sql.1.0.0\lib\net45\sql.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,8 +47,12 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="TCore.Exceptions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TCore.Exceptions.1.0.0\lib\net45\TCore.Exceptions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Books.cs" />
     <Compile Include="bulker.cs" />
     <Compile Include="config.cs" />
     <Compile Include="Program.cs" />
@@ -50,11 +60,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\liblet\cs\TCore.CmdLine\cmdline.csproj">
-      <Project>{b83640e8-72f6-4f92-93fd-7ff7cec3535e}</Project>
-      <Name>cmdline</Name>
+    <ProjectReference Include="..\..\liblet\cs\TCore.Scrappy\TCore.Scrappy.csproj">
+      <Project>{43787649-7722-45cb-886d-c5c5f78d473a}</Project>
+      <Name>TCore.Scrappy</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
