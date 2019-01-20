@@ -83,6 +83,7 @@ namespace DroidUpc
         {
             EnsureServiceConnection();
             // UpcService.USR_DvdInfo usrd = await m_usc.GetDvdScanInfoAsync(sScanCode);
+
             UpcService.USR_DvdInfo usrd = m_usc.GetDvdScanInfo(sScanCode);
             UpcService.DvdInfo dvdInfo = usrd.TheValue;
 

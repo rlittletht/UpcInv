@@ -235,9 +235,19 @@ namespace DroidUpc
 
             // guard against reentrancy on the same scan code.
             m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", sCode);
-            if (!FAddProcessingCode(sCode, crid))
-                return;
+            try
+            {
+                if (!FAddProcessingCode(sCode, crid))
+                    return;
 
+            }
+            catch (Exception exc)
+            {
+                this.RunOnUiThread(() =>
+                    {
+                        m_isr.AddMessage(UpcAlert.AlertType.Halt, "Exception caught: {0}", exc.Message);
+                    });
+            }
             // now handle this scan code
 
             this.RunOnUiThread(() => m_ebScanCode.Text = sCode);
