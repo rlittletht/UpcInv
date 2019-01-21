@@ -1,6 +1,8 @@
 ﻿
 using System;
 using TCore.CmdLine;
+using System.Configuration;
+using TCore.Scrappy.BarnesAndNoble;
 
 namespace Bulker
 {
@@ -10,6 +12,9 @@ namespace Bulker
     class Bulker
     {
         private BulkerConfig m_config;
+
+        public static string s_sConnectionString =
+            ConfigurationManager.AppSettings["Thetasoft.Azure.ConnectionString"];
 
         public Bulker(){}
 
@@ -21,6 +26,8 @@ namespace Bulker
             {
                 new CmdLineSwitch("R", false, false, "Record file", "Record file", null),
                 new CmdLineSwitch("L", false, false, "Log file", "Log file", null),
+                new CmdLineSwitch("C", false, false, "Cover source full path to root", "Cover source full path to root", null), 
+                new CmdLineSwitch("B", true, false, "Bulk update books", "Bulk update books", null), 
             });
 
             CmdLine cmdLine = new CmdLine(cfg);
@@ -42,6 +49,19 @@ namespace Bulker
         {
             ParseCmdLine(args);
 
+            if (m_config.Action != BulkerConfig.RequestedAction.Books)
+                throw new Exception("no action specified");
+
+            switch (m_config.Action)
+            {
+                case BulkerConfig.RequestedAction.Books:
+                {
+                    BookUpdater books = new BookUpdater(m_config);
+
+                    books.DoUpdate();
+                    break;
+                }
+            }
 
         }
     }

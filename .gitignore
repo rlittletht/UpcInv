@@ -6,6 +6,8 @@
 *secret*.resx
 *.cscfg
 
+# ignore cover art
+**/covers/*
 # User-specific files
 *.suo
 *.user
