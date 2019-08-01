@@ -85,6 +85,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Global.asax" />
     <Content Include="UpcSvc.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -92,6 +93,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="contracts.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
     <Compile Include="UpcSvc.svc.cs">
       <DependentUpon>UpcSvc.svc</DependentUpon>
     </Compile>

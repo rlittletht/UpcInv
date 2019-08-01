@@ -235,6 +235,20 @@ namespace UpcSvc
         ----------------------------------------------------------------------------*/
         public USR_BookInfo GetBookScanInfo(string sScanCode)
         {
+#if no
+            WebOperationContext.Current.OutgoingResponse.Headers
+                .Add("Access-Control-Allow-Origin", "*");
+            //identify preflight request and add extra headers
+            if (WebOperationContext.Current.IncomingRequest.Method == "OPTIONS")
+            {
+                WebOperationContext.Current.OutgoingResponse.Headers
+                    .Add("Access-Control-Allow-Methods", "POST, OPTIONS, GET");
+                WebOperationContext.Current.OutgoingResponse.Headers
+                    .Add("Access-Control-Allow-Headers",
+                        "Content-Type, Accept, Authorization, x-requested-with");
+                return null;
+            }
+#endif
             SqlWhere sqlw = new SqlWhere();
             sqlw.AddAliases(s_mpBookAlias);
             sqlw.Add(String.Format("$$upc_codes$$.ScanCode='{0}'", Sql.Sqlify(sScanCode)), SqlWhere.Op.And);
