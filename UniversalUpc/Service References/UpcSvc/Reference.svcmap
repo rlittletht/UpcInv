@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="b36c3dd8-751a-472f-9352-56c251277441" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.ObjectModel.ObservableCollection`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>false</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="UpcSvc.xsd" MetadataType="Schema" ID="43a9fffb-71c5-43f9-bc71-4bf5bbcdbdc8" SourceId="1" SourceUrl="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?xsd=xsd0" />
+    <MetadataFile FileName="UpcSvc.wsdl" MetadataType="Wsdl" ID="6c611883-941a-4298-bb20-d475c46ca139" SourceId="1" SourceUrl="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?wsdl" />
+    <MetadataFile FileName="UpcSvc1.xsd" MetadataType="Schema" ID="10895db4-b650-427b-aff7-430c0a3ce198" SourceId="1" SourceUrl="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?xsd=xsd1" />
+    <MetadataFile FileName="UpcSvc2.xsd" MetadataType="Schema" ID="aeed0e76-929d-468d-997b-89665edd1e63" SourceId="1" SourceUrl="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?xsd=xsd2" />
+    <MetadataFile FileName="UpcSvc.disco" MetadataType="Disco" ID="5fb26484-4301-435a-a645-6118904358a2" SourceId="1" SourceUrl="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?disco" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/UpcSvc" />
+  <xs:element name="GetLastScanDate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sScanCode" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLastScanDateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="GetLastScanDateResult" nillable="true" type="q1:USR_String" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDvdScanInfo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sScanCode" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDvdScanInfoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="GetDvdScanInfoResult" nillable="true" type="q2:USR_DvdInfo" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDvdScanInfosFromTitle">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sTitleSubstring" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDvdScanInfosFromTitleResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="GetDvdScanInfosFromTitleResult" nillable="true" type="q3:USR_DvdInfoList" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateDvd">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sScanCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sTitle" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateDvdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="CreateDvdResult" nillable="true" type="q4:USR" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetBookScanInfo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sScanCode" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetBookScanInfoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="GetBookScanInfoResult" nillable="true" type="q5:USR_BookInfo" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetBookScanInfosFromTitle">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sTitleSubstring" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetBookScanInfosFromTitleResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="GetBookScanInfosFromTitleResult" nillable="true" type="q6:USR_BookInfoList" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateBook">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sScanCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sTitle" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sLocation" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateBookResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="CreateBookResult" nillable="true" type="q7:USR" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateBookScan">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sScanCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sTitle" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sLocation" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateBookScanResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="UpdateBookScanResult" nillable="true" type="q8:USR" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetWineScanInfo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sScanCode" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetWineScanInfoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="GetWineScanInfoResult" nillable="true" type="q9:USR_WineInfo" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DrinkWine">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sScanCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sWine" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sVintage" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sNotes" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DrinkWineResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="DrinkWineResult" nillable="true" type="q10:USR" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateUpcLastScanDate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sScanCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sTitle" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateUpcLastScanDateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="UpdateUpcLastScanDateResult" nillable="true" type="q11:USR" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FetchTitleFromGenericUPC">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sCode" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FetchTitleFromGenericUPCResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="FetchTitleFromGenericUPCResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FetchTitleFromISBN13">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sCode" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FetchTitleFromISBN13Response">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="FetchTitleFromISBN13Result" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TestLog">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TestLogResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/UpcSvc" minOccurs="0" name="TestLogResult" nillable="true" type="q12:USR" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
