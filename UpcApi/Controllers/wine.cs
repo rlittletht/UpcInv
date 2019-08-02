@@ -11,7 +11,6 @@ namespace UpcApi.Controllers
         public IHttpActionResult GetWineScanInfo(string ScanCode)
         {
             return Ok(UpcWine.GetWineScanInfo(ScanCode));
-
         }
     }
 }

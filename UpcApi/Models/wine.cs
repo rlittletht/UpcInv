@@ -56,10 +56,7 @@ namespace UpcApi
 
             string sFullQuery = String.Format("SELECT {0}", sqlw.GetWhere(s_sQueryWine));
 
-            USR_WineInfo usrw = Shared.DoGenericQueryDelegateRead(sFullQuery, ReaderGetWineScanInfoDelegate, USR_WineInfo.FromTCSR);
-
-            usrw.Reason += $"Query: {sFullQuery}";
-            return usrw;
+            return Shared.DoGenericQueryDelegateRead(sFullQuery, ReaderGetWineScanInfoDelegate, USR_WineInfo.FromTCSR);
         }
 
         public static USR DrinkWine(string sScanCode, string sWine, string sVintage, string sNotes)
