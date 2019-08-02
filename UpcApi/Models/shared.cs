@@ -83,13 +83,7 @@ namespace UpcApi
                             }
 
                             if (!fOnce)
-                            {
-                                USR usr = USR.FromSR(SR.FailedCorrelate("scan code not found", crid));
-
-                                usr.Reason += " (!fOnce)";
-
-                                return delegateFromUsr(usr);
-                            }
+                                return delegateFromUsr(USR.FromSR(SR.FailedCorrelate("scan code not found", crid)));
 
                             return t;
                         }
@@ -97,19 +91,13 @@ namespace UpcApi
                     catch (Exception e)
                     {
                         sqlr.Close();
-                        USR usr = USR.FromSR(SR.FailedCorrelate(e, crid));
-
-                        usr.Reason += $" (caught inner exception: {e.Message})";
-                        return delegateFromUsr(usr);
+                        return delegateFromUsr(USR.FromSR(SR.FailedCorrelate(e, crid)));
                     }
                 }
             }
             catch (Exception e)
             {
-                USR usr = USR.FromSR(SR.FailedCorrelate(e, crid));
-
-                usr.Reason += $" (caught outer exception: {e.Message})";
-                return delegateFromUsr(usr);
+                return delegateFromUsr(USR.FromSR(SR.FailedCorrelate(e, crid)));
             }
             finally
             {
