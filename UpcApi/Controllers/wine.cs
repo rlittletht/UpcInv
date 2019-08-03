@@ -12,5 +12,16 @@ namespace UpcApi.Controllers
         {
             return Ok(UpcWine.GetWineScanInfo(ScanCode));
         }
+
+        [HttpGet]
+        [Route("api/wine/DrinkWine")]
+        public IHttpActionResult DrinkWine(
+            [FromUri] string ScanCode,
+            [FromUri] string Wine,
+            [FromUri] string Vintage,
+            [FromUri] string Notes)
+        {
+            return Ok(UpcWine.DrinkWine(ScanCode, Wine, Vintage, Notes));
+        }
     }
 }

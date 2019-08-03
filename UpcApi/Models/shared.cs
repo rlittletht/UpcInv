@@ -8,8 +8,8 @@ namespace UpcApi
 {
     public class Shared
     {
-        private string _sSqlConnection = null;
-        private string _sIsbnDbAccessKey = null;
+        private static string _sSqlConnection = null;
+        private static string _sIsbnDbAccessKey = null;
 
         public static string IsbnDbAccessKeyStatic
         {
@@ -19,7 +19,7 @@ namespace UpcApi
             }
         }
 
-        public string GetIsbnDbAccessKey()
+        public static string GetIsbnDbAccessKey()
         {
             return _sIsbnDbAccessKey ?? (_sIsbnDbAccessKey = IsbnDbAccessKeyStatic);
         }
@@ -119,33 +119,12 @@ namespace UpcApi
         	%%Contact: rlittle
         	
         ----------------------------------------------------------------------------*/
-        static void ReaderLastScanDateDelegate(SqlReader sqlr, CorrelationID crid, ref USR_String usrs)
+        public static void ReaderLastScanDateDelegate(SqlReader sqlr, CorrelationID crid, ref USR_String usrs)
         {
             DateTime dttm = sqlr.Reader.GetDateTime(1);
 
             usrs = USR_String.FromTCSR(USR.SuccessCorrelate(crid));
             usrs.TheValue = dttm.ToString();
-        }
-
-        /*----------------------------------------------------------------------------
-        	%%Function: GetLastScanDate
-        	%%Qualified: UpcSvc.UpcSvc.GetLastScanDate
-        	%%Contact: rlittle
-        	
-            get the last scan date for the given UPC code -- this doesn't care 
-            what type of item it is
-        ----------------------------------------------------------------------------*/
-        public static USR_String GetLastScanDate(string sScanCode)
-        {
-            string sCmd = String.Format("select ScanCode, LastScanDate from upc_Codes where ScanCode='{0}'", Sql.Sqlify(sScanCode));
-
-            return DoGenericQueryDelegateRead<USR_String>(sCmd, ReaderLastScanDateDelegate, USR_String.FromTCSR);
-        }
-
-        public static USR UpdateUpcLastScanDate(string sScanCode, string sTitle)
-        {
-            string sCmd = String.Format("sp_updatescan '{0}', '{1}', '{2}'", Sql.Sqlify(sScanCode), Sql.Sqlify(sTitle), DateTime.Now.ToString());
-            return DoGenericQueryDelegateRead(sCmd, null, FromUSR);
         }
 
         public static USR FromUSR(USR usr)
