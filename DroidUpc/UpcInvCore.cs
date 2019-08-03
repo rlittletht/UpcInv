@@ -9,6 +9,7 @@ using Android.Widget;
 using TCore.Logging;
 using TCore.StatusBox;
 using UpcService = DroidUpc.UpcSvc;
+#pragma warning disable 1998
 
 namespace DroidUpc
 {
@@ -27,8 +28,6 @@ namespace DroidUpc
             Wine = 3,
             Max = 4
         }
-
-        ADAS m_adas;
 
         /*----------------------------------------------------------------------------
         	%%Function: UpcInvCore
@@ -504,7 +503,7 @@ namespace DroidUpc
                 return;
             }
             string sTitle = null;
-            bool fResult = false;
+
             m_lp.LogEvent(crid, EventType.Verbose, "Continuing with processing for {0}...Checking for WineInfo from service", sCode);
             UpcService.WineInfo wni = await WineInfoRetrieve(sCode);
 

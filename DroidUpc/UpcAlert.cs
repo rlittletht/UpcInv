@@ -7,6 +7,7 @@ using Android.Media;
 using Android.OS;
 using Android.Support.V7.App;
 using Java.Lang;
+#pragma warning disable 1998
 
 namespace DroidUpc
 {
