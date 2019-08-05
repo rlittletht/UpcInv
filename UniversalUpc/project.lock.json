@@ -15994,12 +15994,12 @@
   },
   "project": {
     "restore": {
-      "projectUniqueName": "D:\\dev\\UpcInv\\UniversalUpc\\UniversalUpc.csproj",
+      "projectUniqueName": "d:\\dev\\UpcInv\\UniversalUpc\\UniversalUpc.csproj",
       "projectName": "UniversalUpc",
-      "projectPath": "D:\\dev\\UpcInv\\UniversalUpc\\UniversalUpc.csproj",
-      "projectJsonPath": "D:\\dev\\UpcInv\\UniversalUpc\\project.json",
+      "projectPath": "d:\\dev\\UpcInv\\UniversalUpc\\UniversalUpc.csproj",
+      "projectJsonPath": "d:\\dev\\UpcInv\\UniversalUpc\\project.json",
       "packagesPath": "C:\\Users\\rlittle\\.nuget\\packages\\",
-      "outputPath": "D:\\dev\\UpcInv\\UniversalUpc\\obj\\",
+      "outputPath": "d:\\dev\\UpcInv\\UniversalUpc\\obj\\",
       "projectStyle": "ProjectJson",
       "fallbackFolders": [
         "E:\\Microsoft\\Xamarin\\NuGet\\"
@@ -16018,17 +16018,17 @@
       "frameworks": {
         "uap10.0.10586": {
           "projectReferences": {
-            "D:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net.Mobile.Core\\ZXing.Net.Mobile.Core.csproj": {
-              "projectPath": "D:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net.Mobile.Core\\ZXing.Net.Mobile.Core.csproj"
+            "d:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net.Mobile.Core\\ZXing.Net.Mobile.Core.csproj": {
+              "projectPath": "d:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net.Mobile.Core\\ZXing.Net.Mobile.Core.csproj"
             },
-            "D:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net.Mobile.WindowsUniversal\\ZXing.Net.Mobile.WindowsUniversal.csproj": {
-              "projectPath": "D:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net.Mobile.WindowsUniversal\\ZXing.Net.Mobile.WindowsUniversal.csproj"
+            "d:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net.Mobile.WindowsUniversal\\ZXing.Net.Mobile.WindowsUniversal.csproj": {
+              "projectPath": "d:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net.Mobile.WindowsUniversal\\ZXing.Net.Mobile.WindowsUniversal.csproj"
             },
-            "D:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net\\zxing.portable.csproj": {
-              "projectPath": "D:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net\\zxing.portable.csproj"
+            "d:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net\\zxing.portable.csproj": {
+              "projectPath": "d:\\dev\\git\\ZXing.Net.Mobile\\Source\\ZXing.Net\\zxing.portable.csproj"
             },
-            "D:\\dev\\liblet\\cs\\TCore.Logging\\TCore.Logging(Universal)\\TCore.Logging(Universal).csproj": {
-              "projectPath": "D:\\dev\\liblet\\cs\\TCore.Logging\\TCore.Logging(Universal)\\TCore.Logging(Universal).csproj"
+            "d:\\dev\\liblet\\cs\\TCore.Logging\\TCore.Logging(Universal)\\TCore.Logging(Universal).csproj": {
+              "projectPath": "d:\\dev\\liblet\\cs\\TCore.Logging\\TCore.Logging(Universal)\\TCore.Logging(Universal).csproj"
             }
           }
         }

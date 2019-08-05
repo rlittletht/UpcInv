@@ -1,22 +1,23 @@
 ﻿
 using System.Net;
+using System.Threading.Tasks;
+using TCore.WebInterop;
 
 namespace UpcApi.Proxy
 {
-    public class WebApiInterop
+    public class WebApi
     {
+        private WebApiInterop m_apiInterop;
 
-    }
-    public class TcApiProxy
-    {
-//         private WebApiInterop m_apiInterop;
-
-        public TcApiProxy(WebApiInterop apiInterop)
+        public WebApi(WebApiInterop apiInterop)
         {
-            // m_apiInterop = apiInterop;
-            HttpStatusCode c;
+            m_apiInterop = apiInterop;
+        }
 
-
+        public async Task<USR_BookInfoList> GetBookScanInfosFromTitle(string Title)
+        {
+            string sQuery = $"api/book/GetBookScanInfosFromTitle?Title={Title ?? ""}";
+            return await m_apiInterop.CallService<USR_BookInfoList>(sQuery, false);
         }
 
         void ThrowNYI()

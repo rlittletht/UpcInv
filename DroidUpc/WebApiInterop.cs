@@ -77,12 +77,9 @@ namespace TCore.WebInterop
             would be really nice to use await in here, but every time i try it, i get
             threading issues, so old school task it is. 
         ----------------------------------------------------------------------------*/
-        HttpResponseMessage GetServiceResponse(HttpClient client, string sTarget)
+        async Task<HttpResponseMessage> GetServiceResponse(HttpClient client, string sTarget)
         {
-            Task<HttpResponseMessage> tskResponse = client.GetAsync(sTarget);
-
-            tskResponse.Wait();
-            return ProcessResponse(tskResponse.Result);
+            return await client.GetAsync(sTarget);
         }
 
         /*----------------------------------------------------------------------------
@@ -91,12 +88,9 @@ namespace TCore.WebInterop
 
             Do an http post and get the response
         ----------------------------------------------------------------------------*/
-        HttpResponseMessage GetServicePostResponse(HttpClient client, string sTarget, HttpContent content)
+        async Task<HttpResponseMessage> GetServicePostResponse(HttpClient client, string sTarget, HttpContent content)
         {
-            Task<HttpResponseMessage> tskResponse = client.PostAsync(sTarget, content);
-
-            tskResponse.Wait();
-            return ProcessResponse(tskResponse.Result);
+            return await client.PostAsync(sTarget, content);
         }
 
         /*----------------------------------------------------------------------------
@@ -105,14 +99,10 @@ namespace TCore.WebInterop
 
             Do an http put and get the response
         ----------------------------------------------------------------------------*/
-        HttpResponseMessage GetServicePutResponse(HttpClient client, string sTarget, HttpContent content)
+        async Task<HttpResponseMessage> GetServicePutResponse(HttpClient client, string sTarget, HttpContent content)
         {
-            Task<HttpResponseMessage> tskResponse = client.PutAsync(sTarget, content);
-
-            tskResponse.Wait();
-            return ProcessResponse(tskResponse.Result);
+            return await client.PutAsync(sTarget, content);
         }
-
 
         bool FNeAccessToken(string s1, string s2)
         {
@@ -158,7 +148,7 @@ namespace TCore.WebInterop
 
             Core call service, returning an httpresponse
         ----------------------------------------------------------------------------*/
-        public HttpResponseMessage CallService(string sTarget, bool fRequireAuth)
+        public async Task<HttpResponseMessage> CallService(string sTarget, bool fRequireAuth)
         {
             string sAccessToken = fRequireAuth ? m_accessTokenProvider.GetAccessToken() : null;
             if (sAccessToken == null && fRequireAuth == true)
@@ -166,10 +156,10 @@ namespace TCore.WebInterop
 
             HttpClient client = HttpClientCreate(sAccessToken);
 
-            return GetServiceResponse(client, $"{m_apiRoot}/{sTarget}");
+            return await GetServiceResponse(client, $"{m_apiRoot}/{sTarget}");
         }
 
-        public HttpResponseMessage CallServiceEx(string sTarget, bool fRequireAuth, string[] rgsScopes)
+        public async Task<HttpResponseMessage> CallServiceEx(string sTarget, bool fRequireAuth, string[] rgsScopes)
         {
             string sAccessToken = fRequireAuth ? m_accessTokenProvider.GetAccessTokenForScope(rgsScopes) : null;
             if (sAccessToken == null && fRequireAuth == true)
@@ -177,7 +167,7 @@ namespace TCore.WebInterop
 
             HttpClient client = HttpClientCreate(sAccessToken);
 
-            return GetServiceResponse(client, $"{sTarget}");
+            return await GetServiceResponse(client, $"{sTarget}");
         }
 
         /*----------------------------------------------------------------------------
@@ -186,9 +176,9 @@ namespace TCore.WebInterop
 
             Call the service and parse the return value into the given type T        	
         ----------------------------------------------------------------------------*/
-        public T CallService<T>(string sTarget, bool fRequireAuth)
+        public async Task<T> CallService<T>(string sTarget, bool fRequireAuth)
         {
-            HttpResponseMessage resp = CallService(sTarget, fRequireAuth);
+            HttpResponseMessage resp = await CallService(sTarget, fRequireAuth);
 
             if (resp.StatusCode == HttpStatusCode.Unauthorized)
             {
@@ -206,9 +196,9 @@ namespace TCore.WebInterop
 
             Call the service and parse the return value into the given type T        	
         ----------------------------------------------------------------------------*/
-        public T CallServiceEx<T>(string sTarget, bool fRequireAuth, string[] rgsScopes)
+        public async Task<T> CallServiceEx<T>(string sTarget, bool fRequireAuth, string[] rgsScopes)
         {
-            HttpResponseMessage resp = CallServiceEx(sTarget, fRequireAuth, rgsScopes);
+            HttpResponseMessage resp = await CallServiceEx(sTarget, fRequireAuth, rgsScopes);
 
             if (resp.StatusCode == HttpStatusCode.Unauthorized)
             {
@@ -219,13 +209,14 @@ namespace TCore.WebInterop
 
             return JsonConvert.DeserializeObject<T>(sJson);
         }
+
         /*----------------------------------------------------------------------------
             %%Function: CallServicePut
         	%%Qualified: TCore.MsalWeb.WebApiInterop.ProcessResponse
 
             Call the service with a put, with the given HttpContent        	
         ----------------------------------------------------------------------------*/
-        public HttpResponseMessage CallServicePut(string sTarget, HttpContent content, bool fRequireAuth)
+        public async Task<HttpResponseMessage> CallServicePut(string sTarget, HttpContent content, bool fRequireAuth)
         {
             string sAccessToken = m_accessTokenProvider.GetAccessToken();
             if (sAccessToken == null && fRequireAuth == true)
@@ -233,7 +224,7 @@ namespace TCore.WebInterop
 
             HttpClient client = HttpClientCreate(sAccessToken);
 
-            return GetServicePutResponse(client, $"{m_apiRoot}/{sTarget}", content);
+            return await GetServicePutResponse(client, $"{m_apiRoot}/{sTarget}", content);
         }
 
         /*----------------------------------------------------------------------------
@@ -242,9 +233,9 @@ namespace TCore.WebInterop
 
             Call the service put, and parse the result into the given type T
         ----------------------------------------------------------------------------*/
-        public T CallServicePut<T>(string sTarget, HttpContent content, bool fRequireAuth)
+        public async Task<T> CallServicePut<T>(string sTarget, HttpContent content, bool fRequireAuth)
         {
-            HttpResponseMessage resp = CallServicePut(sTarget, content, fRequireAuth);
+            HttpResponseMessage resp = await CallServicePut(sTarget, content, fRequireAuth);
 
             string sJson = GetContentAsString(resp);
 
@@ -257,7 +248,7 @@ namespace TCore.WebInterop
 
             Core call put service, returning an httpresponse
         ----------------------------------------------------------------------------*/
-        public HttpResponseMessage CallServicePost(string sTarget, HttpContent content, bool fRequireAuth)
+        public async Task<HttpResponseMessage> CallServicePost(string sTarget, HttpContent content, bool fRequireAuth)
         {
             string sAccessToken = m_accessTokenProvider.GetAccessToken();
             if (sAccessToken == null && fRequireAuth == true)
@@ -265,7 +256,7 @@ namespace TCore.WebInterop
 
             HttpClient client = HttpClientCreate(sAccessToken);
 
-            return GetServicePostResponse(client, $"{m_apiRoot}/{sTarget}", content);
+            return await GetServicePostResponse(client, $"{m_apiRoot}/{sTarget}", content);
         }
 
         /*----------------------------------------------------------------------------
@@ -274,12 +265,12 @@ namespace TCore.WebInterop
 
             Call the service put, and parse the result into the given type T
         ----------------------------------------------------------------------------*/
-        public T1 CallServicePost<T1, T2>(string sTarget, T2 t2, bool fRequireAuth)
+        public async Task<T1> CallServicePost<T1, T2>(string sTarget, T2 t2, bool fRequireAuth)
         {
             string s = JsonConvert.SerializeObject(t2);
 
             HttpContent content = new StringContent(s, Encoding.UTF8, "application/json");
-            HttpResponseMessage resp = CallServicePost(sTarget, content, fRequireAuth);
+            HttpResponseMessage resp = await CallServicePost(sTarget, content, fRequireAuth);
 
             string sJson = GetContentAsString(resp);
 
