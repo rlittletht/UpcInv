@@ -12,6 +12,8 @@ using TCore.WebInterop;
 using UpcApi;
 using UpcApi.Proxy;
 using UpcService = DroidUpc.UpcSvc;
+using UpcShared;
+
 #pragma warning disable 1998
 
 namespace DroidUpc

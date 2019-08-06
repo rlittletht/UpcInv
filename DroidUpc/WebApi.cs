@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using TCore.WebInterop;
+using UpcShared;
 
 namespace UpcApi.Proxy
 {

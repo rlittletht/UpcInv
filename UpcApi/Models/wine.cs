@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Web.Http;
 using TCore;
 using TCore.Logging;
+using UpcShared;
 
 namespace UpcApi
 {

@@ -51,8 +51,8 @@
     <Reference Include="sql, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TCore.Sql.1.1.0\lib\net45\sql.dll</HintPath>
     </Reference>
-    <Reference Include="StatusResult, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TCore.StatusResult.1.0.0\lib\net45\StatusResult.dll</HintPath>
+    <Reference Include="StatusResult, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TCore.StatusResult.2.0.0\lib\netstandard2.0\StatusResult.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
@@ -71,7 +71,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
-    <Reference Include="System.EnterpriseServices" />
     <Reference Include="TCore.Exceptions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TCore.Exceptions.1.0.0\lib\net45\TCore.Exceptions.dll</HintPath>
     </Reference>
@@ -112,7 +111,6 @@
     <Compile Include="Models\upc.cs" />
     <Compile Include="Models\wine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Types.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -139,6 +137,10 @@
     <ProjectReference Include="..\..\liblet\cs\TCore.Scrappy\TCore.Scrappy.csproj">
       <Project>{43787649-7722-45cb-886d-c5c5f78d473a}</Project>
       <Name>TCore.Scrappy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UpcShared\UpcShared.csproj">
+      <Project>{85c5de2b-7d29-4744-9406-98858dbc5b33}</Project>
+      <Name>UpcShared</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
