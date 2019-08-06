@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace UpcApi
 {
@@ -9,6 +10,10 @@ namespace UpcApi
     {
         public static void Register(HttpConfiguration config)
         {
+            EnableCorsAttribute attr = new EnableCorsAttribute("*", "*", "*");
+
+            config.EnableCors(attr);
+
             // Web API configuration and services
 
             // Web API routes
