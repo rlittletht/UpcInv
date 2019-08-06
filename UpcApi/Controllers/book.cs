@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using System.Web.Http.Cors;
 using TCore.Logging;
 
 namespace UpcApi.Controllers
