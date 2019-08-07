@@ -12,7 +12,6 @@ using Android.Content;
 using Android.Runtime;
 using Android.Widget;
 
-using ZXing;
 using Android.Support.V7.App;
 using System.Linq;
 using System.Threading.Tasks;
@@ -59,7 +58,7 @@ namespace DroidUpc
 
         public delegate void ScanCompleteDelegate(ZXing.Result result);
 
-        public void SetupScanner(MobileBarcodeScanningOptions options, bool fContinuous)
+        public void SetupScanner(ZXing.Mobile.MobileBarcodeScanningOptions options, bool fContinuous)
         {
             m_scannerControl.UseCustomOverlayView = false;
             m_scannerControl.TopText = null;
