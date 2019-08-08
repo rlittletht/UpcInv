@@ -1,6 +1,7 @@
 ﻿using System;
 using TCore;
 using TCore.Scrappy.BarnesAndNoble;
+using UpcShared;
 
 namespace UpcApi
 {
