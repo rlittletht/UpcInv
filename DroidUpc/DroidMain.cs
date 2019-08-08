@@ -289,9 +289,9 @@ namespace DroidUpc
             if (m_cbCheckOnly.Checked)
             {
                 if (AdasCurrent() == UpcInvCore.ADAS.DVD)
-                    m_upccCore.DoCheckDvdTitleInventory(sTitle, new CorrelationID());
+                    await m_upccCore.DoCheckDvdTitleInventory(sTitle, new CorrelationID());
                 else if (AdasCurrent() == UpcInvCore.ADAS.Book)
-                    m_upccCore.DoCheckBookTitleInventory(sTitle, new CorrelationID());
+                    await m_upccCore.DoCheckBookTitleInventory(sTitle, new CorrelationID());
                 else if (AdasCurrent() == UpcInvCore.ADAS.Wine)
                     m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "No manual operation available for Wine");
 

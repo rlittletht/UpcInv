@@ -8,7 +8,13 @@ using Android.Runtime;
 using Android.Widget;
 using TCore.Logging;
 using TCore.StatusBox;
+using TCore.WebInterop;
+using UpcApi;
+using UpcApi.Proxy;
 using UpcService = DroidUpc.UpcSvc;
+using UpcShared;
+
+#pragma warning disable 1998
 
 namespace DroidUpc
 {
@@ -27,8 +33,6 @@ namespace DroidUpc
             Wine = 3,
             Max = 4
         }
-
-        ADAS m_adas;
 
         /*----------------------------------------------------------------------------
         	%%Function: UpcInvCore
@@ -185,15 +189,19 @@ namespace DroidUpc
             return bki;
         }
 
-        public async Task<List<UpcService.BookInfo>> BookInfoListRetrieve(string sTitle)
+        public async Task<List<BookInfo>> BookInfoListRetrieve(string sTitle)
         {
-            EnsureServiceConnection();
+            WebApiInterop wai = new WebApiInterop("http://thetasoft2.azurewebsites.net/UpcApi", null);
+            UpcApi.Proxy.WebApi wapi = new WebApi(wai);
+
+            // EnsureServiceConnection();
             // UpcService.USR_BookInfoList usrdl = await m_usc.GetBookScanInfosFromTitleAsync(sTitle);
-            UpcService.USR_BookInfoList usrdl = m_usc.GetBookScanInfosFromTitle(sTitle);
+            USR_BookInfoList usrdl = await wapi.GetBookScanInfosFromTitle(sTitle);
+            // UpcService.USR_BookInfoList usrdl = m_usc.GetBookScanInfosFromTitle(sTitle);
             if (usrdl.Result == false || usrdl.TheValue == null)
                 return null;
 
-            List<UpcService.BookInfo> bkiList = new List<UpcService.BookInfo>(usrdl.TheValue);
+            List<BookInfo> bkiList = new List<BookInfo>(usrdl.TheValue);
 
             if (bkiList.Count == 0)
                 return null;
@@ -504,7 +512,7 @@ namespace DroidUpc
                 return;
             }
             string sTitle = null;
-            bool fResult = false;
+
             m_lp.LogEvent(crid, EventType.Verbose, "Continuing with processing for {0}...Checking for WineInfo from service", sCode);
             UpcService.WineInfo wni = await WineInfoRetrieve(sCode);
 
@@ -610,7 +618,7 @@ namespace DroidUpc
         {
             m_lp.LogEvent(crid, EventType.Verbose, "Checking inventory for dvd title {0}", sTitle);
 
-            List<UpcService.BookInfo> bkis = await BookInfoListRetrieve(sTitle);
+            List<BookInfo> bkis = await BookInfoListRetrieve(sTitle);
             if (bkis == null)
             {
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "No inventory found for titles like {0}", sTitle);
@@ -621,7 +629,7 @@ namespace DroidUpc
             {
                 m_lp.LogEvent(crid, EventType.Verbose, "Found {0} matching titles for {1}", bkis.Count, sTitle);
                 m_isr.AddMessage(UpcAlert.AlertType.GoodInfo, "Found the following {0} matching titles in inventory:", bkis.Count);
-                foreach (UpcService.BookInfo bki in bkis)
+                foreach (BookInfo bki in bkis)
                 {
                     m_isr.AddMessage(UpcAlert.AlertType.None, "{0}: {1} ({2})", bki.Code, bki.Title, bki.LastScan);
                 }

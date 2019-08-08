@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using TCore;
 using TCore.Logging;
+using UpcShared;
 
 namespace UpcApi
 {
