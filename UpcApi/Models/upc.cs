@@ -24,6 +24,9 @@ namespace UpcApi
 
         public static USR UpdateUpcLastScanDate(string sScanCode, string sTitle)
         {
+            if (String.IsNullOrEmpty(sTitle))
+                return USR.Failed("title cannot be null or empty!");
+
             string sCmd = String.Format("sp_updatescan '{0}', '{1}', '{2}'", Sql.Sqlify(sScanCode), Sql.Sqlify(sTitle), DateTime.Now.ToString());
             return Shared.DoGenericQueryDelegateRead(sCmd, null, Shared.FromUSR);
         }
