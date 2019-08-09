@@ -8,13 +8,16 @@ using System.Threading.Tasks;
 using Windows.Media;
 using TCore.Logging;
 using TCore.StatusBox;
-using UpcService = UniversalUpc.UpcSvc;
+using TCore.WebInterop;
+using UpcApi.Proxy;
+using UpcShared;
 
 namespace UniversalUpc
 {
     public class UpcInvCore
     {
-        private UpcService.UpcSvcClient m_usc = null;
+        private WebApi m_api = null;
+
         private IAlert m_ia;
         private IStatusReporting m_isr;
         private ILogProvider m_lp;
@@ -55,15 +58,15 @@ namespace UniversalUpc
         ----------------------------------------------------------------------------*/
         private void EnsureServiceConnection()
         {
-            if (m_usc == null)
-                m_usc = new UpcService.UpcSvcClient();
+            if (m_api == null)
+                m_api = new WebApi(new WebApiInterop("https://thetasoft2.azurewebsites.net/UpcApi", null));
         }
 
         public DateTime? DttmGetLastScan(string sScanCode)
         {
             EnsureServiceConnection();
 
-            Task<UpcService.USR_String> tsk = m_usc.GetLastScanDateAsync(sScanCode);
+            Task<USR_String> tsk = m_api.GetLastScanDate(sScanCode);
 
             tsk.Wait();
 
@@ -80,23 +83,21 @@ namespace UniversalUpc
         	
             Get information for this DVD scan code
         ----------------------------------------------------------------------------*/
-        public async Task<UpcService.DvdInfo> DvdInfoRetrieve(string sScanCode)
+        public async Task<DvdInfo> DvdInfoRetrieve(string sScanCode)
         {
             EnsureServiceConnection();
-            UpcService.USR_DvdInfo usrd = await m_usc.GetDvdScanInfoAsync(sScanCode);
-            UpcService.DvdInfo dvdInfo = usrd.TheValue;
-
-            return dvdInfo;
+            USR_DvdInfo usrd = await m_api.GetDvdScanInfo(sScanCode);
+            return usrd.TheValue;
         }
 
-        public async Task<List<UpcService.DvdInfo>> DvdInfoListRetrieve(string sTitle)
+        public async Task<List<DvdInfo>> DvdInfoListRetrieve(string sTitle)
         {
             EnsureServiceConnection();
-            UpcService.USR_DvdInfoList usrdl = await m_usc.GetDvdScanInfosFromTitleAsync(sTitle);
+            USR_DvdInfoList usrdl = await m_api.GetDvdScanInfosFromTitle(sTitle);
             if (usrdl.Result == false || usrdl.TheValue == null)
                 return null;
 
-            List<UpcService.DvdInfo> dvdInfoList = new List<UpcService.DvdInfo>(usrdl.TheValue);
+            List<DvdInfo> dvdInfoList = new List<DvdInfo>(usrdl.TheValue);
 
             if (dvdInfoList.Count == 0)
                 return null;
@@ -113,10 +114,10 @@ namespace UniversalUpc
         	
             Get scan information for this scan code (this works for any item type)
         ----------------------------------------------------------------------------*/
-        public async Task<bool> UpdateScanDate(string sScanCode)
+        public async Task<bool> UpdateScanDate(string sScanCode, string sTitle)
         {
             EnsureServiceConnection();
-            UpcService.USR usr = await m_usc.UpdateUpcLastScanDateAsync(sScanCode, "");
+            USR usr = await m_api.UpdateUpcLastScanDate(sScanCode, sTitle);
 
             return usr.Result;
         }
@@ -134,7 +135,7 @@ namespace UniversalUpc
         public async Task<string> FetchTitleFromGenericUPC(string sScanCode)
         {
             EnsureServiceConnection();
-            string sTitle = await m_usc.FetchTitleFromGenericUPCAsync(sScanCode);
+            string sTitle = await m_api.FetchTitleFromGenericUPC(sScanCode);
 
             return sTitle;
         }
@@ -142,7 +143,7 @@ namespace UniversalUpc
         public async Task<string> FetchTitleFromISBN13(string sScanCode)
         {
             EnsureServiceConnection();
-            string sTitle = await m_usc.FetchTitleFromISBN13Async(sScanCode);
+            string sTitle = await m_api.FetchTitleFromISBN13(sScanCode);
 
             return sTitle;
         }
@@ -159,7 +160,7 @@ namespace UniversalUpc
         public async Task<bool> CreateDvd(string sScanCode, string sTitle, CorrelationID crid)
         {
             EnsureServiceConnection();
-            UpcService.USR usr = await m_usc.CreateDvdAsync(sScanCode, sTitle);
+            USR usr = await m_api.CreateDvd(sScanCode, sTitle);
 
             if (usr.Result)
                 m_lp.LogEvent(crid, EventType.Verbose, "Successfully added title for {0}", sScanCode);
@@ -169,23 +170,23 @@ namespace UniversalUpc
             return usr.Result;
         }
 
-        public async Task<UpcService.BookInfo> BookInfoRetrieve(string sScanCode)
+        public async Task<BookInfo> BookInfoRetrieve(string sScanCode)
         {
             EnsureServiceConnection();
-            UpcService.USR_BookInfo usrd = await m_usc.GetBookScanInfoAsync(sScanCode);
-            UpcService.BookInfo bki = usrd.TheValue;
+            USR_BookInfo usrd = await m_api.GetBookScanInfo(sScanCode);
+            BookInfo bki = usrd.TheValue;
 
             return bki;
         }
 
-        public async Task<List<UpcService.BookInfo>> BookInfoListRetrieve(string sTitle)
+        public async Task<List<BookInfo>> BookInfoListRetrieve(string sTitle)
         {
             EnsureServiceConnection();
-            UpcService.USR_BookInfoList usrdl = await m_usc.GetBookScanInfosFromTitleAsync(sTitle);
+            USR_BookInfoList usrdl = await m_api.GetBookScanInfosFromTitle(sTitle);
             if (usrdl.Result == false || usrdl.TheValue == null)
                 return null;
 
-            List<UpcService.BookInfo> bkiList = new List<UpcService.BookInfo>(usrdl.TheValue);
+            List<BookInfo> bkiList = new List<BookInfo>(usrdl.TheValue);
 
             if (bkiList.Count == 0)
                 return null;
@@ -203,7 +204,7 @@ namespace UniversalUpc
         public async Task<bool> UpdateBookScan(string sScanCode, string sTitle, string sLocation, CorrelationID crid)
         {
             EnsureServiceConnection();
-            UpcService.USR usr = await m_usc.UpdateBookScanAsync(sScanCode, sTitle, sLocation);
+            USR usr = await m_api.UpdateBookScan(sScanCode, sTitle, sLocation);
 
             if (usr.Result)
                 m_lp.LogEvent(crid, EventType.Verbose, "Successfully update title for {0}", sScanCode);
@@ -222,7 +223,7 @@ namespace UniversalUpc
         public async Task<bool> CreateBook(string sScanCode, string sTitle, string sLocation, CorrelationID crid)
         {
             EnsureServiceConnection();
-            UpcService.USR usr = await m_usc.CreateBookAsync(sScanCode, sTitle, sLocation);
+            USR usr = await m_api.CreateBook(sScanCode, sTitle, sLocation);
 
             if (usr.Result)
                 m_lp.LogEvent(crid, EventType.Verbose, "Successfully added title for {0}", sScanCode);
@@ -232,11 +233,11 @@ namespace UniversalUpc
             return usr.Result;
         }
 
-        public async Task<UpcService.WineInfo> WineInfoRetrieve(string sScanCode)
+        public async Task<WineInfo> WineInfoRetrieve(string sScanCode)
         {
             EnsureServiceConnection();
-            UpcService.USR_WineInfo usrd = await m_usc.GetWineScanInfoAsync(sScanCode);
-            UpcService.WineInfo wni = usrd.TheValue;
+            USR_WineInfo usrd = await m_api.GetWineScanInfo(sScanCode);
+            WineInfo wni = usrd.TheValue;
 
             return wni;
         }
@@ -244,7 +245,7 @@ namespace UniversalUpc
         public async Task<bool> DrinkWine(string sScanCode, string sWine, string sVintage, string sNotes, CorrelationID crid)
         {
             EnsureServiceConnection();
-            UpcService.USR usr = await m_usc.DrinkWineAsync(sScanCode, sWine, sVintage, sNotes);
+            USR usr = await m_api.DrinkWine(sScanCode, sWine, sVintage, sNotes);
 
             if (usr.Result)
                 m_lp.LogEvent(crid, EventType.Verbose, "Successfully added title for {0}", sScanCode);
@@ -361,7 +362,7 @@ namespace UniversalUpc
             string sTitle = null;
             bool fResult = false;
             m_lp.LogEvent(crid, EventType.Verbose, "Continuing with processing for {0}...Checking for DvdInfo from service", sCode);
-            UpcService.DvdInfo dvdi = await DvdInfoRetrieve(sCode);
+            DvdInfo dvdi = await DvdInfoRetrieve(sCode);
 
             if (dvdi != null)
                 {
@@ -405,7 +406,7 @@ namespace UniversalUpc
         {
             m_lp.LogEvent(crid, EventType.Verbose, "Checking inventory for dvd title {0}", sTitle);
 
-            List<UpcService.DvdInfo> dvdis = await DvdInfoListRetrieve(sTitle);
+            List<DvdInfo> dvdis = await DvdInfoListRetrieve(sTitle);
             if (dvdis == null)
                 {
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "No inventory found for titles like {0}", sTitle);
@@ -416,7 +417,7 @@ namespace UniversalUpc
                 {
                 m_lp.LogEvent(crid, EventType.Verbose, "Found {0} matching titles for {1}", dvdis.Count, sTitle);
                 m_isr.AddMessage(UpcAlert.AlertType.GoodInfo, "Found the following {0} matching titles in inventory:", dvdis.Count);
-                foreach (UpcService.DvdInfo dvdi in dvdis)
+                foreach (DvdInfo dvdi in dvdis)
                     {
                     m_isr.AddMessage(UpcAlert.AlertType.None, "{0}: {1} ({2})", dvdi.Code, dvdi.Title, dvdi.LastScan);
                     }
@@ -449,10 +450,11 @@ namespace UniversalUpc
         	%%Contact: rlittle
         	
         ----------------------------------------------------------------------------*/
-        private async void DoUpdateDvdScanDate(string sCode, UpcService.DvdInfo dvdi, CorrelationID crid, FinalScanCodeCleanupDelegate del)
+        private async void DoUpdateDvdScanDate(string sCode, DvdInfo dvdi, CorrelationID crid, FinalScanCodeCleanupDelegate del)
         {
             m_lp.LogEvent(crid, EventType.Verbose, "Service returned info for {0}", sCode);
 
+            
             // check for a dupe/too soon last scan (within 1 hour)
             if (dvdi.LastScan > DateTime.Now.AddHours(-1))
                 {
@@ -465,7 +467,7 @@ namespace UniversalUpc
             m_lp.LogEvent(crid, EventType.Verbose, "Calling service to update scan date for {0}", sCode);
 
             // now update the last scan date
-            bool fResult = await UpdateScanDate(sCode);
+            bool fResult = await UpdateScanDate(sCode, dvdi.Title);
 
             if (fResult)
                 {
@@ -494,7 +496,7 @@ namespace UniversalUpc
             string sTitle = null;
             bool fResult = false;
             m_lp.LogEvent(crid, EventType.Verbose, "Continuing with processing for {0}...Checking for WineInfo from service", sCode);
-            UpcService.WineInfo wni = await WineInfoRetrieve(sCode);
+            WineInfo wni = await WineInfoRetrieve(sCode);
 
             if (wni != null)
                 {
@@ -510,7 +512,7 @@ namespace UniversalUpc
                 }
         }
 
-        private async void DoDrinkWine(string sCode, string sNotes, UpcService.WineInfo wni, CorrelationID crid, FinalScanCodeCleanupDelegate del)
+        private async void DoDrinkWine(string sCode, string sNotes, WineInfo wni, CorrelationID crid, FinalScanCodeCleanupDelegate del)
         {
             m_lp.LogEvent(crid, EventType.Verbose, "Service returned info for {0}", sCode);
 
@@ -554,7 +556,7 @@ namespace UniversalUpc
             string sTitle = null;
             bool fResult = false;
             m_lp.LogEvent(crid, EventType.Verbose, "Continuing with processing for {0}...Checking for BookInfo from service", sCode);
-            UpcService.BookInfo bki = await BookInfoRetrieve(sCode);
+            BookInfo bki = await BookInfoRetrieve(sCode);
 
             if (bki != null)
                 {
@@ -598,7 +600,7 @@ namespace UniversalUpc
         {
             m_lp.LogEvent(crid, EventType.Verbose, "Checking inventory for dvd title {0}", sTitle);
 
-            List<UpcService.BookInfo> bkis = await BookInfoListRetrieve(sTitle);
+            List<BookInfo> bkis = await BookInfoListRetrieve(sTitle);
             if (bkis == null)
                 {
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "No inventory found for titles like {0}", sTitle);
@@ -609,7 +611,7 @@ namespace UniversalUpc
                 {
                 m_lp.LogEvent(crid, EventType.Verbose, "Found {0} matching titles for {1}", bkis.Count, sTitle);
                 m_isr.AddMessage(UpcAlert.AlertType.GoodInfo, "Found the following {0} matching titles in inventory:", bkis.Count);
-                foreach (UpcService.BookInfo bki in bkis)
+                foreach (BookInfo bki in bkis)
                     {
                     m_isr.AddMessage(UpcAlert.AlertType.None, "{0}: {1} ({2})", bki.Code, bki.Title, bki.LastScan);
                     }
@@ -642,7 +644,7 @@ namespace UniversalUpc
         	%%Contact: rlittle
         	
         ----------------------------------------------------------------------------*/
-        private async void DoUpdateBookScanDate(string sCode, string sLocation, UpcService.BookInfo bki, CorrelationID crid, FinalScanCodeCleanupDelegate del)
+        private async void DoUpdateBookScanDate(string sCode, string sLocation, BookInfo bki, CorrelationID crid, FinalScanCodeCleanupDelegate del)
         {
             m_lp.LogEvent(crid, EventType.Verbose, "Service returned info for {0}", sCode);
 

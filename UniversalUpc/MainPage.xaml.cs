@@ -21,11 +21,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using TCore.StatusBox;
-using UniversalUpc.UpcSvc;
 using ZXing;
 using ZXing.Common;
 using ZXing.Mobile;
-using UpcService = UniversalUpc.UpcSvc;
 using TCore.Logging;
 
 
