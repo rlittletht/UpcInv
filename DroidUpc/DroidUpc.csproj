@@ -53,7 +53,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
@@ -70,51 +69,11 @@
     <Compile Include="UpcAlert.cs" />
     <Compile Include="UpcInvCore.cs" />
     <Compile Include="UpcTypeSpinnerAdapter.cs" />
-    <Compile Include="Web References\UpcSvc\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
-    <None Include="Web References\UpcSvc\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\UpcSvc\UpcSvc.wsdl" />
-    <None Include="Web References\UpcSvc\UpcSvc.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\UpcSvc\UpcSvc0.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\UpcSvc\UpcSvc1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\UpcSvc\USR.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\UpcSvc\USR_BookInfo.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\UpcSvc\USR_BookInfoList.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\UpcSvc\USR_DvdInfo.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\UpcSvc\USR_DvdInfoList.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\UpcSvc\USR_String.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\UpcSvc\USR_WineInfo.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -199,24 +158,6 @@
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WebReferenceUrl Include="http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\UpcSvc\</RelPath>
-      <UpdateFromURL>http://thetasoft2.azurewebsites.net/UpcSvc/UpcSvc.svc</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>
-      </CachedAppSettingsObjectName>
-      <CachedSettingsPropName>
-      </CachedSettingsPropName>
-    </WebReferenceUrl>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\UpcSvc\UpcSvc.disco" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Audio\263133__pan14__tone-beep.wav" />
