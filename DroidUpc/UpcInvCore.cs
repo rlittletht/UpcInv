@@ -106,10 +106,10 @@ namespace DroidUpc
         	
             Get scan information for this scan code (this works for any item type)
         ----------------------------------------------------------------------------*/
-        public async Task<bool> UpdateScanDate(string sScanCode)
+        public async Task<bool> UpdateScanDate(string sScanCode, string sTitle)
         {
             EnsureServiceConnection();
-            USR usr = await m_api.UpdateUpcLastScanDate(sScanCode, "");
+            USR usr = await m_api.UpdateUpcLastScanDate(sScanCode, sTitle);
 
             return usr.Result;
         }
@@ -466,7 +466,7 @@ namespace DroidUpc
             m_lp.LogEvent(crid, EventType.Verbose, "Calling service to update scan date for {0}", sCode);
 
             // now update the last scan date
-            bool fResult = fCheckOnly || await UpdateScanDate(sCode);
+            bool fResult = fCheckOnly || await UpdateScanDate(sCode, dvdi.Title);
 
             if (fResult)
             {
