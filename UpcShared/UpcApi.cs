@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Net;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
-using Windows.Networking.Sockets;
 using TCore.WebInterop;
 using UpcShared;
 
@@ -25,7 +22,7 @@ namespace UpcApi.Proxy
                 for (int i = 0; i < rgo.Length; i++)
                 {
                     if (rgo[i] is string)
-                        rgoNew[i] = Uri.EscapeDataString((string) rgo[i]);
+                        rgoNew[i] = Uri.EscapeDataString((string)rgo[i]);
                     else
                         rgoNew[i] = rgo[i];
                 }
@@ -66,7 +63,7 @@ namespace UpcApi.Proxy
         {
             return await Generic<USR_String>("api/Upc/GetLastScanDate?ScanCode?ScanCode={0}", ScanCode ?? "");
         }
-        
+
         public async Task<USR> UpdateUpcLastScanDate(string ScanCode, string Title)
         {
             return await Generic<USR>("api/Upc/UpdateUpcLastScanDate?ScanCode={0}&Title={1}", ScanCode ?? "", Title ?? "");
@@ -93,7 +90,7 @@ namespace UpcApi.Proxy
 
         public async Task<USR_DvdInfoList> GetDvdScanInfosFromTitle(string Title)
         {
-            return await Generic<USR_DvdInfoList>("api/dvd/GetDvdScanInfosFromTitle?Title={0}", Title??"");
+            return await Generic<USR_DvdInfoList>("api/dvd/GetDvdScanInfosFromTitle?Title={0}", Title ?? "");
         }
 
         public async Task<USR> CreateDvd(string ScanCode, string Title)
@@ -106,7 +103,7 @@ namespace UpcApi.Proxy
         #region Wine
         public async Task<USR_WineInfo> GetWineScanInfo(string ScanCode)
         {
-            return await Generic<USR_WineInfo>("api/wine/GetWineScanInfo?ScanCode={0}", ScanCode??"");
+            return await Generic<USR_WineInfo>("api/wine/GetWineScanInfo?ScanCode={0}", ScanCode ?? "");
         }
 
         public async Task<USR> DrinkWine(string ScanCode, string Wine, string Vintage, string Notes)

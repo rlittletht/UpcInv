@@ -116,8 +116,6 @@
     <Compile Include="StatusBox.cs" />
     <Compile Include="UpcAlert.cs" />
     <Compile Include="UpcInvCore.cs" />
-    <Compile Include="WebApi.cs" />
-    <Compile Include="WebApiInterop.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
