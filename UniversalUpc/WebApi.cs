@@ -2,6 +2,7 @@
 using System.Net;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
+using Windows.Networking.Sockets;
 using TCore.WebInterop;
 using UpcShared;
 
@@ -18,6 +19,20 @@ namespace UpcApi.Proxy
 
         public async Task<T> Generic<T>(string sApiTemplate, params object[] rgo)
         {
+            if (rgo != null && rgo.Length > 0)
+            {
+                object[] rgoNew = new object[rgo.Length];
+                for (int i = 0; i < rgo.Length; i++)
+                {
+                    if (rgo[i] is string)
+                        rgoNew[i] = Uri.EscapeDataString((string) rgo[i]);
+                    else
+                        rgoNew[i] = rgo[i];
+                }
+
+                rgo = rgoNew;
+            }
+
             string sQuery = String.Format(sApiTemplate, rgo);
             return await m_apiInterop.CallService<T>(sQuery, false);
         }
