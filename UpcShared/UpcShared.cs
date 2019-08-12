@@ -289,11 +289,46 @@ namespace UpcShared
         public DateTime LastScan { get; set; }
     }
 
+    public class BookInfoEx : BookInfo
+    {
+        public string Author { get; set; }
+        public string Summary { get; set; }
+        public string CoverSrc { get; set; }
+        public string Series { get; set; }
+        public DateTime? ReleaseDate { get; set; }
+
+        public static BookInfoEx FromBookInfo(BookInfo bki)
+        {
+            BookInfoEx bkix = new BookInfoEx();
+
+            bkix.Code = bki.Code;
+            bkix.Title = bki.Title;
+            bkix.Location = bki.Location;
+            bkix.FirstScan = bki.FirstScan;
+            bkix.LastScan = bki.LastScan;
+
+            return bkix;
+        }
+    }
+
     public class USR_BookInfo : TUSR<BookInfo>
     {
         public static USR_BookInfo FromTCSR(USR usr)
         {
             USR_BookInfo usrs = new USR_BookInfo();
+            usrs.Reason = usr.Reason;
+            usrs.Result = usr.Result;
+            usrs.CorrelationID = usr.CorrelationID;
+
+            return usrs;
+        }
+    }
+
+    public class USR_BookInfoEx : TUSR<BookInfoEx>
+    {
+        public static USR_BookInfoEx FromTCSR(USR usr)
+        {
+            USR_BookInfoEx usrs = new USR_BookInfoEx();
             usrs.Reason = usr.Reason;
             usrs.Result = usr.Result;
             usrs.CorrelationID = usr.CorrelationID;

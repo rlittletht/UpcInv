@@ -14,6 +14,13 @@ namespace UpcApi.Controllers
         }
 
         [HttpGet]
+        [Route("api/book/GetFullBookScanInfo")]
+        public IHttpActionResult GetFullBookScanInfo(string ScanCode)
+        {
+            return Ok(UpcBook.GetFullBookScanInfo(ScanCode));
+        }
+
+        [HttpGet]
         [Route("api/book/GetBookScanInfosFromTitle")]
         public IHttpActionResult GetBookScanInfosFromTitle(string Title)
         {
