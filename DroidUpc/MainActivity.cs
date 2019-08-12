@@ -11,10 +11,11 @@ using Android;
 using Android.Media;
 using Android.Support.V4.Content;
 using Android.Views;
-using HockeyApp;
 using TCore.Logging;
 using TCore.StatusBox;
-using HockeyApp.Android;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace DroidUpc
 {
@@ -50,7 +51,10 @@ namespace DroidUpc
             spinner.ItemSelected += SetNewMediaType;
 
             Button buttonScan = FindViewById<Button>(Resource.Id.buttonScan);
+            // can't use our convenient m_pbManual and m_ebScancode because we haven't
+            // set those up yet...
             FindViewById<Button>(Resource.Id.buttonManual).Click += DoManual;
+            FindViewById<EditText>(Resource.Id.ebCode).KeyPress += DoCodeKeyPress;
 //            FindViewById<Button>(Resource.Id.buttonManual).Click += TestAlert;
 
             buttonScan.Click += OnScanClick;
@@ -120,6 +124,9 @@ namespace DroidUpc
         {
             base.OnCreate(savedInstanceState);
 
+            AppCenter.Start("cb8b70c7-63a1-4124-b62c-ea09f6271367",
+                typeof(Analytics), typeof(Crashes));
+
             SetupMainViewAndEvents();
 
             VolumeControlStream = Stream.Music;
@@ -132,7 +139,7 @@ namespace DroidUpc
         protected override void OnResume()
         {
             base.OnResume();
-            HockeyApp.Android.CrashManager.Register(this, "cb8b70c763a14124b62cea09f6271367");
+            // HockeyApp.Android.CrashManager.Register(this, "cb8b70c763a14124b62cea09f6271367");
         }
 
         private int iAlert = 0;

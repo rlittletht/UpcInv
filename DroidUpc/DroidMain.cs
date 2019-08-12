@@ -109,7 +109,7 @@ namespace DroidUpc
 
             string sResultText = result.Text;
 
-            DispatchScanCode(sResultText, crid);
+            DispatchScanCode(sResultText, m_cbCheckOnly.Checked, crid);
         }
 
         /*----------------------------------------------------------------------------
@@ -121,16 +121,16 @@ namespace DroidUpc
             automatically scanned (from the camera) or it was typed in (possibly
             from an attached wand scanner)
         ----------------------------------------------------------------------------*/
-        private void DispatchScanCode(string sResultText, CorrelationID crid)
+        private void DispatchScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
-            m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
+            m_isr.AddMessage(UpcAlert.AlertType.UPCScanBeep, $"Scan received: {sResultText}");
 
             if (AdasCurrent() == UpcInvCore.ADAS.DVD)
-                DispatchDvdScanCode(sResultText, m_cbCheckOnly.Checked, crid);
+                DispatchDvdScanCode(sResultText, fCheckOnly, crid);
             else if (AdasCurrent() == UpcInvCore.ADAS.Book)
-                DispatchBookScanCode(sResultText, m_cbCheckOnly.Checked, crid);
+                DispatchBookScanCode(sResultText, fCheckOnly, crid);
             else if (AdasCurrent() == UpcInvCore.ADAS.Wine)
-                DispatchWineScanCode(sResultText, m_cbCheckOnly.Checked, crid);
+                DispatchWineScanCode(sResultText, fCheckOnly, crid);
         }
 
         void SetFocus(EditText eb, bool fWantKeyboard)
@@ -303,6 +303,20 @@ namespace DroidUpc
                         sTitle);
                     FinishCode(sCode, cridDel);
                 });
+        }
+
+        private void DoCodeKeyPress(object sender, View.KeyEventArgs eventArgs)
+        {
+            if (eventArgs.KeyCode == Keycode.Enter && eventArgs.Event.Action == KeyEventActions.Up)
+            {
+                CorrelationID crid = new CorrelationID();
+                string sResultText = m_ebScanCode.Text;
+
+                m_lp.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", sResultText);
+
+                DispatchScanCode(sResultText, m_cbCheckOnly.Checked, crid);
+                eventArgs.Handled = true;
+            }
         }
 
         /*----------------------------------------------------------------------------
