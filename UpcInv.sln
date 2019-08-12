@@ -873,8 +873,8 @@ Global
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|Any CPU.Build.0 = DebugStageHostStageSvcProdData|Any CPU
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|ARM.ActiveCfg = Debug|Any CPU
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|ARM.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|x64.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|x64.Build.0 = Debug|Any CPU
+		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|x64.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
+		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|x64.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|x86.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|x86.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|Any CPU.ActiveCfg = DebugStageHostStageSvcProdData|Any CPU
