@@ -15,6 +15,21 @@ namespace UpcApi
             " INNER JOIN $$#upc_books$$ " +
             "   ON $$upc_codes$$.ScanCode = $$upc_books$$.ScanCode";
 
+        private static string s_sQueryBookEx =
+            "$$upc_codes$$.ScanCode, "
+            + "$$upc_codes$$.LastScanDate, "
+            + "$$upc_codes$$.FirstScanDate, "
+            + "$$upc_books$$.Title, "
+            + "$$upc_books$$.Note, "
+            + "$$upc_books$$.Author, "
+            + "$$upc_books$$.Summary, "
+            + "$$upc_books$$.CoverSrc, "
+            + "$$upc_books$$.ReleaseDate, "
+            + "$$upc_books$$.Series "
+            + "FROM $$#upc_codes$$ "
+            + "INNER JOIN $$#upc_books$$ "
+            + "   ON $$upc_codes$$.ScanCode = $$upc_books$$.ScanCode";
+
         private static Dictionary<string, string> s_mpBookAlias = new Dictionary<string, string>
         {
             {"upc_codes", "UPCC"},
@@ -40,6 +55,24 @@ namespace UpcApi
             usrb = USR_BookInfo.FromTCSR(USR.SuccessCorrelate(crid));
             usrb.TheValue = bki;
         }
+
+        public static void ReaderGetBookScanInfoExDelegate(SqlReader sqlr, CorrelationID crid, ref USR_BookInfoEx usrb)
+        {
+            USR_BookInfo bookInfo = null;
+            ReaderGetBookScanInfoDelegate(sqlr, crid, ref bookInfo);
+
+            BookInfoEx bkix = BookInfoEx.FromBookInfo(bookInfo.TheValue); // new BookInfoEx()); //bookInfo.TheValue);
+
+            bkix.Author = sqlr.Reader.IsDBNull(5) ? null : sqlr.Reader.GetString(5);
+            bkix.Summary = sqlr.Reader.IsDBNull(6) ? null : sqlr.Reader.GetString(6);
+            bkix.CoverSrc = sqlr.Reader.IsDBNull(7) ? null : sqlr.Reader.GetString(7);
+            bkix.ReleaseDate = sqlr.Reader.IsDBNull(8) ? (DateTime?) null : sqlr.Reader.GetDateTime(8);
+            bkix.Series = sqlr.Reader.IsDBNull(9) ? null : sqlr.Reader.GetString(9);
+
+            usrb = USR_BookInfoEx.FromTCSR(USR.SuccessCorrelate(crid));
+            usrb.TheValue = bkix;
+        }
+
 
         /*----------------------------------------------------------------------------
             %%Function: ReaderGetDvdScanInfoListDelegate
@@ -74,20 +107,6 @@ namespace UpcApi
         ----------------------------------------------------------------------------*/
         public static USR_BookInfo GetBookScanInfo(string sScanCode)
         {
-#if no
-            WebOperationContext.Current.OutgoingResponse.Headers
-                .Add("Access-Control-Allow-Origin", "*");
-            //identify preflight request and add extra headers
-            if (WebOperationContext.Current.IncomingRequest.Method == "OPTIONS")
-            {
-                WebOperationContext.Current.OutgoingResponse.Headers
-                    .Add("Access-Control-Allow-Methods", "POST, OPTIONS, GET");
-                WebOperationContext.Current.OutgoingResponse.Headers
-                    .Add("Access-Control-Allow-Headers",
-                        "Content-Type, Accept, Authorization, x-requested-with");
-                return null;
-            }
-#endif
             SqlWhere sqlw = new SqlWhere();
             sqlw.AddAliases(s_mpBookAlias);
             sqlw.Add(String.Format("$$upc_codes$$.ScanCode='{0}'", Sql.Sqlify(sScanCode)), SqlWhere.Op.And);
@@ -95,6 +114,23 @@ namespace UpcApi
             string sFullQuery = String.Format("SELECT {0}", sqlw.GetWhere(s_sQueryBook));
 
             return Shared.DoGenericQueryDelegateRead(sFullQuery, ReaderGetBookScanInfoDelegate, USR_BookInfo.FromTCSR);
+        }
+
+        /*----------------------------------------------------------------------------
+            %%Function: GetFullBookScanInfo
+            %%Qualified: UpcSvc.UpcSvc.GetFullBookScanInfo
+    
+            Get the information for the DVD for the given scancode
+        ----------------------------------------------------------------------------*/
+        public static USR_BookInfoEx GetFullBookScanInfo(string sScanCode)
+        {
+            SqlWhere sqlw = new SqlWhere();
+            sqlw.AddAliases(s_mpBookAlias);
+            sqlw.Add(String.Format("$$upc_codes$$.ScanCode='{0}'", Sql.Sqlify(sScanCode)), SqlWhere.Op.And);
+
+            string sFullQuery = String.Format("SELECT {0}", sqlw.GetWhere(s_sQueryBookEx));
+
+            return Shared.DoGenericQueryDelegateRead(sFullQuery, ReaderGetBookScanInfoExDelegate, USR_BookInfoEx.FromTCSR);
         }
 
         /*----------------------------------------------------------------------------
