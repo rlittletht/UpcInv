@@ -657,9 +657,9 @@ Global
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Debug|x86.Build.0 = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Debug|x86.Deploy.0 = Debug|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|Any CPU.ActiveCfg = Debug|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|Any CPU.Build.0 = Debug|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|Any CPU.Deploy.0 = Debug|Any CPU
+		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|Any CPU.ActiveCfg = DebugApk|Any CPU
+		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|Any CPU.Build.0 = DebugApk|Any CPU
+		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|Any CPU.Deploy.0 = DebugApk|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|ARM.ActiveCfg = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|ARM.Build.0 = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|ARM.Deploy.0 = Debug|Any CPU
@@ -669,9 +669,9 @@ Global
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|x86.ActiveCfg = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|x86.Build.0 = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugLocalHostLocalSvcProdData|x86.Deploy.0 = Debug|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|Any CPU.ActiveCfg = Debug|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|Any CPU.Build.0 = Debug|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|Any CPU.Deploy.0 = Debug|Any CPU
+		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|Any CPU.ActiveCfg = DebugApk|Any CPU
+		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|Any CPU.Build.0 = DebugApk|Any CPU
+		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|Any CPU.Deploy.0 = DebugApk|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|ARM.ActiveCfg = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|ARM.Build.0 = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|ARM.Deploy.0 = Debug|Any CPU

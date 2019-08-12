@@ -52,7 +52,10 @@ namespace DroidUpc
         {
             lock (m_plsProcessing)
             {
-                m_lp.LogEvent(crid, EventType.Verbose, "Checking processing list, there are {0} items in the list",
+                m_lp.LogEvent(
+                    crid,
+                    EventType.Verbose,
+                    "Checking processing list, there are {0} items in the list",
                     m_plsProcessing.Count);
                 for (int i = m_plsProcessing.Count - 1; i >= 0; i--)
                     if (m_plsProcessing[i] == sCode)
@@ -106,7 +109,7 @@ namespace DroidUpc
 
             string sResultText = result.Text;
 
-            DispatchScanCode(sResultText, crid);
+            DispatchScanCode(sResultText, m_cbCheckOnly.Checked, crid);
         }
 
         /*----------------------------------------------------------------------------
@@ -118,40 +121,41 @@ namespace DroidUpc
             automatically scanned (from the camera) or it was typed in (possibly
             from an attached wand scanner)
         ----------------------------------------------------------------------------*/
-        private void DispatchScanCode(string sResultText, CorrelationID crid)
+        private void DispatchScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
-            m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
+            m_isr.AddMessage(UpcAlert.AlertType.UPCScanBeep, $"Scan received: {sResultText}");
 
             if (AdasCurrent() == UpcInvCore.ADAS.DVD)
-                DispatchDvdScanCode(sResultText, crid);
+                DispatchDvdScanCode(sResultText, fCheckOnly, crid);
             else if (AdasCurrent() == UpcInvCore.ADAS.Book)
-                DispatchBookScanCode(sResultText, crid);
+                DispatchBookScanCode(sResultText, fCheckOnly, crid);
             else if (AdasCurrent() == UpcInvCore.ADAS.Wine)
-                DispatchWineScanCode(sResultText, crid);
+                DispatchWineScanCode(sResultText, fCheckOnly, crid);
         }
 
         void SetFocus(EditText eb, bool fWantKeyboard)
         {
-            RunOnUiThread(() =>
-            {
-                eb.RequestFocus();
-                eb.SelectAll();
-
-                InputMethodManager imm =
-                    (InputMethodManager)GetSystemService(global::Android.Content.Context.InputMethodService);
-
-                if (fWantKeyboard)
+            RunOnUiThread(
+                () =>
                 {
-                    imm.ShowSoftInput(eb, ShowFlags.Implicit);
-                }
-                else
-                {
-                    imm.HideSoftInputFromWindow(eb.WindowToken, 0);
-                }
-            });
+                    eb.RequestFocus();
+                    eb.SelectAll();
+
+                    InputMethodManager imm =
+                        (InputMethodManager) GetSystemService(global::Android.Content.Context.InputMethodService);
+
+                    if (fWantKeyboard)
+                    {
+                        imm.ShowSoftInput(eb, ShowFlags.Implicit);
+                    }
+                    else
+                    {
+                        imm.HideSoftInputFromWindow(eb.WindowToken, 0);
+                    }
+                });
         }
 
-        void DispatchWineScanCode(string sResultText, CorrelationID crid)
+        void DispatchWineScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
             string sScanCode = sResultText;
 
@@ -165,29 +169,39 @@ namespace DroidUpc
             RunOnUiThread(() => m_ebScanCode.Text = sScanCode);
 
             // The removal of the reentrancy guard will happen asynchronously
-            m_upccCore.DoHandleWineScanCode(sScanCode, m_ebNotes.Text, crid, (cridDel, sTitle, fResult) =>
-            {
-                RunOnUiThread(() =>
+            m_upccCore.DoHandleWineScanCode(
+                sScanCode,
+                m_ebNotes.Text,
+                fCheckOnly,
+                crid,
+                (cridDel, sTitle, fResult) =>
                 {
-                    if (sTitle == null)
-                    {
-                        m_ebTitle.Text = "!!TITLE NOT FOUND";
-                        SetFocus(m_ebTitle, true);
-                    }
-                    else
-                    {
-                        m_ebTitle.Text = sTitle;
-                        SetFocus(m_ebScanCode, false);
-                    }
+                    RunOnUiThread(
+                        () =>
+                        {
+                            if (sTitle == null)
+                            {
+                                m_ebTitle.Text = "!!TITLE NOT FOUND";
+                                SetFocus(m_ebTitle, true);
+                            }
+                            else
+                            {
+                                m_ebTitle.Text = sTitle;
+                                SetFocus(m_ebScanCode, false);
+                            }
 
-                    m_lp.LogEvent(cridDel, fResult ? EventType.Information : EventType.Error,
-                        "FinalScanCodeCleanup: {0}: {1}", fResult, sTitle);
-                    FinishCode(sScanCode, cridDel);
+                            m_lp.LogEvent(
+                                cridDel,
+                                fResult ? EventType.Information : EventType.Error,
+                                "FinalScanCodeCleanup: {0}: {1}",
+                                fResult,
+                                sTitle);
+                            FinishCode(sScanCode, cridDel);
+                        });
                 });
-            });
         }
 
-        void DispatchBookScanCode(string sResultText, CorrelationID crid)
+        void DispatchBookScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
             string sIsbn13 = m_upccCore.SEnsureIsbn13(sResultText);
 
@@ -208,28 +222,39 @@ namespace DroidUpc
             RunOnUiThread(() => m_ebScanCode.Text = sIsbn13);
 
             // The removal of the reentrancy guard will happen asynchronously
-            m_upccCore.DoHandleBookScanCode(sIsbn13, m_ebLocation.Text, crid, (cridDel, sTitle, fResult) =>
-            {
-                RunOnUiThread(() =>
+            m_upccCore.DoHandleBookScanCode(
+                sIsbn13,
+                m_ebLocation.Text,
+                fCheckOnly,
+                crid,
+                (cridDel, sTitle, fResult) =>
                 {
-                    if (sTitle == null)
-                    {
-                        m_ebTitle.Text = "!!TITLE NOT FOUND";
-                        SetFocus(m_ebTitle, true);
-                    }
-                    else
-                    {
-                        m_ebTitle.Text = sTitle;
-                        SetFocus(m_ebScanCode, false);
-                    }
-                });
+                    RunOnUiThread(
+                        () =>
+                        {
+                            if (sTitle == null)
+                            {
+                                m_ebTitle.Text = "!!TITLE NOT FOUND";
+                                SetFocus(m_ebTitle, true);
+                            }
+                            else
+                            {
+                                m_ebTitle.Text = sTitle;
+                                SetFocus(m_ebScanCode, false);
+                            }
+                        });
 
-                m_lp.LogEvent(cridDel, fResult ? EventType.Information : EventType.Error, "FinalScanCodeCleanup: {0}: {1}", fResult, sTitle);
-                FinishCode(sIsbn13, cridDel);
-            });
+                    m_lp.LogEvent(
+                        cridDel,
+                        fResult ? EventType.Information : EventType.Error,
+                        "FinalScanCodeCleanup: {0}: {1}",
+                        fResult,
+                        sTitle);
+                    FinishCode(sIsbn13, cridDel);
+                });
         }
 
-        private void DispatchDvdScanCode(string sResultText, CorrelationID crid)
+        private void DispatchDvdScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
             string sCode = m_upccCore.SEnsureEan13(sResultText);
 
@@ -239,40 +264,59 @@ namespace DroidUpc
             {
                 if (!FAddProcessingCode(sCode, crid))
                     return;
-
             }
             catch (Exception exc)
             {
-                this.RunOnUiThread(() =>
-                    {
-                        m_isr.AddMessage(UpcAlert.AlertType.Halt, "Exception caught: {0}", exc.Message);
-                    });
+                this.RunOnUiThread(() => { m_isr.AddMessage(UpcAlert.AlertType.Halt, "Exception caught: {0}", exc.Message); });
             }
             // now handle this scan code
 
             this.RunOnUiThread(() => m_ebScanCode.Text = sCode);
 
-
             // The removal of the reentrancy guard will happen asynchronously
-            m_upccCore.DoHandleDvdScanCode(sCode, crid, (cridDel, sTitle, fResult) =>
-            {
-                this.RunOnUiThread(() =>
+            m_upccCore.DoHandleDvdScanCode(
+                sCode,
+                fCheckOnly,
+                crid,
+                (cridDel, sTitle, fResult) =>
                 {
-                    if (sTitle == null)
-                    {
-                        m_ebTitle.Text = "!!TITLE NOT FOUND";
-                        SetFocus(m_ebTitle, true);
-                    }
-                    else
-                    {
-                        m_ebTitle.Text = sTitle;
-                        SetFocus(m_ebScanCode, false);
-                    }
-                });
+                    this.RunOnUiThread(
+                        () =>
+                        {
+                            if (sTitle == null)
+                            {
+                                m_ebTitle.Text = "!!TITLE NOT FOUND";
+                                SetFocus(m_ebTitle, true);
+                            }
+                            else
+                            {
+                                m_ebTitle.Text = sTitle;
+                                SetFocus(m_ebScanCode, false);
+                            }
+                        });
 
-                m_lp.LogEvent(cridDel, fResult ? EventType.Information : EventType.Error, "FinalScanCodeCleanup: {0}: {1}", fResult, sTitle);
-                FinishCode(sCode, cridDel);
-            });
+                    m_lp.LogEvent(
+                        cridDel,
+                        fResult ? EventType.Information : EventType.Error,
+                        "FinalScanCodeCleanup: {0}: {1}",
+                        fResult,
+                        sTitle);
+                    FinishCode(sCode, cridDel);
+                });
+        }
+
+        private void DoCodeKeyPress(object sender, View.KeyEventArgs eventArgs)
+        {
+            if (eventArgs.KeyCode == Keycode.Enter && eventArgs.Event.Action == KeyEventActions.Up)
+            {
+                CorrelationID crid = new CorrelationID();
+                string sResultText = m_ebScanCode.Text;
+
+                m_lp.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", sResultText);
+
+                DispatchScanCode(sResultText, m_cbCheckOnly.Checked, crid);
+                eventArgs.Handled = true;
+            }
         }
 
         /*----------------------------------------------------------------------------
@@ -309,9 +353,9 @@ namespace DroidUpc
             bool fResult = false;
 
             if (m_adasCurrent == UpcInvCore.ADAS.DVD)
-                fResult = await m_upccCore.DoCreateDvdTitle(m_ebScanCode.Text, sTitle, crid);
+                fResult = await m_upccCore.DoCreateDvdTitle(m_ebScanCode.Text, sTitle, m_cbCheckOnly.Checked, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Book)
-                fResult = await m_upccCore.DoCreateBookTitle(m_ebScanCode.Text, sTitle, m_ebLocation.Text, crid);
+                fResult = await m_upccCore.DoCreateBookTitle(m_ebScanCode.Text, sTitle, m_ebLocation.Text, m_cbCheckOnly.Checked, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Wine)
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "No manual operation available for Wine");
 
@@ -332,32 +376,33 @@ namespace DroidUpc
             if (m_txtLocation == null || m_ebLocation == null || m_ebNotes == null)
                 return;
 
-            RunOnUiThread(() =>
-            {
-                switch (adas)
+            RunOnUiThread(
+                () =>
                 {
-                    case UpcInvCore.ADAS.Book:
-                        m_txtLocation.Visibility = Android.Views.ViewStates.Visible;
-                        m_ebLocation.Visibility = Android.Views.ViewStates.Visible;
-                        m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
-                        break;
-                    case UpcInvCore.ADAS.Wine:
-                        m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
-                        m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
-                        m_ebNotes.Visibility = Android.Views.ViewStates.Visible;
-                        break;
-                    case UpcInvCore.ADAS.DVD:
-                        m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
-                        m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
-                        m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
-                        break;
-                    case UpcInvCore.ADAS.Generic:
-                        m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
-                        m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
-                        m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
-                        break;
-                }
-            });
+                    switch (adas)
+                    {
+                        case UpcInvCore.ADAS.Book:
+                            m_txtLocation.Visibility = Android.Views.ViewStates.Visible;
+                            m_ebLocation.Visibility = Android.Views.ViewStates.Visible;
+                            m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
+                            break;
+                        case UpcInvCore.ADAS.Wine:
+                            m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
+                            m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
+                            m_ebNotes.Visibility = Android.Views.ViewStates.Visible;
+                            break;
+                        case UpcInvCore.ADAS.DVD:
+                            m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
+                            m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
+                            m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
+                            break;
+                        case UpcInvCore.ADAS.Generic:
+                            m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
+                            m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
+                            m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
+                            break;
+                    }
+                });
         }
 
         private void DoCheckChange(object sender, EventArgs e)
@@ -367,7 +412,7 @@ namespace DroidUpc
 
         private void OnEnterSelectAll(object sender, View.FocusChangeEventArgs e)
         {
-            EditText eb = (EditText)sender;
+            EditText eb = (EditText) sender;
             if (e.HasFocus)
                 eb.SelectAll();
         }
