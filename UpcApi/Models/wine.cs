@@ -64,7 +64,7 @@ namespace UpcApi
         {
             string sNow = DateTime.Now.ToString();
 
-            string sCmd = String.Format("sp_drinkwine '{0}', '{1}', '{2}', '{3}', '{4}'", Sql.Sqlify(sScanCode), Sql.Sqlify(sWine), Sql.Sqlify(sVintage), Sql.Sqlify(sNotes), sNow);
+            string sCmd = String.Format("sp_drinkwine '{0}', '{1}', '{2}', '{3}', '{4}'", Sql.Sqlify(sScanCode), Sql.Sqlify(sWine ?? ""), Sql.Sqlify(sVintage ?? ""), Sql.Sqlify(sNotes ?? ""), sNow);
             return Shared.DoGenericQueryDelegateRead(sCmd, null, Shared.FromUSR);
         }
     }
