@@ -28,6 +28,13 @@ namespace UpcApi.Controllers
         }
 
         [HttpGet]
+        [Route("api/book/QueryBookScanInfos")]
+        public IHttpActionResult QueryBookScanInfos(string Title, string Author, string Series, string Summary)
+        {
+            return Ok(UpcBook.QueryBookScanInfos(Title, Author, Series, Summary));
+        }
+
+        [HttpGet]
         [Route("api/book/CreateBook")]
         public IHttpActionResult CreateBook([FromUri] string ScanCode, [FromUri] string Title, [FromUri] string Location)
         {
