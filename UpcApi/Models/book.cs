@@ -134,17 +134,44 @@ namespace UpcApi
         }
 
         /*----------------------------------------------------------------------------
-            %%Function: GetDvdScanInfosFromTitle
-            %%Qualified: UpcSvc.UpcSvc.GetDvdScanInfosFromTitle
-            %%Contact: rlittle
-    
-            Get the list of matching dvdInfo items for the given title substring
+        	%%Function: GetBookScanInfosFromTitle
+        	%%Qualified: UpcApi.UpcBook.GetBookScanInfosFromTitle
+        	
+            Get the list of matching bookInfo items for the given title substring
         ----------------------------------------------------------------------------*/
         public static USR_BookInfoList GetBookScanInfosFromTitle(string sTitleSubstring)
         {
             SqlWhere sqlw = new SqlWhere();
             sqlw.AddAliases(s_mpBookAlias);
             sqlw.Add(String.Format("$$upc_books$$.Title like '%{0}%'", Sql.Sqlify(sTitleSubstring)), SqlWhere.Op.And);
+
+            string sFullQuery = String.Format("SELECT {0}", sqlw.GetWhere(s_sQueryBook));
+
+            return Shared.DoGenericQueryDelegateRead(sFullQuery, ReaderGetBookScanInfoListDelegate, USR_BookInfoList.FromTCSR);
+        }
+
+        /*----------------------------------------------------------------------------
+        	%%Function: GetBookScanInfosFromTitle
+        	%%Qualified: UpcApi.UpcBook.GetBookScanInfosFromTitle
+        	
+            Get the list of matching bookInfo items for the given title substring
+        ----------------------------------------------------------------------------*/
+        public static USR_BookInfoList QueryBookScanInfos(
+            string sTitleSubstring,
+            string sAuthorSubstring,
+            string sSeriesSubstring,
+            string sSummarySubstring)
+        {
+            SqlWhere sqlw = new SqlWhere();
+            sqlw.AddAliases(s_mpBookAlias);
+            if (sTitleSubstring != null)
+                sqlw.Add(String.Format("$$upc_books$$.Title like '%{0}%'", Sql.Sqlify(sTitleSubstring)), SqlWhere.Op.And);
+            if (sAuthorSubstring != null)
+                sqlw.Add(String.Format("$$upc_books$$.Author like '%{0}%'", Sql.Sqlify(sAuthorSubstring)), SqlWhere.Op.And);
+            if (sSeriesSubstring != null)
+                sqlw.Add(String.Format("$$upc_books$$.Series like '%{0}%'", Sql.Sqlify(sSeriesSubstring)), SqlWhere.Op.And);
+            if (sSummarySubstring != null)
+                sqlw.Add(String.Format("$$upc_books$$.Summary like '%{0}%'", Sql.Sqlify(sSummarySubstring)), SqlWhere.Op.And);
 
             string sFullQuery = String.Format("SELECT {0}", sqlw.GetWhere(s_sQueryBook));
 
