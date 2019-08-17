@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -11,6 +12,7 @@ using Windows.Foundation.Collections;
 using Windows.Media.Capture;
 using Windows.Perception.Spatial;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,6 +26,7 @@ using ZXing;
 using ZXing.Common;
 using ZXing.Mobile;
 using TCore.Logging;
+using TCore.Pipeline;
 
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -62,6 +65,9 @@ namespace UniversalUpc
             m_sb.Initialize(recStatus, m_upca);
             AdjustUIForMediaType(m_adasCurrent);
             AdjustUIForAvailableHardware();
+
+            m_pipeline = new ProducerConsumer<Transaction>(null, TransactionDispatcher);
+            m_pipeline.Start();
         }
 
         async Task AdjustUIForAvailableHardware()
@@ -183,6 +189,7 @@ namespace UniversalUpc
         private void DispatchScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
             m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
+            m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
 
             if (m_adasCurrent == UpcInvCore.ADAS.DVD)
                 DispatchDvdScanCode(sResultText, fCheckOnly, crid);
@@ -289,6 +296,14 @@ namespace UniversalUpc
                 });
         }
 
+        async void SetTextBoxText(TextBox eb, string text)
+        {
+            if (eb.Dispatcher.HasThreadAccess)
+                eb.Text = text;
+            else
+                await eb.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { eb.Text = text; });
+        }
+
         private void DispatchDvdScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
             string sCode = m_upccCore.SEnsureEan13(sResultText);
@@ -296,38 +311,83 @@ namespace UniversalUpc
             // guard against reentrancy on the same scan code.
             m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", sCode);
             if (!FAddProcessingCode(sCode, crid))
+            {
+                // even if we bail out...set the focus
+                SetFocus(ebScanCode, false);
                 return;
+            }
 
             // now handle this scan code
 
-            ebScanCode.Text = sCode;
+            // ebScanCode.Text = sCode;
 
             // The removal of the reentrancy guard will happen asynchronously
-            m_upccCore.DoHandleDvdScanCode(
-                sCode,
-                fCheckOnly,
-                crid,
-                (cridDel, sTitle, fResult) =>
-                {
-                    if (sTitle == null)
-                    {
-                        ebTitle.Text = "!!TITLE NOT FOUND";
-                        SetFocus(ebTitle, true);
-                    }
-                    else
-                    {
-                        ebTitle.Text = sTitle;
-                        SetFocus(ebScanCode, false);
-                    }
 
-                    m_lp.LogEvent(
-                        cridDel,
-                        fResult ? EventType.Information : EventType.Error,
-                        "FinalScanCodeCleanup: {0}: {1}",
-                        fResult,
-                        sTitle);
-                    FinishCode(sCode, cridDel);
+            WorkBoard.WorkItemDispatch del = new WorkBoard.WorkItemDispatch(
+                () =>
+                {
+                    m_upccCore.DoHandleDvdScanCode(
+                        sCode,
+                        fCheckOnly,
+                        crid,
+                        (cridDel, sTitle, fResult) =>
+                        {
+                            if (sTitle == null)
+                            {
+                                SetTextBoxText(ebScanCode, "");
+                                SetTextBoxText(ebTitle, "!!TITLE NOT FOUND");
+                            }
+                            else
+                            {
+                                SetTextBoxText(ebTitle, sTitle);
+                            }
+
+                            m_lp.LogEvent(
+                                cridDel,
+                                fResult ? EventType.Information : EventType.Error,
+                                "FinalScanCodeCleanup: {0}: {1}",
+                                fResult,
+                                sTitle);
+                            FinishCode(sCode, cridDel);
+                        });
                 });
+
+            int workId = m_board.CreateWork(sCode, del);
+
+            WorkItemView view = m_board.GetWorkItemView(workId);
+
+            // lstWorkBoard.Items.Add(view);
+            m_pipeline.Producer.QueueRecord(new Transaction(workId));
+            SetFocus(ebScanCode, false);
+        }
+
+        public class Transaction : IPipelineBase<Transaction>
+        {
+            public int WorkId { get; set; }
+
+            public Transaction()
+            {
+            }
+
+            public Transaction(int workId)
+            {
+                WorkId = workId;
+            }
+
+            public void InitFrom(Transaction from)
+            {
+                WorkId = from.WorkId;
+            }
+        }
+
+        private ProducerConsumer<Transaction> m_pipeline;
+
+        public void TransactionDispatcher(IEnumerable<Transaction> items)
+        {
+            foreach (Transaction item in items)
+            {
+                m_board.DoWorkItem(item.WorkId);
+            }
         }
 
         private async void ToggleScan(object sender, RoutedEventArgs e)
@@ -349,6 +409,8 @@ namespace UniversalUpc
                 m_fScannerOn = false;
             }
         }
+
+        private WorkBoard m_board = new WorkBoard();
 
         /*----------------------------------------------------------------------------
         	%%Function: DoManual

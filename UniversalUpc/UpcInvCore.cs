@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media;
 using TCore.Logging;
@@ -380,10 +381,14 @@ namespace UniversalUpc
             bool fResult = false;
             m_lp.LogEvent(crid, EventType.Verbose,
                 "Continuing with processing for {0}...Checking for DvdInfo from service", sCode);
+
+            m_isr.AddMessage(UpcAlert.AlertType.None, $"Checking inventory for code: {sCode}...");
+
             DvdInfo dvdi = await DvdInfoRetrieve(sCode);
 
             if (dvdi != null)
             {
+                Thread.Sleep(1000);
                 DoUpdateDvdScanDate(sCode, dvdi, fCheckOnly, crid, del);
             }
             else
@@ -407,7 +412,18 @@ namespace UniversalUpc
         {
             m_lp.LogEvent(crid, EventType.Verbose, "No DVD info for scan code {0}, looking up...", sCode);
 
-            m_isr.AddMessage(UpcAlert.AlertType.None, "looking up code {0}", sCode);
+            m_isr.AddMessage(UpcAlert.AlertType.None, "No inventory found, doing lookup for code: {0}", sCode);
+
+            // if the scan length is > 12, then chop off the beginning (likely padding)
+            if (sCode.Length > 12)
+                sCode = sCode.Substring(sCode.Length - 12);
+
+            if (sCode.Length != 12)
+            {
+                m_isr.AddMessage(UpcAlert.AlertType.None, $"Scancode {sCode} not a valid UPC code.");
+                return null;
+            }
+
             string sTitle = await FetchTitleFromGenericUPC(sCode);
 
             if (sTitle == "" || sTitle.Substring(0, 2) == "!!")
