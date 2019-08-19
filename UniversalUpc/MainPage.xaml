@@ -90,6 +90,7 @@
             <!--<Grid HorizontalAlignment="Left" Height="559" Margin="10,71,0,0" VerticalAlignment="Top" Width="340"> -->
             <!--<CaptureElement Name="previewVideo" VerticalAlignment="Center"/>-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <CheckBox x:Name="cbErrorSoundsOnly" Checked="DoErrorSoundsChange" Unchecked="DoErrorSoundsChange">Error Sounds Only</CheckBox>
                 <CheckBox x:Name="cbCheckOnly" Checked="DoCheckChange" Unchecked="DoCheckChange">Check Only</CheckBox>
                 <Button Height="Auto" Content="Manual" x:Name="pbManualAdd" Click="DoManual"/>
                 <Button Height="Auto" Content="Scan" x:Name="pbScan" Click="ToggleScan" Margin="2" />

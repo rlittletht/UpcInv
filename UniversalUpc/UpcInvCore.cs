@@ -374,6 +374,7 @@ namespace UniversalUpc
         public async void DoHandleDvdScanCode(
             string sCode,
             bool fCheckOnly,
+            bool fErrorSoundsOnly, 
             CorrelationID crid,
             FinalScanCodeCleanupDelegate del)
         {
@@ -389,14 +390,14 @@ namespace UniversalUpc
             if (dvdi != null)
             {
                 Thread.Sleep(1000);
-                DoUpdateDvdScanDate(sCode, dvdi, fCheckOnly, crid, del);
+                DoUpdateDvdScanDate(sCode, dvdi, fCheckOnly, fErrorSoundsOnly, crid, del);
             }
             else
             {
                 sTitle = await DoLookupDvdTitle(sCode, crid);
 
                 if (sTitle != null)
-                    fResult = await DoCreateDvdTitle(sCode, sTitle, fCheckOnly, crid);
+                    fResult = await DoCreateDvdTitle(sCode, sTitle, fCheckOnly, fErrorSoundsOnly, crid);
 
                 del(crid, sTitle, fResult);
             }
@@ -468,7 +469,7 @@ namespace UniversalUpc
         	%%Contact: rlittle
         	
         ----------------------------------------------------------------------------*/
-        public async Task<bool> DoCreateDvdTitle(string sCode, string sTitle, bool fCheckOnly, CorrelationID crid)
+        public async Task<bool> DoCreateDvdTitle(string sCode, string sTitle, bool fCheckOnly, bool fErrorSoundsOnly, CorrelationID crid)
         {
             string sCheck = fCheckOnly ? "[CheckOnly] " : "";
             m_lp.LogEvent(crid, EventType.Verbose, "Service returned title {0} for code {1}. Adding title.", sTitle, sCode);
@@ -476,7 +477,7 @@ namespace UniversalUpc
             bool fResult = fCheckOnly || await CreateDvd(sCode, sTitle, crid);
 
             if (fResult)
-                m_isr.AddMessage(UpcAlert.AlertType.GoodInfo, "{2}Added title for {0}: {1}", sCode, sTitle, sCheck);
+                m_isr.AddMessage(fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.GoodInfo, "{2}Added title for {0}: {1}", sCode, sTitle, sCheck);
             else
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Couldn't create DVD title for {0}: {1}", sCode, sTitle);
 
@@ -493,6 +494,7 @@ namespace UniversalUpc
             string sCode,
             DvdInfo dvdi,
             bool fCheckOnly,
+            bool fErrorSoundsOnly,
             CorrelationID crid,
             FinalScanCodeCleanupDelegate del)
         {
@@ -518,7 +520,7 @@ namespace UniversalUpc
             if (fResult)
             {
                 m_lp.LogEvent(crid, EventType.Verbose, "{1}Successfully updated last scan for {0}", sCode, sCheck);
-                m_isr.AddMessage(UpcAlert.AlertType.GoodInfo, "{2}{0}: Updated LastScan (was {1})", dvdi.Title,
+                m_isr.AddMessage(fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.GoodInfo, "{2}{0}: Updated LastScan (was {1})", dvdi.Title,
                     dvdi.LastScan.ToString(), sCheck);
             }
             else

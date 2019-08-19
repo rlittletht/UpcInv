@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using System.Reflection;
 using System.IO;
+using Windows.Media.Core;
+using Windows.Media.Playback;
+using Windows.Media.Streaming.Adaptive;
 using Windows.Storage;
 using Windows.UI.Core;
 
@@ -28,19 +31,17 @@ namespace UniversalUpc
             None
             };
 
-        private Dictionary<AlertType, MediaElement> m_mpAlertMedia;
+        private Dictionary<AlertType, IMediaPlaybackSource> m_mpAlertMedia;
 
-        private async Task<MediaElement> LoadSoundFile(string v)
+        private async Task<IMediaPlaybackSource> LoadSoundFile(string v)
         {
-            MediaElement snd = new MediaElement();
-
-            snd.AutoPlay = false;
             StorageFolder folder = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync("Assets");
             StorageFile file = await folder.GetFileAsync(v);
-            var stream = await file.OpenAsync(FileAccessMode.Read);
-            snd.SetSource(stream, file.ContentType);
-            return snd;
+            var i = MediaSource.CreateFromStream(await file.OpenAsync(FileAccessMode.Read), file.ContentType);
+
+            return i;
         }
+
         async void LoadEffects()
         {
             m_mpAlertMedia.Add(AlertType.GoodInfo, await LoadSoundFile("Exclamation.wav"));
@@ -50,9 +51,13 @@ namespace UniversalUpc
             m_mpAlertMedia.Add(AlertType.Halt, await LoadSoundFile("Ding.wav"));
             m_mpAlertMedia.Add(AlertType.UPCScanBeep, await LoadSoundFile("263133__pan14__tone-beep.wav"));
         }
+
+        private MediaPlayer m_player;
+
         public UpcAlert()
         {
-            m_mpAlertMedia = new Dictionary<AlertType, MediaElement>();
+            m_player = new MediaPlayer();
+            m_mpAlertMedia = new Dictionary<AlertType, IMediaPlaybackSource>();
 
             LoadEffects();
         }
@@ -67,8 +72,8 @@ namespace UniversalUpc
             if (at == AlertType.None)
                 return;
 
-            MediaElement me = m_mpAlertMedia[at];
-            me.Play();
+            m_player.Source = m_mpAlertMedia[at];
+            m_player.Play();
         }
 #if none
         void DoAlert(AlertType at, string s)

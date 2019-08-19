@@ -45,6 +45,7 @@ namespace UniversalUpc
         private bool m_fScannerOn;
         private bool m_fScannerSetup;
         private bool m_fCheckOnly;
+        private bool m_fErrorSoundsOnly;
 
         private UpcInvCore.ADAS m_adasCurrent;
 
@@ -141,7 +142,8 @@ namespace UniversalUpc
             if (result != null)
             {
                 txtStatus.Text = "result != null, format = " + result.BarcodeFormat + ", text = " + result.Text;
-                m_upca.Play(UpcAlert.AlertType.GoodInfo);
+                if (!m_fErrorSoundsOnly)
+                    m_upca.Play(UpcAlert.AlertType.GoodInfo);
             }
             else
             {
@@ -188,11 +190,11 @@ namespace UniversalUpc
         ----------------------------------------------------------------------------*/
         private void DispatchScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
-            m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
-            m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
+            if (!m_fErrorSoundsOnly)
+                m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
 
             if (m_adasCurrent == UpcInvCore.ADAS.DVD)
-                DispatchDvdScanCode(sResultText, fCheckOnly, crid);
+                DispatchDvdScanCode(sResultText, fCheckOnly, m_fErrorSoundsOnly, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Book)
                 DispatchBookScanCode(sResultText, fCheckOnly, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Wine)
@@ -254,7 +256,7 @@ namespace UniversalUpc
             if (sIsbn13.StartsWith("!!"))
             {
                 m_lp.LogEvent(crid, EventType.Error, sIsbn13);
-                m_sb.AddMessage(UpcAlert.AlertType.BadInfo, sIsbn13);
+                m_sb.AddMessage(m_fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.BadInfo, sIsbn13);
                 return;
             }
 
@@ -304,7 +306,7 @@ namespace UniversalUpc
                 await eb.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { eb.Text = text; });
         }
 
-        private void DispatchDvdScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
+        private void DispatchDvdScanCode(string sResultText, bool fCheckOnly, bool fErrorSoundsOnly, CorrelationID crid)
         {
             string sCode = m_upccCore.SEnsureEan13(sResultText);
 
@@ -329,6 +331,7 @@ namespace UniversalUpc
                     m_upccCore.DoHandleDvdScanCode(
                         sCode,
                         fCheckOnly,
+                        fErrorSoundsOnly,
                         crid,
                         (cridDel, sTitle, fResult) =>
                         {
@@ -446,16 +449,24 @@ namespace UniversalUpc
             bool fResult = false;
 
             if (m_adasCurrent == UpcInvCore.ADAS.DVD)
-                fResult = await m_upccCore.DoCreateDvdTitle(ebScanCode.Text, sTitle, m_fCheckOnly, crid);
+                fResult = await m_upccCore.DoCreateDvdTitle(ebScanCode.Text, sTitle, m_fCheckOnly, m_fErrorSoundsOnly, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Book)
                 fResult = await m_upccCore.DoCreateBookTitle(ebScanCode.Text, sTitle, ebLocation.Text, m_fCheckOnly, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Wine)
                 m_sb.AddMessage(UpcAlert.AlertType.BadInfo, "No manual operation available for Wine");
 
             if (fResult)
-                m_sb.AddMessage(UpcAlert.AlertType.GoodInfo, "Added {0} as {1}", ebScanCode.Text, sTitle);
+            {
+                m_sb.AddMessage(
+                    m_fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.GoodInfo,
+                    "Added {0} as {1}",
+                    ebScanCode.Text,
+                    sTitle);
+            }
             else
+            {
                 m_sb.AddMessage(UpcAlert.AlertType.Halt, "FAILED  to Added {0} as {1}", ebScanCode.Text, sTitle);
+            }
         }
 
         private void SetNewMediaType(object sender, RoutedEventArgs e)
@@ -497,6 +508,11 @@ namespace UniversalUpc
         private void DoCheckChange(object sender, RoutedEventArgs e)
         {
             m_fCheckOnly = cbCheckOnly.IsChecked ?? false;
+        }
+
+        private void DoErrorSoundsChange(object sender, RoutedEventArgs e)
+        {
+            m_fErrorSoundsOnly = cbErrorSoundsOnly.IsChecked ?? false;
         }
 
         private void OnEnterSelectAll(object sender, RoutedEventArgs e)
