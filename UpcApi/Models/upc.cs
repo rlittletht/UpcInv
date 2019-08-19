@@ -49,7 +49,7 @@ namespace UpcApi
             string sError;
 
             if (!Book.FScrapeBook(book, out sError))
-                return "!!NO TITLE FOUND: " + sError;
+                return "!!NO TITLE FOUND: " + sError.Substring(0, 50);
 
             return book.Title;
         }
