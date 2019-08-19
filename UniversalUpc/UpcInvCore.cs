@@ -361,7 +361,7 @@ namespace UniversalUpc
 
         #region DVD Client
 
-        public delegate void FinalScanCodeCleanupDelegate(CorrelationID crid, string sFinalTitle, bool fResult);
+        public delegate void FinalScanCodeReportAndCleanupDelegate(string scanCode, CorrelationID crid, string sFinalTitle, bool fResult);
 
         /*----------------------------------------------------------------------------
         	%%Function: DoHandleDvdScanCode
@@ -373,10 +373,11 @@ namespace UniversalUpc
         ----------------------------------------------------------------------------*/
         public async void DoHandleDvdScanCode(
             string sCode,
+            string sUnused,
             bool fCheckOnly,
             bool fErrorSoundsOnly, 
             CorrelationID crid,
-            FinalScanCodeCleanupDelegate del)
+            FinalScanCodeReportAndCleanupDelegate del)
         {
             string sTitle = null;
             bool fResult = false;
@@ -399,7 +400,7 @@ namespace UniversalUpc
                 if (sTitle != null)
                     fResult = await DoCreateDvdTitle(sCode, sTitle, fCheckOnly, fErrorSoundsOnly, crid);
 
-                del(crid, sTitle, fResult);
+                del(sCode, crid, sTitle, fResult);
             }
         }
 
@@ -421,7 +422,7 @@ namespace UniversalUpc
 
             if (sCode.Length != 12)
             {
-                m_isr.AddMessage(UpcAlert.AlertType.None, $"Scancode {sCode} not a valid UPC code.");
+                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, $"Scancode {sCode} not a valid UPC code.");
                 return null;
             }
 
@@ -496,7 +497,7 @@ namespace UniversalUpc
             bool fCheckOnly,
             bool fErrorSoundsOnly,
             CorrelationID crid,
-            FinalScanCodeCleanupDelegate del)
+            FinalScanCodeReportAndCleanupDelegate del)
         {
             string sCheck = fCheckOnly ? "[CheckOnly] " : "";
 
@@ -508,7 +509,7 @@ namespace UniversalUpc
                 m_lp.LogEvent(crid, EventType.Verbose, "{1}Avoiding duplicate scan for {0}", sCode, sCheck);
                 m_isr.AddMessage(UpcAlert.AlertType.Duplicate, "{2}{0}: Duplicate?! LastScan was {1}", dvdi.Title,
                     dvdi.LastScan.ToString(), sCheck);
-                del(crid, dvdi.Title, true);
+                del(sCode, crid, dvdi.Title, true);
                 return;
             }
 
@@ -529,7 +530,7 @@ namespace UniversalUpc
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "{1}{0}: Failed to update last scan!", dvdi.Title, sCheck);
             }
 
-            del(crid, dvdi.Title, true);
+            del(sCode, crid, dvdi.Title, true);
         }
 
         #endregion
@@ -540,13 +541,14 @@ namespace UniversalUpc
             string sCode,
             string sNotes,
             bool fCheckOnly,
+            bool fErrorSoundsOnly,
             CorrelationID crid,
-            FinalScanCodeCleanupDelegate del)
+            FinalScanCodeReportAndCleanupDelegate del)
         {
             if (sNotes.StartsWith("!!"))
             {
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Notes not set: {0}", sNotes);
-                del(crid, null, false);
+                del(sCode, crid, null, false);
                 return;
             }
 
@@ -558,7 +560,7 @@ namespace UniversalUpc
 
             if (wni != null)
             {
-                DoDrinkWine(sCode, sNotes, wni, fCheckOnly, crid, del);
+                DoDrinkWine(sCode, sNotes, wni, fCheckOnly, fErrorSoundsOnly, crid, del);
             }
             else
             {
@@ -566,7 +568,7 @@ namespace UniversalUpc
 
                 sTitle = "!!WINE NOTE FOUND";
 
-                del(crid, sTitle, false);
+                del(sCode, crid, sTitle, false);
             }
         }
 
@@ -575,8 +577,9 @@ namespace UniversalUpc
             string sNotes,
             WineInfo wni,
             bool fCheckOnly,
+            bool fErrorSoundsOnly, // we ignore this for wines -- we don't do bulk wine scanning
             CorrelationID crid,
-            FinalScanCodeCleanupDelegate del)
+            FinalScanCodeReportAndCleanupDelegate del)
         {
             string sCheck = fCheckOnly ? "[CheckOnly] " : "";
             m_lp.LogEvent(crid, EventType.Verbose, "Service returned info for {0}", sCode);
@@ -597,7 +600,7 @@ namespace UniversalUpc
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "{0}: Failed to drink wine!", wni.Wine);
             }
 
-            del(crid, wni.Wine, true);
+            del(sCode, crid, wni.Wine, true);
         }
 
         #endregion
@@ -616,13 +619,14 @@ namespace UniversalUpc
             string sCode,
             string sLocation,
             bool fCheckOnly,
+            bool fErrorSoundsOnly,
             CorrelationID crid,
-            FinalScanCodeCleanupDelegate del)
+            FinalScanCodeReportAndCleanupDelegate del)
         {
             if (sLocation.StartsWith("!!"))
             {
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Location not set: {0}", sLocation);
-                del(crid, null, false);
+                del(sCode, crid, null, false);
                 return;
             }
 
@@ -633,16 +637,16 @@ namespace UniversalUpc
 
             if (bki != null)
             {
-                DoUpdateBookScanDate(sCode, sLocation, bki, fCheckOnly, crid, del);
+                DoUpdateBookScanDate(sCode, sLocation, bki, fCheckOnly, fErrorSoundsOnly, crid, del);
             }
             else
             {
                 sTitle = await DoLookupBookTitle(sCode, crid);
 
                 if (sTitle != null)
-                    fResult = await DoCreateBookTitle(sCode, sTitle, sLocation, fCheckOnly, crid);
+                    fResult = await DoCreateBookTitle(sCode, sTitle, sLocation, fCheckOnly, fErrorSoundsOnly, crid);
 
-                del(crid, sTitle, fResult);
+                del(sCode, crid, sTitle, fResult);
             }
         }
 
@@ -701,7 +705,7 @@ namespace UniversalUpc
         	%%Contact: rlittle
         	
         ----------------------------------------------------------------------------*/
-        public async Task<bool> DoCreateBookTitle(string sCode, string sTitle, string sLocation, bool fCheckOnly, CorrelationID crid)
+        public async Task<bool> DoCreateBookTitle(string sCode, string sTitle, string sLocation, bool fCheckOnly, bool fErrorSoundsOnly, CorrelationID crid)
         {
             string sCheck = fCheckOnly ? "[CheckOnly] " : "";
             m_lp.LogEvent(crid, EventType.Verbose, "Service returned title {0} for code {1}. Adding title.", sTitle,
@@ -709,7 +713,7 @@ namespace UniversalUpc
 
             bool fResult = fCheckOnly || await CreateBook(sCode, sTitle, sLocation, crid);
             if (fResult)
-                m_isr.AddMessage(UpcAlert.AlertType.GoodInfo, "{2}Added title for {0}: {1}", sCode, sTitle, sCheck);
+                m_isr.AddMessage(fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.GoodInfo, "{2}Added title for {0}: {1}", sCode, sTitle, sCheck);
             else
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Couldn't create Book title for {0}: {1}", sCode, sTitle);
 
@@ -727,8 +731,9 @@ namespace UniversalUpc
             string sLocation,
             BookInfo bki,
             bool fCheckOnly,
+            bool fErrorSoundsOnly,
             CorrelationID crid,
-            FinalScanCodeCleanupDelegate del)
+            FinalScanCodeReportAndCleanupDelegate del)
         {
             string sCheck = fCheckOnly ? "[CheckOnly] " : "";
             m_lp.LogEvent(crid, EventType.Verbose, "Service returned info for {0}", sCode);
@@ -739,7 +744,7 @@ namespace UniversalUpc
                 m_lp.LogEvent(crid, EventType.Verbose, "{1}Avoiding duplicate scan for {0}", sCode, sCheck);
                 m_isr.AddMessage(UpcAlert.AlertType.Duplicate, "{2}{0}: Duplicate?! LastScan was {1}", bki.Title,
                     bki.LastScan.ToString(), sCheck);
-                del(crid, bki.Title, true);
+                del(sCode, crid, bki.Title, true);
                 return;
             }
 
@@ -751,7 +756,7 @@ namespace UniversalUpc
             if (fResult)
             {
                 m_lp.LogEvent(crid, EventType.Verbose, "{1}Successfully updated last scan for {0}", sCode, sCheck);
-                m_isr.AddMessage(UpcAlert.AlertType.GoodInfo, "{2}{0}: Updated LastScan (was {1})", bki.Title,
+                m_isr.AddMessage(fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.GoodInfo, "{2}{0}: Updated LastScan (was {1})", bki.Title,
                     bki.LastScan.ToString(), sCheck);
             }
             else
@@ -760,7 +765,7 @@ namespace UniversalUpc
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "{0}: Failed to update last scan!", bki.Title);
             }
 
-            del(crid, bki.Title, true);
+            del(sCode, crid, bki.Title, true);
         }
 
         #endregion
