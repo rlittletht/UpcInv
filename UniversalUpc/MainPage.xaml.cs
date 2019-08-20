@@ -359,6 +359,7 @@ namespace UniversalUpc
             if (scanCodeAdjusted.StartsWith("!!"))
             {
                 m_lp.LogEvent(crid, EventType.Error, scanCodeAdjusted);
+                SetFocus(ebScanCode, false);
                 m_sb.AddMessage(m_fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.BadInfo, scanCodeAdjusted);
                 return;
             }
