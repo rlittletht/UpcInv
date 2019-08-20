@@ -48,8 +48,17 @@ namespace UpcApi
             Book.BookElement book = new Book.BookElement(sCode);
             string sError;
 
+            // fill in the things we don't care about -- this will prevent it from trying to scrape them
+            // (and potentially failing to get the title because it can't get a summary, for example)
+
+            book.Summary = "skip";
+            book.ReleaseDate = "skip";
+            book.Author = "skip";
+            book.Series = "skip";
+            book.RawCoverUrl = "skip";
+
             if (!Book.FScrapeBook(book, out sError))
-                return "!!NO TITLE FOUND: " + sError.Substring(0, 50);
+                return "!!NO TITLE FOUND: " + (sError.Length > 50 ? sError.Substring(0, 50) : sError);
 
             return book.Title;
         }
