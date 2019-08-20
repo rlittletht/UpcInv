@@ -284,6 +284,10 @@ namespace UniversalUpc
         {
             string sIsbn13 = null;
 
+            // check for internal scan codes as well. right now all of our manual scan codes are 030###
+            if (s.Length == 6 && s.StartsWith("030"))
+                return s;
+
             if (s.Length == 10)
             {
                 if (s.Substring(9, 1) != SCheckCalcIsbn10(s.Substring(0, 9)))
@@ -395,12 +399,24 @@ namespace UniversalUpc
             }
             else
             {
-                sTitle = await DoLookupDvdTitle(sCode, crid);
+                try
+                {
+                    sTitle = await DoLookupDvdTitle(sCode, crid);
 
-                if (sTitle != null)
-                    fResult = await DoCreateDvdTitle(sCode, sTitle, fCheckOnly, fErrorSoundsOnly, crid);
+                    if (sTitle != null)
+                        fResult = await DoCreateDvdTitle(sCode, sTitle, fCheckOnly, fErrorSoundsOnly, crid);
+                }
+                catch (Exception exc)
+                {
+                    m_isr.AddMessage(UpcAlert.AlertType.Halt, "Exception Caught: {0}", exc.Message);
 
-                del(sCode, crid, sTitle, fResult);
+                    sTitle = "!!Exception";
+                    fResult = false;
+                }
+                finally
+                {
+                    del(sCode, crid, sTitle, fResult);
+                }
             }
         }
 
@@ -641,12 +657,24 @@ namespace UniversalUpc
             }
             else
             {
-                sTitle = await DoLookupBookTitle(sCode, crid);
+                try
+                {
+                    sTitle = await DoLookupBookTitle(sCode, crid);
 
-                if (sTitle != null)
-                    fResult = await DoCreateBookTitle(sCode, sTitle, sLocation, fCheckOnly, fErrorSoundsOnly, crid);
+                    if (sTitle != null)
+                        fResult = await DoCreateBookTitle(sCode, sTitle, sLocation, fCheckOnly, fErrorSoundsOnly, crid);
+                }
+                catch (Exception exc)
+                {
+                    m_isr.AddMessage(UpcAlert.AlertType.Halt, "Exception Caught: {0}", exc.Message);
+                    sTitle = "!!Exception";
+                    fResult = false;
+                }
+                finally
+                {
+                    del(sCode, crid, sTitle, fResult);
+                }
 
-                del(sCode, crid, sTitle, fResult);
             }
         }
 
@@ -661,6 +689,7 @@ namespace UniversalUpc
             m_lp.LogEvent(crid, EventType.Verbose, "No Book info for scan code {0}, looking up...", sCode);
 
             m_isr.AddMessage(UpcAlert.AlertType.None, "looking up code {0}", sCode);
+
             string sTitle = await FetchTitleFromISBN13(sCode);
 
             if (sTitle == "" || sTitle.Substring(0, 2) == "!!")

@@ -183,6 +183,9 @@ namespace TCore.WebInterop
 
             string sJson = GetContentAsString(resp);
 
+            if (resp.StatusCode == HttpStatusCode.InternalServerError)
+                throw new Exception($"Internal Server Error: {sJson}");
+
             return JsonConvert.DeserializeObject<T>(sJson);
         }
 
