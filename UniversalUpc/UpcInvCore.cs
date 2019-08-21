@@ -740,6 +740,7 @@ namespace UniversalUpc
             m_lp.LogEvent(crid, EventType.Verbose, "Service returned title {0} for code {1}. Adding title.", sTitle,
                 sCode);
 
+            sCode = SEnsureIsbn13(sCode);
             bool fResult = fCheckOnly || await CreateBook(sCode, sTitle, sLocation, crid);
             if (fResult)
                 m_isr.AddMessage(fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.GoodInfo, "{2}Added title for {0}: {1}", sCode, sTitle, sCheck);
