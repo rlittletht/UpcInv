@@ -68,6 +68,8 @@ namespace UniversalUpc
             AdjustUIForMediaType(m_adasCurrent);
             AdjustUIForAvailableHardware();
 
+            m_board = new WorkBoard(UpdateWorkBoard);
+
             m_pipeline = new ProducerConsumer<Transaction>(null, TransactionDispatcher);
             m_pipeline.Start();
         }
@@ -219,26 +221,6 @@ namespace UniversalUpc
                 fErrorSoundsOnly,
                 crid
             );
-#if nomore
-            string sScanCode = sResultText;
-
-            // guard against reentrancy on the same scan code.
-            m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", sScanCode);
-            if (!FAddProcessingCode(sScanCode, crid))
-                return;
-
-            // now handle this scan code
-
-            ebScanCode.Text = sScanCode;
-
-            // The removal of the reentrancy guard will happen asynchronously
-            m_upccCore.DoHandleWineScanCode(
-                ebScanCode.Text,
-                ebNotes.Text,
-                fCheckOnly,
-                crid,
-                ReportAndRemoveReentrancyEntry);
-#endif
         }
 
         void DispatchBookScanCode(string sResultText, bool fCheckOnly, bool fErrorSoundsOnly, CorrelationID crid)
@@ -252,33 +234,6 @@ namespace UniversalUpc
                 fErrorSoundsOnly,
                 crid
             );
-#if nomore
-            string sIsbn13 = m_upccCore.SEnsureIsbn13(sResultText);
-
-            if (sIsbn13.StartsWith("!!"))
-            {
-                m_lp.LogEvent(crid, EventType.Error, sIsbn13);
-                m_sb.AddMessage(m_fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.BadInfo, sIsbn13);
-                return;
-            }
-
-            // guard against reentrancy on the same scan code.
-            m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", sIsbn13);
-            if (!FAddProcessingCode(sIsbn13, crid))
-                return;
-
-            // now handle this scan code
-
-            ebScanCode.Text = sIsbn13;
-
-            // The removal of the reentrancy guard will happen asynchronously
-            m_upccCore.DoHandleBookScanCode(
-                ebScanCode.Text,
-                ebLocation.Text,
-                fCheckOnly,
-                crid,
-                ReportAndRemoveReentrancyEntry);
-#endif
         }
 
         private void DispatchDvdScanCode(string sResultText, bool fCheckOnly, bool fErrorSoundsOnly, CorrelationID crid)
@@ -326,7 +281,7 @@ namespace UniversalUpc
 
         delegate string AdjustScanCode(string scanCode);
 
-        delegate void DoHandleDispatchScanCodeDelegate(
+        delegate Task DoHandleDispatchScanCodeDelegate(
             string sCode,
             string sExtra, // location for book, notes for wine, null for dvd
             bool fCheckOnly,
@@ -376,9 +331,9 @@ namespace UniversalUpc
             // The removal of the reentrancy guard will happen asynchronously
 
             WorkBoard.WorkItemDispatch del = new WorkBoard.WorkItemDispatch(
-                () =>
+                async () =>
                 {
-                    delDispatch(
+                    await delDispatch(
                         scanCodeAdjusted,
                         sExtra,
                         fCheckOnly,
@@ -391,9 +346,38 @@ namespace UniversalUpc
 
             WorkItemView view = m_board.GetWorkItemView(workId);
 
-            // lstWorkBoard.Items.Add(view);
+            lstWorkBoard.Items.Insert(0, view);
             m_pipeline.Producer.QueueRecord(new Transaction(workId));
             SetFocus(ebScanCode, false);
+        }
+
+        void AddToWorkBoard(WorkItemView view)
+        {
+            lstWorkBoard.Items.Insert(0, view);
+        }
+
+        void UpdateWorkBoardCore(WorkItemView view)
+        {
+            // find the item in the view and update it
+            for (int i = 0; i < lstWorkBoard.Items.Count; i++)
+            {
+                if (((WorkItemView) lstWorkBoard.Items[i]).WorkId == view.WorkId)
+                {
+                    lstWorkBoard.Items[i] = view;
+                    return;
+                }
+            }
+
+            throw new Exception("Can't find work item to update");
+        }
+
+        async void UpdateWorkBoard(WorkItemView view)
+        {
+            
+            if (lstWorkBoard.Dispatcher.HasThreadAccess)
+                UpdateWorkBoardCore(view);
+            else
+                await lstWorkBoard.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { UpdateWorkBoardCore(view); });
         }
 
         async void SetTextBoxText(TextBox eb, string text)
@@ -425,11 +409,11 @@ namespace UniversalUpc
 
         private ProducerConsumer<Transaction> m_pipeline;
 
-        public void TransactionDispatcher(IEnumerable<Transaction> items)
+        public async Task TransactionDispatcher(IEnumerable<Transaction> items)
         {
             foreach (Transaction item in items)
             {
-                m_board.DoWorkItem(item.WorkId);
+                await m_board.DoWorkItem(item.WorkId);
             }
         }
 
@@ -453,7 +437,7 @@ namespace UniversalUpc
             }
         }
 
-        private WorkBoard m_board = new WorkBoard();
+        private WorkBoard m_board;
 
         /*----------------------------------------------------------------------------
         	%%Function: DoManual

@@ -375,7 +375,7 @@ namespace UniversalUpc
             Handle the dispatch of a DVD scan code.  Update the scan date, 
             lookup a title, and create a title if necessary.
         ----------------------------------------------------------------------------*/
-        public async void DoHandleDvdScanCode(
+        public async Task DoHandleDvdScanCode(
             string sCode,
             string sUnused,
             bool fCheckOnly,
@@ -394,7 +394,6 @@ namespace UniversalUpc
 
             if (dvdi != null)
             {
-                Thread.Sleep(1000);
                 DoUpdateDvdScanDate(sCode, dvdi, fCheckOnly, fErrorSoundsOnly, crid, del);
             }
             else
@@ -553,7 +552,7 @@ namespace UniversalUpc
 
         #region Wine Client
 
-        public async void DoHandleWineScanCode(
+        public async Task DoHandleWineScanCode(
             string sCode,
             string sNotes,
             bool fCheckOnly,
@@ -631,7 +630,7 @@ namespace UniversalUpc
             Handle the dispatch of a DVD scan code.  Update the scan date, 
             lookup a title, and create a title if necessary.
         ----------------------------------------------------------------------------*/
-        public async void DoHandleBookScanCode(
+        public async Task DoHandleBookScanCode(
             string sCode,
             string sLocation,
             bool fCheckOnly,

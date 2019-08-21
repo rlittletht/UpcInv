@@ -1,6 +1,9 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
 using TCore.Logging;
 
 namespace UniversalUpc
@@ -11,11 +14,20 @@ namespace UniversalUpc
     public class WorkBoard
     {
         private object m_oLock = new Object();
+        private UpdateWorkBoard m_delUpdateBoard;
+
 
         private int m_workIdNext = 0;
         private Dictionary<int, WorkItem> m_board = new Dictionary<int, WorkItem>();
 
-        public delegate void WorkItemDispatch();
+        public delegate Task WorkItemDispatch();
+
+        public delegate void UpdateWorkBoard(WorkItemView view);
+
+        public WorkBoard(UpdateWorkBoard delUpdateBoard)
+        {
+            m_delUpdateBoard = delUpdateBoard;
+        }
 
         /// <summary>
         /// Create a new WorkItem and add it to the board in the created state
@@ -49,24 +61,33 @@ namespace UniversalUpc
             return view;
         }
 
-        public void DoWorkItem(int workId)
+        public async Task DoWorkItem(int workId)
         {
             WorkItem work;
+            WorkItemView view;
 
             lock (m_oLock)
             {
                 work = m_board[workId];
 
                 work.BumpStage();
+                work.CurrentStatus = WorkItem.Status.Dispatched;
+                view = work.GetView();
             }
 
-            work.DoWork();
+            m_delUpdateBoard(view);
+
+            await work.DoWork();
 
             lock(m_oLock)
             {
                 work = m_board[workId];
                 work.BumpStage();
+                work.CurrentStatus = WorkItem.Status.Complete;
+                view = work.GetView();
             }
+
+            m_delUpdateBoard(view);
         }
     }
 }

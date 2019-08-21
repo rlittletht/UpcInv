@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using UniversalUpc;
 
 namespace UniversalUpc
@@ -63,9 +64,9 @@ namespace UniversalUpc
             return new WorkItemView(WorkId, ScanCode, CurrentStatus);
         }
 
-        public void DoWork()
+        public async Task DoWork()
         {
-            WorkDelegate();
+            await WorkDelegate();
         }
 
         public int BumpStage()
