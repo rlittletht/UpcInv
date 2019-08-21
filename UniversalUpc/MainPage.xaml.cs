@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -9,8 +10,10 @@ using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Capture;
+using Windows.Media.SpeechRecognition;
 using Windows.Perception.Spatial;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,6 +27,7 @@ using ZXing;
 using ZXing.Common;
 using ZXing.Mobile;
 using TCore.Logging;
+using TCore.Pipeline;
 
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -42,6 +46,7 @@ namespace UniversalUpc
         private bool m_fScannerOn;
         private bool m_fScannerSetup;
         private bool m_fCheckOnly;
+        private bool m_fErrorSoundsOnly;
 
         private UpcInvCore.ADAS m_adasCurrent;
 
@@ -62,6 +67,9 @@ namespace UniversalUpc
             m_sb.Initialize(recStatus, m_upca);
             AdjustUIForMediaType(m_adasCurrent);
             AdjustUIForAvailableHardware();
+
+            m_pipeline = new ProducerConsumer<Transaction>(null, TransactionDispatcher);
+            m_pipeline.Start();
         }
 
         async Task AdjustUIForAvailableHardware()
@@ -135,7 +143,8 @@ namespace UniversalUpc
             if (result != null)
             {
                 txtStatus.Text = "result != null, format = " + result.BarcodeFormat + ", text = " + result.Text;
-                m_upca.Play(UpcAlert.AlertType.GoodInfo);
+                if (!m_fErrorSoundsOnly)
+                    m_upca.Play(UpcAlert.AlertType.GoodInfo);
             }
             else
             {
@@ -182,14 +191,15 @@ namespace UniversalUpc
         ----------------------------------------------------------------------------*/
         private void DispatchScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
-            m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
+            if (!m_fErrorSoundsOnly)
+                m_upca.DoAlert(UpcAlert.AlertType.UPCScanBeep);
 
             if (m_adasCurrent == UpcInvCore.ADAS.DVD)
-                DispatchDvdScanCode(sResultText, fCheckOnly, crid);
+                DispatchDvdScanCode(sResultText, fCheckOnly, m_fErrorSoundsOnly, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Book)
-                DispatchBookScanCode(sResultText, fCheckOnly, crid);
+                DispatchBookScanCode(sResultText, fCheckOnly, m_fErrorSoundsOnly, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Wine)
-                DispatchWineScanCode(sResultText, fCheckOnly, crid);
+                DispatchWineScanCode(sResultText, fCheckOnly, m_fErrorSoundsOnly, crid);
         }
 
         void SetFocus(TextBox eb, bool fWantKeyboard)
@@ -198,8 +208,18 @@ namespace UniversalUpc
             eb.Select(0, eb.Text.Length);
         }
 
-        void DispatchWineScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
+        void DispatchWineScanCode(string sResultText, bool fCheckOnly, bool fErrorSoundsOnly, CorrelationID crid)
         {
+            DispatchScanCodeCore(
+                (scanToAdjust) => sResultText,
+                m_upccCore.DoHandleWineScanCode,
+                sResultText,
+                ebNotes.Text,
+                fCheckOnly,
+                fErrorSoundsOnly,
+                crid
+            );
+#if nomore
             string sScanCode = sResultText;
 
             // guard against reentrancy on the same scan code.
@@ -217,37 +237,28 @@ namespace UniversalUpc
                 ebNotes.Text,
                 fCheckOnly,
                 crid,
-                (cridDel, sTitle, fResult) =>
-                {
-                    if (sTitle == null)
-                    {
-                        ebTitle.Text = "!!TITLE NOT FOUND";
-                        SetFocus(ebTitle, true);
-                    }
-                    else
-                    {
-                        ebTitle.Text = sTitle;
-                        SetFocus(ebScanCode, false);
-                    }
-
-                    m_lp.LogEvent(
-                        cridDel,
-                        fResult ? EventType.Information : EventType.Error,
-                        "FinalScanCodeCleanup: {0}: {1}",
-                        fResult,
-                        sTitle);
-                    FinishCode(sScanCode, cridDel);
-                });
+                ReportAndRemoveReentrancyEntry);
+#endif
         }
 
-        void DispatchBookScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
+        void DispatchBookScanCode(string sResultText, bool fCheckOnly, bool fErrorSoundsOnly, CorrelationID crid)
         {
+            DispatchScanCodeCore(
+                (scanToAdjust) => m_upccCore.SEnsureIsbn13(sResultText),
+                m_upccCore.DoHandleBookScanCode,
+                sResultText,
+                ebLocation.Text,
+                fCheckOnly,
+                fErrorSoundsOnly,
+                crid
+            );
+#if nomore
             string sIsbn13 = m_upccCore.SEnsureIsbn13(sResultText);
 
             if (sIsbn13.StartsWith("!!"))
             {
                 m_lp.LogEvent(crid, EventType.Error, sIsbn13);
-                m_sb.AddMessage(UpcAlert.AlertType.BadInfo, sIsbn13);
+                m_sb.AddMessage(m_fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.BadInfo, sIsbn13);
                 return;
             }
 
@@ -266,68 +277,160 @@ namespace UniversalUpc
                 ebLocation.Text,
                 fCheckOnly,
                 crid,
-                (cridDel, sTitle, fResult) =>
-                {
-                    if (sTitle == null)
-                    {
-                        ebTitle.Text = "!!TITLE NOT FOUND";
-                        SetFocus(ebTitle, true);
-                    }
-                    else
-                    {
-                        ebTitle.Text = sTitle;
-                        SetFocus(ebScanCode, false);
-                    }
-
-                    m_lp.LogEvent(
-                        cridDel,
-                        fResult ? EventType.Information : EventType.Error,
-                        "FinalScanCodeCleanup: {0}: {1}",
-                        fResult,
-                        sTitle);
-                    FinishCode(sIsbn13, cridDel);
-                });
+                ReportAndRemoveReentrancyEntry);
+#endif
         }
 
-        private void DispatchDvdScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
+        private void DispatchDvdScanCode(string sResultText, bool fCheckOnly, bool fErrorSoundsOnly, CorrelationID crid)
         {
-            string sCode = m_upccCore.SEnsureEan13(sResultText);
+            DispatchScanCodeCore(
+                (scanToAdjust) => m_upccCore.SEnsureEan13(scanToAdjust),
+                m_upccCore.DoHandleDvdScanCode,
+                sResultText,
+                null, // sExtra
+                fCheckOnly,
+                fErrorSoundsOnly,
+                crid
+            );
+        }
+
+        /// <summary>
+        /// generic remove the given code from the reentrancy protection. This code MUST match the code that
+        /// that was added to the queue
+        /// </summary>
+        /// <param name="crid"></param>
+        /// <param name="sTitle"></param>
+        /// <param name="fResult"></param>
+        void ReportAndRemoveReentrancyEntry(string scanCode, CorrelationID crid, string sTitle, bool fResult)
+        {
+            if (sTitle == null)
+            {
+//                SetTextBoxText(ebScanCode, "");
+                SetTextBoxText(ebTitle, "!!TITLE NOT FOUND");
+                // SetFocus(ebTitle, true);
+            }
+            else
+            {
+                SetTextBoxText(ebTitle, sTitle);
+                //SetFocus(ebScanCode, false);
+            }
+
+            m_lp.LogEvent(
+                crid,
+                fResult ? EventType.Information : EventType.Error,
+                "FinalScanCodeCleanup: {0}: {1}",
+                fResult,
+                sTitle);
+            FinishCode(scanCode, crid);
+        }
+
+        delegate string AdjustScanCode(string scanCode);
+
+        delegate void DoHandleDispatchScanCodeDelegate(
+            string sCode,
+            string sExtra, // location for book, notes for wine, null for dvd
+            bool fCheckOnly,
+            bool fErrorSoundsOnly,
+            CorrelationID crid,
+            UpcInvCore.FinalScanCodeReportAndCleanupDelegate delReportAndCleanup);
+
+
+        /// <summary>
+        /// Dispatch the scancode with the given workitem delegate.
+        /// The scanCode must already be normalized. The delegate should take care of dispatching
+        /// to the correct upcc handler AND must include the delegate to remove the reentrancy item
+        /// </summary>
+        /// <param name="delDispatch"></param>
+        /// <param name="delAdjust"></param>
+        /// <param name="scanCode"></param>
+        /// <param name="fErrorSoundsOnly"></param>
+        /// <param name="crid"></param>
+        void DispatchScanCodeCore(
+            AdjustScanCode delAdjust, 
+            DoHandleDispatchScanCodeDelegate delDispatch, 
+            string scanCode, 
+            string sExtra, 
+            bool fCheckOnly, 
+            bool fErrorSoundsOnly, 
+            CorrelationID crid)
+        {
+            string scanCodeAdjusted = delAdjust(scanCode);
+
+            if (scanCodeAdjusted.StartsWith("!!"))
+            {
+                m_lp.LogEvent(crid, EventType.Error, scanCodeAdjusted);
+                SetFocus(ebScanCode, false);
+                m_sb.AddMessage(m_fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.BadInfo, scanCodeAdjusted);
+                return;
+            }
 
             // guard against reentrancy on the same scan code.
-            m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", sCode);
-            if (!FAddProcessingCode(sCode, crid))
+            m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", scanCodeAdjusted);
+            if (!FAddProcessingCode(scanCodeAdjusted, crid))
+            {
+                // even if we bail out...set the focus
+                SetFocus(ebScanCode, false);
                 return;
-
-            // now handle this scan code
-
-            ebScanCode.Text = sCode;
+            }
 
             // The removal of the reentrancy guard will happen asynchronously
-            m_upccCore.DoHandleDvdScanCode(
-                sCode,
-                fCheckOnly,
-                crid,
-                (cridDel, sTitle, fResult) =>
-                {
-                    if (sTitle == null)
-                    {
-                        ebTitle.Text = "!!TITLE NOT FOUND";
-                        SetFocus(ebTitle, true);
-                    }
-                    else
-                    {
-                        ebTitle.Text = sTitle;
-                        SetFocus(ebScanCode, false);
-                    }
 
-                    m_lp.LogEvent(
-                        cridDel,
-                        fResult ? EventType.Information : EventType.Error,
-                        "FinalScanCodeCleanup: {0}: {1}",
-                        fResult,
-                        sTitle);
-                    FinishCode(sCode, cridDel);
+            WorkBoard.WorkItemDispatch del = new WorkBoard.WorkItemDispatch(
+                () =>
+                {
+                    delDispatch(
+                        scanCodeAdjusted,
+                        sExtra,
+                        fCheckOnly,
+                        fErrorSoundsOnly,
+                        crid,
+                        ReportAndRemoveReentrancyEntry);
                 });
+
+            int workId = m_board.CreateWork(scanCodeAdjusted, del);
+
+            WorkItemView view = m_board.GetWorkItemView(workId);
+
+            // lstWorkBoard.Items.Add(view);
+            m_pipeline.Producer.QueueRecord(new Transaction(workId));
+            SetFocus(ebScanCode, false);
+        }
+
+        async void SetTextBoxText(TextBox eb, string text)
+        {
+            if (eb.Dispatcher.HasThreadAccess)
+                eb.Text = text;
+            else
+                await eb.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { eb.Text = text; });
+        }
+
+        public class Transaction : IPipelineBase<Transaction>
+        {
+            public int WorkId { get; set; }
+
+            public Transaction()
+            {
+            }
+
+            public Transaction(int workId)
+            {
+                WorkId = workId;
+            }
+
+            public void InitFrom(Transaction from)
+            {
+                WorkId = from.WorkId;
+            }
+        }
+
+        private ProducerConsumer<Transaction> m_pipeline;
+
+        public void TransactionDispatcher(IEnumerable<Transaction> items)
+        {
+            foreach (Transaction item in items)
+            {
+                m_board.DoWorkItem(item.WorkId);
+            }
         }
 
         private async void ToggleScan(object sender, RoutedEventArgs e)
@@ -349,6 +452,8 @@ namespace UniversalUpc
                 m_fScannerOn = false;
             }
         }
+
+        private WorkBoard m_board = new WorkBoard();
 
         /*----------------------------------------------------------------------------
         	%%Function: DoManual
@@ -384,16 +489,24 @@ namespace UniversalUpc
             bool fResult = false;
 
             if (m_adasCurrent == UpcInvCore.ADAS.DVD)
-                fResult = await m_upccCore.DoCreateDvdTitle(ebScanCode.Text, sTitle, m_fCheckOnly, crid);
+                fResult = await m_upccCore.DoCreateDvdTitle(ebScanCode.Text, sTitle, m_fCheckOnly, m_fErrorSoundsOnly, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Book)
-                fResult = await m_upccCore.DoCreateBookTitle(ebScanCode.Text, sTitle, ebLocation.Text, m_fCheckOnly, crid);
+                fResult = await m_upccCore.DoCreateBookTitle(ebScanCode.Text, sTitle, ebLocation.Text, m_fCheckOnly, m_fErrorSoundsOnly, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Wine)
                 m_sb.AddMessage(UpcAlert.AlertType.BadInfo, "No manual operation available for Wine");
 
             if (fResult)
-                m_sb.AddMessage(UpcAlert.AlertType.GoodInfo, "Added {0} as {1}", ebScanCode.Text, sTitle);
+            {
+                m_sb.AddMessage(
+                    m_fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.GoodInfo,
+                    "Added {0} as {1}",
+                    ebScanCode.Text,
+                    sTitle);
+            }
             else
+            {
                 m_sb.AddMessage(UpcAlert.AlertType.Halt, "FAILED  to Added {0} as {1}", ebScanCode.Text, sTitle);
+            }
         }
 
         private void SetNewMediaType(object sender, RoutedEventArgs e)
@@ -435,6 +548,11 @@ namespace UniversalUpc
         private void DoCheckChange(object sender, RoutedEventArgs e)
         {
             m_fCheckOnly = cbCheckOnly.IsChecked ?? false;
+        }
+
+        private void DoErrorSoundsChange(object sender, RoutedEventArgs e)
+        {
+            m_fErrorSoundsOnly = cbErrorSoundsOnly.IsChecked ?? false;
         }
 
         private void OnEnterSelectAll(object sender, RoutedEventArgs e)

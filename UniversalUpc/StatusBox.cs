@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml.Controls;
 using UniversalUpc;
@@ -29,11 +31,8 @@ namespace TCore.StatusBox
             m_fInit = true;
         }
 
-        public void AddMessage(UpcAlert.AlertType at, string sMessage, params object[] rgo)
+        public void AddMessageCore(UpcAlert.AlertType at, string sMessage, params object[] rgo)
         {
-            if (!m_fInit)
-                return;
-
             ITextDocument iDoc = m_rec.Document;
 
             string s2;
@@ -45,6 +44,21 @@ namespace TCore.StatusBox
             iDoc.SetText(TextSetOptions.None, s);
             if (at != UpcAlert.AlertType.None)
                 m_ia.DoAlert(at);
+        }
+
+        public async void AddMessage(UpcAlert.AlertType at, string sMessage, params object[] rgo)
+        {
+            if (!m_fInit)
+                return;
+
+            if (!m_rec.Dispatcher.HasThreadAccess)
+            {
+                await m_rec.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { AddMessageCore(at, sMessage, rgo); });
+            }
+            else
+            {
+                AddMessageCore(at, sMessage, rgo);
+            }
         }
     }
 }

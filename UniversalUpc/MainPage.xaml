@@ -65,7 +65,7 @@
             <TextBlock Text="Title: " Grid.Row="2" Grid.Column="0"/>
             <TextBlock Text="Location: " Grid.Row="4" Grid.Column="0" x:Name="txtLocation"/>
 
-            <TextBox Grid.Row="0" Grid.Column="2" x:Name="ebScanCode" Text="" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" KeyUp="OnCodeKeyUp" Grid.ColumnSpan="2" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
+            <TextBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" x:Name="ebScanCode" Text="" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" KeyUp="OnCodeKeyUp" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
             <TextBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" x:Name="ebTitle" Text="" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
             <TextBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="4" x:Name="ebLocation" Text="!!Location" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
             <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="6" x:Name="ebNotes" Text="!!Private tasting notes" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
@@ -90,12 +90,29 @@
             <!--<Grid HorizontalAlignment="Left" Height="559" Margin="10,71,0,0" VerticalAlignment="Top" Width="340"> -->
             <!--<CaptureElement Name="previewVideo" VerticalAlignment="Center"/>-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <CheckBox x:Name="cbErrorSoundsOnly" Checked="DoErrorSoundsChange" Unchecked="DoErrorSoundsChange">Bulk Mode: Error Sounds Only</CheckBox>
                 <CheckBox x:Name="cbCheckOnly" Checked="DoCheckChange" Unchecked="DoCheckChange">Check Only</CheckBox>
                 <Button Height="Auto" Content="Manual" x:Name="pbManualAdd" Click="DoManual"/>
                 <Button Height="Auto" Content="Scan" x:Name="pbScan" Click="ToggleScan" Margin="2" />
             </StackPanel>
             <my:ZXingScannerControl x:Name="scannerControl" Height="200"/>
             <TextBlock Height="Auto" x:Name="txtStatus" Text="Status Here"/>
+            <TextBlock Height="Auto" x:Name="txtHistory" Text="Transaction History"/>
+            
+            <ListView x:Name="lstWorkBoard">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:Name="BoardTemplate" x:DataType="local:WorkItemView">
+                            <Grid Height="Auto">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding ScanCode}" Grid.Column="0"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackPanel>
         <RichEditBox x:Name="recStatus" Grid.Row="3"/>
     </Grid>

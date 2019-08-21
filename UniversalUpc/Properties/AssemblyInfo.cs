@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 //[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("UniversalUpc")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -30,6 +30,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitleAttribute("UniversalUpc")]
 [assembly: AssemblyDescriptionAttribute("Inventory scanner and lookup")]
 [assembly: AssemblyCompanyAttribute("Thetasoft")]
-[assembly: AssemblyVersionAttribute("1.0.0.0")]
-[assembly: AssemblyFileVersionAttribute("1.0.0.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 
