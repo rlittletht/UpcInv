@@ -27,8 +27,23 @@
         <Style BasedOn="{StaticResource ControlStyle}" TargetType="Button">
             <Setter Property="MinWidth" Value="70"/>
         </Style>
-        <Style TargetType="Grid">
+        <Style x:Key="PaddedGrid" TargetType="Grid">
             <Setter Property="Margin" Value="10,10,10,10"/>
+        </Style>
+        <Style x:Key="NoPaddedGrid" TargetType="Grid">
+            <Setter Property="Padding" Value="0,0,0,0" />
+            <Setter Property="Margin" Value="0,0,0,0" />
+        </Style>
+        <Style x:Key="BorderedListView" TargetType="ListView">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListView">
+                        <Border Name="Border" BorderBrush="Transparent" BorderThickness="2">
+                            <ContentPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         <Style x:Key="SeparatorColumn" TargetType="ColumnDefinition">
             <Setter Property="Width" Value="10"/>
@@ -37,7 +52,7 @@
             <Setter Property="Height" Value="3"/>
         </Style>
     </Page.Resources>
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Style="{StaticResource PaddedGrid}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -45,7 +60,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" x:Name="textBlock" HorizontalAlignment="Left" Height="56" Margin="5,10,0,0" TextWrapping="Wrap" Text="inventorix" VerticalAlignment="Top" Width="345" FontSize="36"/>
-        <Grid Grid.Row="1">
+        <Grid Style="{StaticResource PaddedGrid}" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="10"/>
@@ -98,21 +113,39 @@
             <my:ZXingScannerControl x:Name="scannerControl" Height="200"/>
             <TextBlock Height="Auto" x:Name="txtStatus" Text="Status Here"/>
             <TextBlock Height="Auto" x:Name="txtHistory" Text="Transaction History"/>
-            
-            <ListView x:Name="lstWorkBoard">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:Name="BoardTemplate" x:DataType="local:WorkItemView">
-                            <Grid Height="Auto">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding ScanCode}" Grid.Column="0"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+
+            <Border
+                BorderThickness="1"   
+                BorderBrush="Green"   
+                CornerRadius="3"   
+                HorizontalAlignment="Stretch"   
+                VerticalAlignment="Top" 
+                Margin="0,5"
+                Height="140">
+                <ListView HorizontalAlignment="Stretch" x:Name="lstWorkBoard" Padding="0,0,0,0" Margin="0,0,0,0" MaxHeight="140">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="Padding" Value="6,0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:Name="BoardTemplate" x:DataType="local:WorkItemView" >
+                            <Grid Height="Auto" HorizontalAlignment="Stretch" Style="{StaticResource NoPaddedGrid}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="90"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding ScanCode}" Grid.Column="0" />
+                                <TextBlock HorizontalAlignment="Stretch" Text="{Binding Description}" Grid.Column="1" Padding="10,0,0,0"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding CurrentStatus}" Grid.Column="2" Padding="10,0,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Border>
         </StackPanel>
         <RichEditBox x:Name="recStatus" Grid.Row="3"/>
     </Grid>
