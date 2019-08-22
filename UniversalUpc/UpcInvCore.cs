@@ -31,8 +31,6 @@ namespace UniversalUpc
             Wine = 3,
         }
 
-        ADAS m_adas;
-
         /*----------------------------------------------------------------------------
         	%%Function: UpcInvCore
         	%%Qualified: UniversalUpc.UpcInvCore.UpcInvCore
@@ -395,6 +393,7 @@ namespace UniversalUpc
 
             if (dvdi != null)
             {
+                Thread.Sleep(1000);
                 DoUpdateDvdScanDate(workId, sCode, dvdi, fCheckOnly, fErrorSoundsOnly, crid, del);
             }
             else
@@ -571,7 +570,6 @@ namespace UniversalUpc
             }
 
             string sTitle = null;
-            bool fResult = false;
             m_lp.LogEvent(crid, EventType.Verbose,
                 "Continuing with processing for {0}...Checking for WineInfo from service", sCode);
             WineInfo wni = await WineInfoRetrieve(sCode);

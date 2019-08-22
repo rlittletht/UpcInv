@@ -406,11 +406,11 @@ namespace UniversalUpc
 
         private ProducerConsumer<Transaction> m_pipeline;
 
-        public async Task TransactionDispatcher(IEnumerable<Transaction> items)
+        public void TransactionDispatcher(IEnumerable<Transaction> items)
         {
             foreach (Transaction item in items)
             {
-                await m_board.DoWorkItem(item.WorkId);
+                m_board.DoWorkItem(item.WorkId).Wait();
             }
         }
         #endregion
@@ -443,7 +443,7 @@ namespace UniversalUpc
             throw new Exception("illegal ADAS combobox item");
         }
 
-        private async void ToggleScan(object sender, RoutedEventArgs e)
+        private void ToggleScan(object sender, RoutedEventArgs e)
         {
             if (m_fScannerOn == false)
             {
@@ -477,9 +477,9 @@ namespace UniversalUpc
             if (m_fCheckOnly)
             {
                 if (m_adasCurrent == UpcInvCore.ADAS.DVD)
-                    m_upccCore.DoCheckDvdTitleInventory(sTitle, new CorrelationID());
+                    await m_upccCore.DoCheckDvdTitleInventory(sTitle, new CorrelationID());
                 else if (m_adasCurrent == UpcInvCore.ADAS.Book)
-                    m_upccCore.DoCheckBookTitleInventory(sTitle, new CorrelationID());
+                    await m_upccCore.DoCheckBookTitleInventory(sTitle, new CorrelationID());
                 else if (m_adasCurrent == UpcInvCore.ADAS.Wine)
                     m_sb.AddMessage(UpcAlert.AlertType.BadInfo, "No manual operation available for Wine");
 

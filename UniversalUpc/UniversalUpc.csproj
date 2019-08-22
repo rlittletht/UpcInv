@@ -208,10 +208,6 @@
       <Project>{8cc42025-d8e2-4254-acaf-4caa05c1ef7f}</Project>
       <Name>TCore.Logging%28Universal%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\liblet\cs\TCore.Pipeline\TCore.Pipeline.csproj">
-      <Project>{34863620-1ee0-457b-904b-8744d495d2f5}</Project>
-      <Name>TCore.Pipeline</Name>
-    </ProjectReference>
     <ProjectReference Include="..\UpcShared\UpcShared.csproj">
       <Project>{85c5de2b-7d29-4744-9406-98858dbc5b33}</Project>
       <Name>UpcShared</Name>
@@ -232,6 +228,9 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="TCore.Pipeline">
+      <Version>1.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
