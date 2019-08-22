@@ -11,7 +11,7 @@ namespace UniversalUpc
         public int WorkId { get; }
         public string ScanCode { get; }
         public WorkItem.Status CurrentStatus { get; }
-
+        
         public WorkItemView(int workId, string scanCode, WorkItem.Status currentStatus)
         {
             WorkId = workId;

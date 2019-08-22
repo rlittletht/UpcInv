@@ -74,33 +74,9 @@ namespace UniversalUpc
             m_pipeline.Start();
         }
 
-        async Task AdjustUIForAvailableHardware()
-        {
-            DeviceInformationCollection devices =
-                await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
-
-            if (devices.Count > 0)
-                return;
-
-            scannerControl.Visibility = Visibility.Collapsed;
-            pbScan.Visibility = Visibility.Collapsed;
-        }
+        #region Processing Reentrancy Protection
 
         private List<string> m_plsProcessing;
-
-        UpcInvCore.ADAS AdasFromDropdownItem(ComboBoxItem cbi)
-        {
-            if (String.Compare((string) cbi.Tag, "dvd") == 0)
-                return UpcInvCore.ADAS.DVD;
-            else if (String.Compare((string) cbi.Tag, "book") == 0)
-                return UpcInvCore.ADAS.Book;
-            else if (String.Compare((string) cbi.Tag, "wine") == 0)
-                return UpcInvCore.ADAS.Wine;
-            else if (String.Compare((string) cbi.Tag, "upc") == 0)
-                return UpcInvCore.ADAS.Generic;
-
-            throw new Exception("illegal ADAS combobox item");
-        }
 
         void FinishCode(string sCode, CorrelationID crid)
         {
@@ -140,6 +116,38 @@ namespace UniversalUpc
             }
         }
 
+        /// <summary>
+        /// generic remove the given code from the reentrancy protection. This code MUST match the code that
+        /// that was added to the queue
+        /// </summary>
+        /// <param name="crid"></param>
+        /// <param name="sTitle"></param>
+        /// <param name="fResult"></param>
+        void ReportAndRemoveReentrancyEntry(string scanCode, CorrelationID crid, string sTitle, bool fResult)
+        {
+            if (sTitle == null)
+            {
+                //                SetTextBoxText(ebScanCode, "");
+                SetTextBoxText(ebTitle, "!!TITLE NOT FOUND");
+                // SetFocus(ebTitle, true);
+            }
+            else
+            {
+                SetTextBoxText(ebTitle, sTitle);
+                //SetFocus(ebScanCode, false);
+            }
+
+            m_lp.LogEvent(
+                crid,
+                fResult ? EventType.Information : EventType.Error,
+                "FinalScanCodeCleanup: {0}: {1}",
+                fResult,
+                sTitle);
+            FinishCode(scanCode, crid);
+        }
+        #endregion
+
+        #region UI Update
         private void DisplayResult(Result result)
         {
             if (result != null)
@@ -153,6 +161,24 @@ namespace UniversalUpc
                 txtStatus.Text = "result = null";
             }
         }
+
+        void SetFocus(TextBox eb, bool fWantKeyboard)
+        {
+            eb.Focus(fWantKeyboard ? FocusState.Pointer : FocusState.Programmatic);
+            eb.Select(0, eb.Text.Length);
+        }
+
+        async void SetTextBoxText(TextBox eb, string text)
+        {
+            if (eb.Dispatcher.HasThreadAccess)
+                eb.Text = text;
+            else
+                await eb.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { eb.Text = text; });
+        }
+
+        #endregion
+
+        #region UI Dispatch
 
         /*----------------------------------------------------------------------------
         	%%Function: ScannerControlDispatchScanCode
@@ -204,12 +230,6 @@ namespace UniversalUpc
                 DispatchWineScanCode(sResultText, fCheckOnly, m_fErrorSoundsOnly, crid);
         }
 
-        void SetFocus(TextBox eb, bool fWantKeyboard)
-        {
-            eb.Focus(fWantKeyboard ? FocusState.Pointer : FocusState.Programmatic);
-            eb.Select(0, eb.Text.Length);
-        }
-
         void DispatchWineScanCode(string sResultText, bool fCheckOnly, bool fErrorSoundsOnly, CorrelationID crid)
         {
             DispatchScanCodeCore(
@@ -249,36 +269,6 @@ namespace UniversalUpc
             );
         }
 
-        /// <summary>
-        /// generic remove the given code from the reentrancy protection. This code MUST match the code that
-        /// that was added to the queue
-        /// </summary>
-        /// <param name="crid"></param>
-        /// <param name="sTitle"></param>
-        /// <param name="fResult"></param>
-        void ReportAndRemoveReentrancyEntry(string scanCode, CorrelationID crid, string sTitle, bool fResult)
-        {
-            if (sTitle == null)
-            {
-//                SetTextBoxText(ebScanCode, "");
-                SetTextBoxText(ebTitle, "!!TITLE NOT FOUND");
-                // SetFocus(ebTitle, true);
-            }
-            else
-            {
-                SetTextBoxText(ebTitle, sTitle);
-                //SetFocus(ebScanCode, false);
-            }
-
-            m_lp.LogEvent(
-                crid,
-                fResult ? EventType.Information : EventType.Error,
-                "FinalScanCodeCleanup: {0}: {1}",
-                fResult,
-                sTitle);
-            FinishCode(scanCode, crid);
-        }
-
         delegate string AdjustScanCode(string scanCode);
 
         delegate Task DoHandleDispatchScanCodeDelegate(
@@ -301,12 +291,12 @@ namespace UniversalUpc
         /// <param name="fErrorSoundsOnly"></param>
         /// <param name="crid"></param>
         void DispatchScanCodeCore(
-            AdjustScanCode delAdjust, 
-            DoHandleDispatchScanCodeDelegate delDispatch, 
-            string scanCode, 
-            string sExtra, 
-            bool fCheckOnly, 
-            bool fErrorSoundsOnly, 
+            AdjustScanCode delAdjust,
+            DoHandleDispatchScanCodeDelegate delDispatch,
+            string scanCode,
+            string sExtra,
+            bool fCheckOnly,
+            bool fErrorSoundsOnly,
             CorrelationID crid)
         {
             string scanCodeAdjusted = delAdjust(scanCode);
@@ -351,6 +341,11 @@ namespace UniversalUpc
             SetFocus(ebScanCode, false);
         }
 
+        #endregion
+
+        #region Work Board
+        private WorkBoard m_board;
+
         void AddToWorkBoard(WorkItemView view)
         {
             lstWorkBoard.Items.Insert(0, view);
@@ -373,21 +368,14 @@ namespace UniversalUpc
 
         async void UpdateWorkBoard(WorkItemView view)
         {
-            
             if (lstWorkBoard.Dispatcher.HasThreadAccess)
                 UpdateWorkBoardCore(view);
             else
                 await lstWorkBoard.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { UpdateWorkBoardCore(view); });
         }
+        #endregion
 
-        async void SetTextBoxText(TextBox eb, string text)
-        {
-            if (eb.Dispatcher.HasThreadAccess)
-                eb.Text = text;
-            else
-                await eb.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { eb.Text = text; });
-        }
-
+        #region Pipeline
         public class Transaction : IPipelineBase<Transaction>
         {
             public int WorkId { get; set; }
@@ -416,6 +404,35 @@ namespace UniversalUpc
                 await m_board.DoWorkItem(item.WorkId);
             }
         }
+        #endregion
+
+        #region UI Controls / Manual Scanning
+        
+        async Task AdjustUIForAvailableHardware()
+        {
+            DeviceInformationCollection devices =
+                await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+
+            if (devices.Count > 0)
+                return;
+
+            scannerControl.Visibility = Visibility.Collapsed;
+            pbScan.Visibility = Visibility.Collapsed;
+        }
+
+        UpcInvCore.ADAS AdasFromDropdownItem(ComboBoxItem cbi)
+        {
+            if (String.Compare((string)cbi.Tag, "dvd") == 0)
+                return UpcInvCore.ADAS.DVD;
+            else if (String.Compare((string)cbi.Tag, "book") == 0)
+                return UpcInvCore.ADAS.Book;
+            else if (String.Compare((string)cbi.Tag, "wine") == 0)
+                return UpcInvCore.ADAS.Wine;
+            else if (String.Compare((string)cbi.Tag, "upc") == 0)
+                return UpcInvCore.ADAS.Generic;
+
+            throw new Exception("illegal ADAS combobox item");
+        }
 
         private async void ToggleScan(object sender, RoutedEventArgs e)
         {
@@ -436,8 +453,6 @@ namespace UniversalUpc
                 m_fScannerOn = false;
             }
         }
-
-        private WorkBoard m_board;
 
         /*----------------------------------------------------------------------------
         	%%Function: DoManual
@@ -561,5 +576,7 @@ namespace UniversalUpc
 
             e.Handled = false;
         }
+        #endregion
+
     }
 }
