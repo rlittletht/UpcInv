@@ -49,6 +49,26 @@ namespace UniversalUpc
             return newWork.WorkId;
         }
 
+        public void SetWorkDelegate(int workId, WorkItemDispatch dispatch)
+        {
+            lock (m_oLock)
+            {
+                WorkItem work = m_board[workId];
+
+                work.SetWorkDelegate(dispatch);
+            }
+        }
+
+        public void UpdateWork(int workId, bool fResult, string sTitle)
+        {
+            lock (m_oLock)
+            {
+                WorkItem work = m_board[workId];
+                work.Description = sTitle;
+                work.Succeeded = fResult;
+            }
+        }
+
         public WorkItemView GetWorkItemView(int workId)
         {
             WorkItemView view; 
@@ -83,7 +103,7 @@ namespace UniversalUpc
             {
                 work = m_board[workId];
                 work.BumpStage();
-                work.CurrentStatus = WorkItem.Status.Complete;
+                work.CurrentStatus = work.Succeeded ? WorkItem.Status.Complete : WorkItem.Status.Failed;
                 view = work.GetView();
             }
 

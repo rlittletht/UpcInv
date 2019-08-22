@@ -11,12 +11,14 @@ namespace UniversalUpc
         public int WorkId { get; }
         public string ScanCode { get; }
         public WorkItem.Status CurrentStatus { get; }
-        
-        public WorkItemView(int workId, string scanCode, WorkItem.Status currentStatus)
+        public string Description { get; }
+
+        public WorkItemView(int workId, string scanCode, WorkItem.Status currentStatus, string description)
         {
             WorkId = workId;
             ScanCode = scanCode;
             CurrentStatus = currentStatus;
+            Description = description;
         }
     }
 
@@ -43,8 +45,15 @@ namespace UniversalUpc
         public int StageMax { get; set; }
         public Stopwatch Timer { get; set; }
         public long TimerFrequency { get; set; }
+        public string Description { get; set; }
+        public bool Succeeded { get;set; }
 
         private WorkBoard.WorkItemDispatch WorkDelegate { get; set; }
+
+        public void SetWorkDelegate(WorkBoard.WorkItemDispatch del)
+        {
+            WorkDelegate = del;
+        }
 
         public WorkItem(string scanCode, WorkBoard.WorkItemDispatch del, int workId)
         {
@@ -61,7 +70,7 @@ namespace UniversalUpc
 
         public WorkItemView GetView()
         {
-            return new WorkItemView(WorkId, ScanCode, CurrentStatus);
+            return new WorkItemView(WorkId, ScanCode, CurrentStatus, Description);
         }
 
         public async Task DoWork()

@@ -365,7 +365,7 @@ namespace UniversalUpc
 
         #region DVD Client
 
-        public delegate void FinalScanCodeReportAndCleanupDelegate(string scanCode, CorrelationID crid, string sFinalTitle, bool fResult);
+        public delegate void FinalScanCodeReportAndCleanupDelegate(int workId, string scanCode, CorrelationID crid, string sFinalTitle, bool fResult);
 
         /*----------------------------------------------------------------------------
         	%%Function: DoHandleDvdScanCode
@@ -376,6 +376,7 @@ namespace UniversalUpc
             lookup a title, and create a title if necessary.
         ----------------------------------------------------------------------------*/
         public async Task DoHandleDvdScanCode(
+            int workId,
             string sCode,
             string sUnused,
             bool fCheckOnly,
@@ -394,7 +395,7 @@ namespace UniversalUpc
 
             if (dvdi != null)
             {
-                DoUpdateDvdScanDate(sCode, dvdi, fCheckOnly, fErrorSoundsOnly, crid, del);
+                DoUpdateDvdScanDate(workId, sCode, dvdi, fCheckOnly, fErrorSoundsOnly, crid, del);
             }
             else
             {
@@ -414,7 +415,7 @@ namespace UniversalUpc
                 }
                 finally
                 {
-                    del(sCode, crid, sTitle, fResult);
+                    del(workId, sCode, crid, sTitle, fResult);
                 }
             }
         }
@@ -507,6 +508,7 @@ namespace UniversalUpc
         	
         ----------------------------------------------------------------------------*/
         private async void DoUpdateDvdScanDate(
+            int workId, 
             string sCode,
             DvdInfo dvdi,
             bool fCheckOnly,
@@ -524,7 +526,7 @@ namespace UniversalUpc
                 m_lp.LogEvent(crid, EventType.Verbose, "{1}Avoiding duplicate scan for {0}", sCode, sCheck);
                 m_isr.AddMessage(UpcAlert.AlertType.Duplicate, "{2}{0}: Duplicate?! LastScan was {1}", dvdi.Title,
                     dvdi.LastScan.ToString(), sCheck);
-                del(sCode, crid, dvdi.Title, true);
+                del(workId, sCode, crid, dvdi.Title, true);
                 return;
             }
 
@@ -545,7 +547,7 @@ namespace UniversalUpc
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "{1}{0}: Failed to update last scan!", dvdi.Title, sCheck);
             }
 
-            del(sCode, crid, dvdi.Title, true);
+            del(workId, sCode, crid, dvdi.Title, true);
         }
 
         #endregion
@@ -553,6 +555,7 @@ namespace UniversalUpc
         #region Wine Client
 
         public async Task DoHandleWineScanCode(
+            int workId,
             string sCode,
             string sNotes,
             bool fCheckOnly,
@@ -563,7 +566,7 @@ namespace UniversalUpc
             if (sNotes.StartsWith("!!"))
             {
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Notes not set: {0}", sNotes);
-                del(sCode, crid, null, false);
+                del(workId, sCode, crid, null, false);
                 return;
             }
 
@@ -575,7 +578,7 @@ namespace UniversalUpc
 
             if (wni != null)
             {
-                DoDrinkWine(sCode, sNotes, wni, fCheckOnly, fErrorSoundsOnly, crid, del);
+                DoDrinkWine(workId, sCode, sNotes, wni, fCheckOnly, fErrorSoundsOnly, crid, del);
             }
             else
             {
@@ -583,11 +586,12 @@ namespace UniversalUpc
 
                 sTitle = "!!WINE NOTE FOUND";
 
-                del(sCode, crid, sTitle, false);
+                del(workId, sCode, crid, sTitle, false);
             }
         }
 
         private async void DoDrinkWine(
+            int workId,
             string sCode,
             string sNotes,
             WineInfo wni,
@@ -615,7 +619,7 @@ namespace UniversalUpc
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "{0}: Failed to drink wine!", wni.Wine);
             }
 
-            del(sCode, crid, wni.Wine, true);
+            del(workId, sCode, crid, wni.Wine, true);
         }
 
         #endregion
@@ -631,6 +635,7 @@ namespace UniversalUpc
             lookup a title, and create a title if necessary.
         ----------------------------------------------------------------------------*/
         public async Task DoHandleBookScanCode(
+            int workId,
             string sCode,
             string sLocation,
             bool fCheckOnly,
@@ -641,7 +646,7 @@ namespace UniversalUpc
             if (sLocation.StartsWith("!!"))
             {
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Location not set: {0}", sLocation);
-                del(sCode, crid, null, false);
+                del(workId, sCode, crid, null, false);
                 return;
             }
 
@@ -652,7 +657,7 @@ namespace UniversalUpc
 
             if (bki != null)
             {
-                DoUpdateBookScanDate(sCode, sLocation, bki, fCheckOnly, fErrorSoundsOnly, crid, del);
+                DoUpdateBookScanDate(workId, sCode, sLocation, bki, fCheckOnly, fErrorSoundsOnly, crid, del);
             }
             else
             {
@@ -671,7 +676,7 @@ namespace UniversalUpc
                 }
                 finally
                 {
-                    del(sCode, crid, sTitle, fResult);
+                    del(workId, sCode, crid, sTitle, fResult);
                 }
 
             }
@@ -756,6 +761,7 @@ namespace UniversalUpc
         	
         ----------------------------------------------------------------------------*/
         private async void DoUpdateBookScanDate(
+            int workId,
             string sCode,
             string sLocation,
             BookInfo bki,
@@ -773,7 +779,7 @@ namespace UniversalUpc
                 m_lp.LogEvent(crid, EventType.Verbose, "{1}Avoiding duplicate scan for {0}", sCode, sCheck);
                 m_isr.AddMessage(UpcAlert.AlertType.Duplicate, "{2}{0}: Duplicate?! LastScan was {1}", bki.Title,
                     bki.LastScan.ToString(), sCheck);
-                del(sCode, crid, bki.Title, true);
+                del(workId, sCode, crid, bki.Title, true);
                 return;
             }
 
@@ -794,7 +800,7 @@ namespace UniversalUpc
                 m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "{0}: Failed to update last scan!", bki.Title);
             }
 
-            del(sCode, crid, bki.Title, true);
+            del(workId, sCode, crid, bki.Title, true);
         }
 
         #endregion

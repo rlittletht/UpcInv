@@ -123,12 +123,15 @@ namespace UniversalUpc
         /// <param name="crid"></param>
         /// <param name="sTitle"></param>
         /// <param name="fResult"></param>
-        void ReportAndRemoveReentrancyEntry(string scanCode, CorrelationID crid, string sTitle, bool fResult)
+        void ReportAndRemoveReentrancyEntry(int workId, string scanCode, CorrelationID crid, string sTitle, bool fResult)
         {
+            string sDescription = sTitle;
+
             if (sTitle == null)
             {
                 //                SetTextBoxText(ebScanCode, "");
                 SetTextBoxText(ebTitle, "!!TITLE NOT FOUND");
+                sDescription = "";
                 // SetFocus(ebTitle, true);
             }
             else
@@ -143,6 +146,8 @@ namespace UniversalUpc
                 "FinalScanCodeCleanup: {0}: {1}",
                 fResult,
                 sTitle);
+
+            m_board.UpdateWork(workId, fResult, sDescription);
             FinishCode(scanCode, crid);
         }
         #endregion
@@ -272,6 +277,7 @@ namespace UniversalUpc
         delegate string AdjustScanCode(string scanCode);
 
         delegate Task DoHandleDispatchScanCodeDelegate(
+            int workId,
             string sCode,
             string sExtra, // location for book, notes for wine, null for dvd
             bool fCheckOnly,
@@ -320,10 +326,13 @@ namespace UniversalUpc
 
             // The removal of the reentrancy guard will happen asynchronously
 
+            int workId = m_board.CreateWork(scanCodeAdjusted, null);
+
             WorkBoard.WorkItemDispatch del = new WorkBoard.WorkItemDispatch(
                 async () =>
                 {
                     await delDispatch(
+                        workId,
                         scanCodeAdjusted,
                         sExtra,
                         fCheckOnly,
@@ -332,7 +341,7 @@ namespace UniversalUpc
                         ReportAndRemoveReentrancyEntry);
                 });
 
-            int workId = m_board.CreateWork(scanCodeAdjusted, del);
+            m_board.SetWorkDelegate(workId, del);
 
             WorkItemView view = m_board.GetWorkItemView(workId);
 

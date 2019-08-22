@@ -119,25 +119,28 @@
                 BorderBrush="Green"   
                 CornerRadius="3"   
                 HorizontalAlignment="Stretch"   
-                VerticalAlignment="Top"   
+                VerticalAlignment="Top" 
+                Margin="0,5"
                 Height="140">
-                <ListView x:Name="lstWorkBoard" Padding="0,0,0,0" Margin="0,0,0,0" MaxHeight="140">
+                <ListView HorizontalAlignment="Stretch" x:Name="lstWorkBoard" Padding="0,0,0,0" Margin="0,0,0,0" MaxHeight="140">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="MinHeight" Value="0"/>
-                            <Setter Property="Padding" Value="6,3"/>
+                            <Setter Property="Padding" Value="6,0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate x:Name="BoardTemplate" x:DataType="local:WorkItemView" >
-                            <Grid Height="Auto" Style="{StaticResource NoPaddedGrid}">
+                            <Grid Height="Auto" HorizontalAlignment="Stretch" Style="{StaticResource NoPaddedGrid}">
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="90"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="{Binding ScanCode}" Grid.Column="0" />
-                                <TextBlock Text="{Binding CurrentStatus}" Grid.Column="1" Padding="10,0,0,0"/>
+                                <TextBlock HorizontalAlignment="Stretch" Text="{Binding Description}" Grid.Column="1" Padding="10,0,0,0"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding CurrentStatus}" Grid.Column="2" Padding="10,0,0,0"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
