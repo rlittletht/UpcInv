@@ -393,7 +393,6 @@ namespace UniversalUpc
 
             if (dvdi != null)
             {
-                Thread.Sleep(1000);
                 DoUpdateDvdScanDate(workId, sCode, dvdi, fCheckOnly, fErrorSoundsOnly, crid, del);
             }
             else
