@@ -11,26 +11,12 @@ using Windows.Media.Playback;
 using Windows.Media.Streaming.Adaptive;
 using Windows.Storage;
 using Windows.UI.Core;
+using UpcShared;
 
 namespace UniversalUpc
 {
-    public interface IAlert
-    {
-        void DoAlert(UpcAlert.AlertType at);
-    }
     public class UpcAlert : IAlert
     {
-        public enum AlertType
-            {
-            GoodInfo,
-            BadInfo,
-            Halt,
-            Duplicate,
-			Drink,
-            UPCScanBeep,
-            None
-            };
-
         private Dictionary<AlertType, IMediaPlaybackSource> m_mpAlertMedia;
 
         private async Task<IMediaPlaybackSource> LoadSoundFile(string v)

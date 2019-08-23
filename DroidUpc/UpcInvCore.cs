@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Android.App;
-using Android.OS;
-using Android.Support.V7.App;
-using Android.Runtime;
-using Android.Widget;
 using TCore.Logging;
 using TCore.StatusBox;
 using TCore.WebInterop;
-using UpcApi;
 using UpcApi.Proxy;
 using UpcShared;
 
@@ -356,7 +350,11 @@ namespace DroidUpc
             Handle the dispatch of a DVD scan code.  Update the scan date, 
             lookup a title, and create a title if necessary.
         ----------------------------------------------------------------------------*/
-        public async void DoHandleDvdScanCode(string sCode, bool fCheckOnly, CorrelationID crid, FinalScanCodeCleanupDelegate del)
+        public async void DoHandleDvdScanCode(
+            string sCode, 
+            bool fCheckOnly, 
+            CorrelationID crid, 
+            FinalScanCodeCleanupDelegate del)
         {
             string sTitle = null;
             bool fResult = false;

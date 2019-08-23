@@ -114,6 +114,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="proxies.cs" />
     <Compile Include="Scanner.cs" />
     <Compile Include="StatusBox.cs" />
     <Compile Include="WorkBoard.cs" />

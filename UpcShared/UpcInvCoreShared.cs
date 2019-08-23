@@ -1,27 +1,56 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
+using System.Diagnostics;
 using System.Threading.Tasks;
-using TCore.Logging;
-using TCore.StatusBox;
 using TCore.WebInterop;
 using UpcApi.Proxy;
-using UpcShared;
 
-namespace UniversalUpc
+namespace UpcShared
 {
-    #if no
-    public class UpcInvCoreNo
+    public interface IAlert
+    {
+        void DoAlert(AlertType at);
+    }
+
+    public enum AlertType
+    {
+        GoodInfo,
+        BadInfo,
+        Halt,
+        Duplicate,
+        Drink,
+        UPCScanBeep,
+        None
+    };
+
+    public interface IStatusReporting
+    {
+        void AddMessage(AlertType at, string sMessage, params object[] rgo);
+    }
+
+    public enum EventType
+    {
+        Critical = 0,
+        Error = 1,
+        Warning = 2,
+        Information = 3,
+        Verbose = 4
+    };
+
+    public interface ILogProvider
+    {
+        void LogEvent(Guid crids, EventType et, string s, params object[] rgo);
+    }
+
+    public class UpcInvCore
     {
         private WebApi m_api = null;
 
         private IAlert m_ia;
         private IStatusReporting m_isr;
-        private TCore.Logging.ILogProvider m_lp;
+        private ILogProvider m_lp;
 
         public enum ADAS
         {
@@ -29,6 +58,7 @@ namespace UniversalUpc
             Book = 1,
             DVD = 2,
             Wine = 3,
+            Max = 4
         }
 
         /*----------------------------------------------------------------------------
@@ -39,7 +69,7 @@ namespace UniversalUpc
             Createa a new instance of UpcInvCore (provide alerting and status 
             reporting interfaces)
         ----------------------------------------------------------------------------*/
-        public UpcInvCoreNo(IAlert ia, IStatusReporting isr, TCore.Logging.ILogProvider lp)
+        public UpcInvCore(IAlert ia, IStatusReporting isr, ILogProvider lp)
         {
             m_ia = ia;
             m_isr = isr;
@@ -61,20 +91,6 @@ namespace UniversalUpc
                 m_api = new WebApi(new WebApiInterop("https://thetasoft2.azurewebsites.net/UpcApi", null));
         }
 
-        public DateTime? DttmGetLastScan(string sScanCode)
-        {
-            EnsureServiceConnection();
-
-            Task<USR_String> tsk = m_api.GetLastScanDate(sScanCode);
-
-            tsk.Wait();
-
-            if (!tsk.IsCompleted || !tsk.Result.Result)
-                return null;
-
-            return DateTime.Parse(tsk.Result.TheValue);
-        }
-
         /*----------------------------------------------------------------------------
         	%%Function: DvdInfoRetrieve
         	%%Qualified: UniversalUpc.UpcInvCore.DvdInfoRetrieve
@@ -85,13 +101,17 @@ namespace UniversalUpc
         public async Task<DvdInfo> DvdInfoRetrieve(string sScanCode)
         {
             EnsureServiceConnection();
+
             USR_DvdInfo usrd = await m_api.GetDvdScanInfo(sScanCode);
-            return usrd.TheValue;
+            DvdInfo dvdInfo = usrd.TheValue;
+
+            return dvdInfo;
         }
 
         public async Task<List<DvdInfo>> DvdInfoListRetrieve(string sTitle)
         {
             EnsureServiceConnection();
+
             USR_DvdInfoList usrdl = await m_api.GetDvdScanInfosFromTitle(sTitle);
             if (usrdl.Result == false || usrdl.TheValue == null)
                 return null;
@@ -156,15 +176,15 @@ namespace UniversalUpc
         	
             Create a DVD with the given scan code and title.
         ----------------------------------------------------------------------------*/
-        public async Task<bool> CreateDvd(string sScanCode, string sTitle, CorrelationID crid)
+        public async Task<bool> CreateDvd(string sScanCode, string sTitle, Guid crids)
         {
             EnsureServiceConnection();
             USR usr = await m_api.CreateDvd(sScanCode, sTitle);
 
             if (usr.Result)
-                m_lp.LogEvent(crid, EventType.Verbose, "Successfully added title for {0}", sScanCode);
+                m_lp.LogEvent(crids, EventType.Verbose, "Successfully added title for {0}", sScanCode);
             else
-                m_lp.LogEvent(crid, EventType.Error, "Failed to add title for {0}", sScanCode);
+                m_lp.LogEvent(crids, EventType.Error, "Failed to add title for {0}", sScanCode);
 
             return usr.Result;
         }
@@ -182,6 +202,7 @@ namespace UniversalUpc
         {
             EnsureServiceConnection();
             USR_BookInfoList usrdl = await m_api.GetBookScanInfosFromTitle(sTitle);
+
             if (usrdl.Result == false || usrdl.TheValue == null)
                 return null;
 
@@ -200,15 +221,15 @@ namespace UniversalUpc
         	
             Create a Book with the given scan code and title.
         ----------------------------------------------------------------------------*/
-        public async Task<bool> UpdateBookScan(string sScanCode, string sTitle, string sLocation, CorrelationID crid)
+        public async Task<bool> UpdateBookScan(string sScanCode, string sTitle, string sLocation, Guid crids)
         {
             EnsureServiceConnection();
             USR usr = await m_api.UpdateBookScan(sScanCode, sTitle, sLocation);
 
             if (usr.Result)
-                m_lp.LogEvent(crid, EventType.Verbose, "Successfully update title for {0}", sScanCode);
+                m_lp.LogEvent(crids, EventType.Verbose, "Successfully update title for {0}", sScanCode);
             else
-                m_lp.LogEvent(crid, EventType.Error, "Failed to update title for {0}", sScanCode);
+                m_lp.LogEvent(crids, EventType.Error, "Failed to update title for {0}", sScanCode);
 
             return usr.Result;
         }
@@ -220,15 +241,15 @@ namespace UniversalUpc
         	
             Create a Book with the given scan code and title.
         ----------------------------------------------------------------------------*/
-        public async Task<bool> CreateBook(string sScanCode, string sTitle, string sLocation, CorrelationID crid)
+        public async Task<bool> CreateBook(string sScanCode, string sTitle, string sLocation, Guid crids)
         {
             EnsureServiceConnection();
             USR usr = await m_api.CreateBook(sScanCode, sTitle, sLocation);
 
             if (usr.Result)
-                m_lp.LogEvent(crid, EventType.Verbose, "Successfully added title for {0}", sScanCode);
+                m_lp.LogEvent(crids, EventType.Verbose, "Successfully added title for {0}", sScanCode);
             else
-                m_lp.LogEvent(crid, EventType.Error, "Failed to add title for {0}", sScanCode);
+                m_lp.LogEvent(crids, EventType.Error, "Failed to add title for {0}", sScanCode);
 
             return usr.Result;
         }
@@ -242,33 +263,28 @@ namespace UniversalUpc
             return wni;
         }
 
-        public async Task<bool> DrinkWine(
-            string sScanCode,
-            string sWine,
-            string sVintage,
-            string sNotes,
-            CorrelationID crid)
+        public async Task<bool> DrinkWine(string sScanCode, string sWine, string sVintage, string sNotes, Guid crids)
         {
             EnsureServiceConnection();
-            USR usr = await m_api.DrinkWine(sScanCode, sWine, sVintage, sNotes);
+            USR usr;
+
+            usr = await m_api.DrinkWine(sScanCode, sWine, sVintage, sNotes);
 
             if (usr.Result)
-                m_lp.LogEvent(crid, EventType.Verbose, "Successfully added title for {0}", sScanCode);
+                m_lp.LogEvent(crids, EventType.Verbose, "Successfully added title for {0}", sScanCode);
             else
-                m_lp.LogEvent(crid, EventType.Error, "Failed to add title for {0}", sScanCode);
+                m_lp.LogEvent(crids, EventType.Error, "Failed to add title for {0}", sScanCode);
 
             return usr.Result;
         }
-
         #endregion
 
         #region UPC/EAN Support
-
         /*----------------------------------------------------------------------------
-        	%%Function: SEnsureEan13
-        	%%Qualified: UniversalUpc.UpcInvCore.SEnsureEan13
-        	%%Contact: rlittle
-        	
+            %%Function: SEnsureEan13
+            %%Qualified: UniversalUpc.UpcInvCore.SEnsureEan13
+            %%Contact: rlittle
+
         ----------------------------------------------------------------------------*/
         public string SEnsureEan13(string s)
         {
@@ -356,14 +372,13 @@ namespace UniversalUpc
             n = n % 10;
             return String.Format("{0}", n);
         }
-
-        #endregion
+#endregion
 
         #region Client Business Logic
 
         #region DVD Client
 
-        public delegate void FinalScanCodeReportAndCleanupDelegate(int workId, string scanCode, CorrelationID crid, string sFinalTitle, bool fResult);
+        public delegate void FinalScanCodeReportAndCleanupDelegate(int workId, string scanCode, Guid crids, string sFinalTitle, bool fResult);
 
         /*----------------------------------------------------------------------------
         	%%Function: DoHandleDvdScanCode
@@ -378,42 +393,42 @@ namespace UniversalUpc
             string sCode,
             string sUnused,
             bool fCheckOnly,
-            bool fErrorSoundsOnly, 
-            CorrelationID crid,
+            bool fErrorSoundsOnly,
+            Guid crids,
             FinalScanCodeReportAndCleanupDelegate del)
         {
             string sTitle = null;
             bool fResult = false;
-            m_lp.LogEvent(crid, EventType.Verbose,
+            m_lp.LogEvent(crids, EventType.Verbose,
                 "Continuing with processing for {0}...Checking for DvdInfo from service", sCode);
 
-            m_isr.AddMessage(UpcAlert.AlertType.None, $"Checking inventory for code: {sCode}...");
+            m_isr.AddMessage(AlertType.None, $"Checking inventory for code: {sCode}...");
 
             DvdInfo dvdi = await DvdInfoRetrieve(sCode);
 
             if (dvdi != null)
             {
-                DoUpdateDvdScanDate(workId, sCode, dvdi, fCheckOnly, fErrorSoundsOnly, crid, del);
+                DoUpdateDvdScanDate(workId, sCode, dvdi, fCheckOnly, fErrorSoundsOnly, crids, del);
             }
             else
             {
                 try
                 {
-                    sTitle = await DoLookupDvdTitle(sCode, crid);
+                    sTitle = await DoLookupDvdTitle(sCode, crids);
 
                     if (sTitle != null)
-                        fResult = await DoCreateDvdTitle(sCode, sTitle, fCheckOnly, fErrorSoundsOnly, crid);
+                        fResult = await DoCreateDvdTitle(sCode, sTitle, fCheckOnly, fErrorSoundsOnly, crids);
                 }
                 catch (Exception exc)
                 {
-                    m_isr.AddMessage(UpcAlert.AlertType.Halt, "Exception Caught: {0}", exc.Message);
+                    m_isr.AddMessage(AlertType.Halt, "Exception Caught: {0}", exc.Message);
 
                     sTitle = "!!Exception";
                     fResult = false;
                 }
                 finally
                 {
-                    del(workId, sCode, crid, sTitle, fResult);
+                    del(workId, sCode, crids, sTitle, fResult);
                 }
             }
         }
@@ -424,11 +439,11 @@ namespace UniversalUpc
         	%%Contact: rlittle
         	
         ----------------------------------------------------------------------------*/
-        private async Task<string> DoLookupDvdTitle(string sCode, CorrelationID crid)
+        private async Task<string> DoLookupDvdTitle(string sCode, Guid crids)
         {
-            m_lp.LogEvent(crid, EventType.Verbose, "No DVD info for scan code {0}, looking up...", sCode);
+            m_lp.LogEvent(crids, EventType.Verbose, "No DVD info for scan code {0}, looking up...", sCode);
 
-            m_isr.AddMessage(UpcAlert.AlertType.None, "No inventory found, doing lookup for code: {0}", sCode);
+            m_isr.AddMessage(AlertType.None, "No inventory found, doing lookup for code: {0}", sCode);
 
             // if the scan length is > 12, then chop off the beginning (likely padding)
             if (sCode.Length > 12)
@@ -437,7 +452,7 @@ namespace UniversalUpc
             if (sCode.Length != 12
                 && !(sCode.Length == 6 && sCode.StartsWith("030")))
             {
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, $"Scancode {sCode} not a valid UPC code.");
+                m_isr.AddMessage(AlertType.BadInfo, $"Scancode {sCode} not a valid UPC code.");
                 return null;
             }
 
@@ -445,34 +460,34 @@ namespace UniversalUpc
 
             if (sTitle == "" || sTitle.Substring(0, 2) == "!!")
             {
-                m_lp.LogEvent(crid, EventType.Verbose, "Service did not return a title for {0}", sCode);
+                m_lp.LogEvent(crids, EventType.Verbose, "Service did not return a title for {0}", sCode);
 
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Couldn't find title for {0}: {1}", sCode, sTitle);
+                m_isr.AddMessage(AlertType.BadInfo, "Couldn't find title for {0}: {1}", sCode, sTitle);
                 return null;
             }
 
             return sTitle;
         }
 
-        public async Task<bool> DoCheckDvdTitleInventory(string sTitle, CorrelationID crid)
+        public async Task<bool> DoCheckDvdTitleInventory(string sTitle, Guid crids)
         {
-            m_lp.LogEvent(crid, EventType.Verbose, "Checking inventory for dvd title {0}", sTitle);
+            m_lp.LogEvent(crids, EventType.Verbose, "Checking inventory for dvd title {0}", sTitle);
 
             List<DvdInfo> dvdis = await DvdInfoListRetrieve(sTitle);
             if (dvdis == null)
             {
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "No inventory found for titles like {0}", sTitle);
-                m_lp.LogEvent(crid, EventType.Verbose, "No inventory found for titles like {0}", sTitle);
+                m_isr.AddMessage(AlertType.BadInfo, "No inventory found for titles like {0}", sTitle);
+                m_lp.LogEvent(crids, EventType.Verbose, "No inventory found for titles like {0}", sTitle);
                 return false;
             }
             else
             {
-                m_lp.LogEvent(crid, EventType.Verbose, "Found {0} matching titles for {1}", dvdis.Count, sTitle);
-                m_isr.AddMessage(UpcAlert.AlertType.GoodInfo, "Found the following {0} matching titles in inventory:",
+                m_lp.LogEvent(crids, EventType.Verbose, "Found {0} matching titles for {1}", dvdis.Count, sTitle);
+                m_isr.AddMessage(AlertType.GoodInfo, "Found the following {0} matching titles in inventory:",
                     dvdis.Count);
                 foreach (DvdInfo dvdi in dvdis)
                 {
-                    m_isr.AddMessage(UpcAlert.AlertType.None, "{0}: {1} ({2})", dvdi.Code, dvdi.Title, dvdi.LastScan);
+                    m_isr.AddMessage(AlertType.None, "{0}: {1} ({2})", dvdi.Code, dvdi.Title, dvdi.LastScan);
                 }
 
                 return true;
@@ -485,17 +500,17 @@ namespace UniversalUpc
         	%%Contact: rlittle
         	
         ----------------------------------------------------------------------------*/
-        public async Task<bool> DoCreateDvdTitle(string sCode, string sTitle, bool fCheckOnly, bool fErrorSoundsOnly, CorrelationID crid)
+        public async Task<bool> DoCreateDvdTitle(string sCode, string sTitle, bool fCheckOnly, bool fErrorSoundsOnly, Guid crids)
         {
             string sCheck = fCheckOnly ? "[CheckOnly] " : "";
-            m_lp.LogEvent(crid, EventType.Verbose, "Service returned title {0} for code {1}. Adding title.", sTitle, sCode);
+            m_lp.LogEvent(crids, EventType.Verbose, "Service returned title {0} for code {1}. Adding title.", sTitle, sCode);
 
-            bool fResult = fCheckOnly || await CreateDvd(sCode, sTitle, crid);
+            bool fResult = fCheckOnly || await CreateDvd(sCode, sTitle, crids);
 
             if (fResult)
-                m_isr.AddMessage(fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.GoodInfo, "{2}Added title for {0}: {1}", sCode, sTitle, sCheck);
+                m_isr.AddMessage(fErrorSoundsOnly ? AlertType.None : AlertType.GoodInfo, "{2}Added title for {0}: {1}", sCode, sTitle, sCheck);
             else
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Couldn't create DVD title for {0}: {1}", sCode, sTitle);
+                m_isr.AddMessage(AlertType.BadInfo, "Couldn't create DVD title for {0}: {1}", sCode, sTitle);
 
             return fResult;
         }
@@ -507,46 +522,46 @@ namespace UniversalUpc
         	
         ----------------------------------------------------------------------------*/
         private async void DoUpdateDvdScanDate(
-            int workId, 
+            int workId,
             string sCode,
             DvdInfo dvdi,
             bool fCheckOnly,
             bool fErrorSoundsOnly,
-            CorrelationID crid,
+            Guid crids,
             FinalScanCodeReportAndCleanupDelegate del)
         {
             string sCheck = fCheckOnly ? "[CheckOnly] " : "";
 
-            m_lp.LogEvent(crid, EventType.Verbose, "Service returned info for {0}", sCode);
+            m_lp.LogEvent(crids, EventType.Verbose, "Service returned info for {0}", sCode);
 
             // check for a dupe/too soon last scan (within 1 hour)
             if (dvdi.LastScan > DateTime.Now.AddHours(-1))
             {
-                m_lp.LogEvent(crid, EventType.Verbose, "{1}Avoiding duplicate scan for {0}", sCode, sCheck);
-                m_isr.AddMessage(UpcAlert.AlertType.Duplicate, "{2}{0}: Duplicate?! LastScan was {1}", dvdi.Title,
+                m_lp.LogEvent(crids, EventType.Verbose, "{1}Avoiding duplicate scan for {0}", sCode, sCheck);
+                m_isr.AddMessage(AlertType.Duplicate, "{2}{0}: Duplicate?! LastScan was {1}", dvdi.Title,
                     dvdi.LastScan.ToString(), sCheck);
-                del(workId, sCode, crid, dvdi.Title, true);
+                del(workId, sCode, crids, dvdi.Title, true);
                 return;
             }
 
-            m_lp.LogEvent(crid, EventType.Verbose, "{1}Calling service to update scan date for {0}", sCode, sCheck);
+            m_lp.LogEvent(crids, EventType.Verbose, "{1}Calling service to update scan date for {0}", sCode, sCheck);
 
             // now update the last scan date
             bool fResult = fCheckOnly || await UpdateScanDate(sCode, dvdi.Title);
 
             if (fResult)
             {
-                m_lp.LogEvent(crid, EventType.Verbose, "{1}Successfully updated last scan for {0}", sCode, sCheck);
-                m_isr.AddMessage(fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.GoodInfo, "{2}{0}: Updated LastScan (was {1})", dvdi.Title,
+                m_lp.LogEvent(crids, EventType.Verbose, "{1}Successfully updated last scan for {0}", sCode, sCheck);
+                m_isr.AddMessage(fErrorSoundsOnly ? AlertType.None : AlertType.GoodInfo, "{2}{0}: Updated LastScan (was {1})", dvdi.Title,
                     dvdi.LastScan.ToString(), sCheck);
             }
             else
             {
-                m_lp.LogEvent(crid, EventType.Error, "{1}Failed to update last scan for {0}", sCode, sCheck);
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "{1}{0}: Failed to update last scan!", dvdi.Title, sCheck);
+                m_lp.LogEvent(crids, EventType.Error, "{1}Failed to update last scan for {0}", sCode, sCheck);
+                m_isr.AddMessage(AlertType.BadInfo, "{1}{0}: Failed to update last scan!", dvdi.Title, sCheck);
             }
 
-            del(workId, sCode, crid, dvdi.Title, true);
+            del(workId, sCode, crids, dvdi.Title, true);
         }
 
         #endregion
@@ -559,32 +574,32 @@ namespace UniversalUpc
             string sNotes,
             bool fCheckOnly,
             bool fErrorSoundsOnly,
-            CorrelationID crid,
+            Guid crids,
             FinalScanCodeReportAndCleanupDelegate del)
         {
             if (sNotes.StartsWith("!!"))
             {
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Notes not set: {0}", sNotes);
-                del(workId, sCode, crid, null, false);
+                m_isr.AddMessage(AlertType.BadInfo, "Notes not set: {0}", sNotes);
+                del(workId, sCode, crids, null, false);
                 return;
             }
 
             string sTitle = null;
-            m_lp.LogEvent(crid, EventType.Verbose,
+            m_lp.LogEvent(crids, EventType.Verbose,
                 "Continuing with processing for {0}...Checking for WineInfo from service", sCode);
             WineInfo wni = await WineInfoRetrieve(sCode);
 
             if (wni != null)
             {
-                DoDrinkWine(workId, sCode, sNotes, wni, fCheckOnly, fErrorSoundsOnly, crid, del);
+                DoDrinkWine(workId, sCode, sNotes, wni, fCheckOnly, fErrorSoundsOnly, crids, del);
             }
             else
             {
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Could not find wine for {0}", sCode);
+                m_isr.AddMessage(AlertType.BadInfo, "Could not find wine for {0}", sCode);
 
                 sTitle = "!!WINE NOTE FOUND";
 
-                del(workId, sCode, crid, sTitle, false);
+                del(workId, sCode, crids, sTitle, false);
             }
         }
 
@@ -595,29 +610,29 @@ namespace UniversalUpc
             WineInfo wni,
             bool fCheckOnly,
             bool fErrorSoundsOnly, // we ignore this for wines -- we don't do bulk wine scanning
-            CorrelationID crid,
+            Guid crids,
             FinalScanCodeReportAndCleanupDelegate del)
         {
             string sCheck = fCheckOnly ? "[CheckOnly] " : "";
-            m_lp.LogEvent(crid, EventType.Verbose, "Service returned info for {0}", sCode);
+            m_lp.LogEvent(crids, EventType.Verbose, "Service returned info for {0}", sCode);
 
-            m_lp.LogEvent(crid, EventType.Verbose, "{1}Drinking wine {0}", sCode, sCheck);
+            m_lp.LogEvent(crids, EventType.Verbose, "{1}Drinking wine {0}", sCode, sCheck);
 
             // now update the last scan date
-            bool fResult = fCheckOnly || await DrinkWine(sCode, wni.Wine, wni.Vintage, sNotes, crid);
+            bool fResult = fCheckOnly || await DrinkWine(sCode, wni.Wine, wni.Vintage, sNotes, crids);
 
             if (fResult)
             {
-                m_lp.LogEvent(crid, EventType.Verbose, "{1}Successfully drank wine for {0}", sCode, sCheck);
-                m_isr.AddMessage(UpcAlert.AlertType.Drink, "{1}{0}: Drank wine!", wni.Wine, sCheck);
+                m_lp.LogEvent(crids, EventType.Verbose, "{1}Successfully drank wine for {0}", sCode, sCheck);
+                m_isr.AddMessage(AlertType.Drink, "{1}{0}: Drank wine!", wni.Wine, sCheck);
             }
             else
             {
-                m_lp.LogEvent(crid, EventType.Error, "Failed to drink wine {0}", sCode);
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "{0}: Failed to drink wine!", wni.Wine);
+                m_lp.LogEvent(crids, EventType.Error, "Failed to drink wine {0}", sCode);
+                m_isr.AddMessage(AlertType.BadInfo, "{0}: Failed to drink wine!", wni.Wine);
             }
 
-            del(workId, sCode, crid, wni.Wine, true);
+            del(workId, sCode, crids, wni.Wine, true);
         }
 
         #endregion
@@ -638,43 +653,43 @@ namespace UniversalUpc
             string sLocation,
             bool fCheckOnly,
             bool fErrorSoundsOnly,
-            CorrelationID crid,
+            Guid crids,
             FinalScanCodeReportAndCleanupDelegate del)
         {
             if (sLocation.StartsWith("!!"))
             {
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Location not set: {0}", sLocation);
-                del(workId, sCode, crid, null, false);
+                m_isr.AddMessage(AlertType.BadInfo, "Location not set: {0}", sLocation);
+                del(workId, sCode, crids, null, false);
                 return;
             }
 
             string sTitle = null;
             bool fResult = false;
-            m_lp.LogEvent(crid, EventType.Verbose, "Continuing with processing for {0}...Checking for BookInfo from service", sCode);
+            m_lp.LogEvent(crids, EventType.Verbose, "Continuing with processing for {0}...Checking for BookInfo from service", sCode);
             BookInfo bki = await BookInfoRetrieve(sCode);
 
             if (bki != null)
             {
-                DoUpdateBookScanDate(workId, sCode, sLocation, bki, fCheckOnly, fErrorSoundsOnly, crid, del);
+                DoUpdateBookScanDate(workId, sCode, sLocation, bki, fCheckOnly, fErrorSoundsOnly, crids, del);
             }
             else
             {
                 try
                 {
-                    sTitle = await DoLookupBookTitle(sCode, crid);
+                    sTitle = await DoLookupBookTitle(sCode, crids);
 
                     if (sTitle != null)
-                        fResult = await DoCreateBookTitle(sCode, sTitle, sLocation, fCheckOnly, fErrorSoundsOnly, crid);
+                        fResult = await DoCreateBookTitle(sCode, sTitle, sLocation, fCheckOnly, fErrorSoundsOnly, crids);
                 }
                 catch (Exception exc)
                 {
-                    m_isr.AddMessage(UpcAlert.AlertType.Halt, "Exception Caught: {0}", exc.Message);
+                    m_isr.AddMessage(AlertType.Halt, "Exception Caught: {0}", exc.Message);
                     sTitle = "!!Exception";
                     fResult = false;
                 }
                 finally
                 {
-                    del(workId, sCode, crid, sTitle, fResult);
+                    del(workId, sCode, crids, sTitle, fResult);
                 }
 
             }
@@ -686,44 +701,44 @@ namespace UniversalUpc
         	%%Contact: rlittle
         	
         ----------------------------------------------------------------------------*/
-        private async Task<string> DoLookupBookTitle(string sCode, CorrelationID crid)
+        private async Task<string> DoLookupBookTitle(string sCode, Guid crids)
         {
-            m_lp.LogEvent(crid, EventType.Verbose, "No Book info for scan code {0}, looking up...", sCode);
+            m_lp.LogEvent(crids, EventType.Verbose, "No Book info for scan code {0}, looking up...", sCode);
 
-            m_isr.AddMessage(UpcAlert.AlertType.None, "looking up code {0}", sCode);
+            m_isr.AddMessage(AlertType.None, "looking up code {0}", sCode);
 
             string sTitle = await FetchTitleFromISBN13(sCode);
 
             if (sTitle == "" || sTitle.Substring(0, 2) == "!!")
             {
-                m_lp.LogEvent(crid, EventType.Verbose, "Service did not return a title for {0}", sCode);
+                m_lp.LogEvent(crids, EventType.Verbose, "Service did not return a title for {0}", sCode);
 
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Couldn't find title for {0}: {1}", sCode, sTitle);
+                m_isr.AddMessage(AlertType.BadInfo, "Couldn't find title for {0}: {1}", sCode, sTitle);
                 return null;
             }
 
             return sTitle;
         }
 
-        public async Task<bool> DoCheckBookTitleInventory(string sTitle, CorrelationID crid)
+        public async Task<bool> DoCheckBookTitleInventory(string sTitle, Guid crids)
         {
-            m_lp.LogEvent(crid, EventType.Verbose, "Checking inventory for dvd title {0}", sTitle);
+            m_lp.LogEvent(crids, EventType.Verbose, "Checking inventory for dvd title {0}", sTitle);
 
             List<BookInfo> bkis = await BookInfoListRetrieve(sTitle);
             if (bkis == null)
             {
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "No inventory found for titles like {0}", sTitle);
-                m_lp.LogEvent(crid, EventType.Verbose, "No inventory found for titles like {0}", sTitle);
+                m_isr.AddMessage(AlertType.BadInfo, "No inventory found for titles like {0}", sTitle);
+                m_lp.LogEvent(crids, EventType.Verbose, "No inventory found for titles like {0}", sTitle);
                 return false;
             }
             else
             {
-                m_lp.LogEvent(crid, EventType.Verbose, "Found {0} matching titles for {1}", bkis.Count, sTitle);
-                m_isr.AddMessage(UpcAlert.AlertType.GoodInfo, "Found the following {0} matching titles in inventory:",
+                m_lp.LogEvent(crids, EventType.Verbose, "Found {0} matching titles for {1}", bkis.Count, sTitle);
+                m_isr.AddMessage(AlertType.GoodInfo, "Found the following {0} matching titles in inventory:",
                     bkis.Count);
                 foreach (BookInfo bki in bkis)
                 {
-                    m_isr.AddMessage(UpcAlert.AlertType.None, "{0}: {1} ({2})", bki.Code, bki.Title, bki.LastScan);
+                    m_isr.AddMessage(AlertType.None, "{0}: {1} ({2})", bki.Code, bki.Title, bki.LastScan);
                 }
 
                 return true;
@@ -736,18 +751,18 @@ namespace UniversalUpc
         	%%Contact: rlittle
         	
         ----------------------------------------------------------------------------*/
-        public async Task<bool> DoCreateBookTitle(string sCode, string sTitle, string sLocation, bool fCheckOnly, bool fErrorSoundsOnly, CorrelationID crid)
+        public async Task<bool> DoCreateBookTitle(string sCode, string sTitle, string sLocation, bool fCheckOnly, bool fErrorSoundsOnly, Guid crids)
         {
             string sCheck = fCheckOnly ? "[CheckOnly] " : "";
-            m_lp.LogEvent(crid, EventType.Verbose, "Service returned title {0} for code {1}. Adding title.", sTitle,
+            m_lp.LogEvent(crids, EventType.Verbose, "Service returned title {0} for code {1}. Adding title.", sTitle,
                 sCode);
 
             sCode = SEnsureIsbn13(sCode);
-            bool fResult = fCheckOnly || await CreateBook(sCode, sTitle, sLocation, crid);
+            bool fResult = fCheckOnly || await CreateBook(sCode, sTitle, sLocation, crids);
             if (fResult)
-                m_isr.AddMessage(fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.GoodInfo, "{2}Added title for {0}: {1}", sCode, sTitle, sCheck);
+                m_isr.AddMessage(fErrorSoundsOnly ? AlertType.None : AlertType.GoodInfo, "{2}Added title for {0}: {1}", sCode, sTitle, sCheck);
             else
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Couldn't create Book title for {0}: {1}", sCode, sTitle);
+                m_isr.AddMessage(AlertType.BadInfo, "Couldn't create Book title for {0}: {1}", sCode, sTitle);
 
             return fResult;
         }
@@ -765,45 +780,44 @@ namespace UniversalUpc
             BookInfo bki,
             bool fCheckOnly,
             bool fErrorSoundsOnly,
-            CorrelationID crid,
+            Guid crids,
             FinalScanCodeReportAndCleanupDelegate del)
         {
             string sCheck = fCheckOnly ? "[CheckOnly] " : "";
-            m_lp.LogEvent(crid, EventType.Verbose, "Service returned info for {0}", sCode);
+            m_lp.LogEvent(crids, EventType.Verbose, "Service returned info for {0}", sCode);
 
             // check for a dupe/too soon last scan (within 1 hour)
             if (bki.LastScan > DateTime.Now.AddHours(-1))
             {
-                m_lp.LogEvent(crid, EventType.Verbose, "{1}Avoiding duplicate scan for {0}", sCode, sCheck);
-                m_isr.AddMessage(UpcAlert.AlertType.Duplicate, "{2}{0}: Duplicate?! LastScan was {1}", bki.Title,
+                m_lp.LogEvent(crids, EventType.Verbose, "{1}Avoiding duplicate scan for {0}", sCode, sCheck);
+                m_isr.AddMessage(AlertType.Duplicate, "{2}{0}: Duplicate?! LastScan was {1}", bki.Title,
                     bki.LastScan.ToString(), sCheck);
-                del(workId, sCode, crid, bki.Title, true);
+                del(workId, sCode, crids, bki.Title, true);
                 return;
             }
 
-            m_lp.LogEvent(crid, EventType.Verbose, "Calling service to update scan date for {0}", sCode);
+            m_lp.LogEvent(crids, EventType.Verbose, "Calling service to update scan date for {0}", sCode);
 
             // now update the last scan date
-            bool fResult = fCheckOnly || await UpdateBookScan(sCode, bki.Title, sLocation, crid);
+            bool fResult = fCheckOnly || await UpdateBookScan(sCode, bki.Title, sLocation, crids);
 
             if (fResult)
             {
-                m_lp.LogEvent(crid, EventType.Verbose, "{1}Successfully updated last scan for {0}", sCode, sCheck);
-                m_isr.AddMessage(fErrorSoundsOnly ? UpcAlert.AlertType.None : UpcAlert.AlertType.GoodInfo, "{2}{0}: Updated LastScan (was {1})", bki.Title,
+                m_lp.LogEvent(crids, EventType.Verbose, "{1}Successfully updated last scan for {0}", sCode, sCheck);
+                m_isr.AddMessage(fErrorSoundsOnly ? AlertType.None : AlertType.GoodInfo, "{2}{0}: Updated LastScan (was {1})", bki.Title,
                     bki.LastScan.ToString(), sCheck);
             }
             else
             {
-                m_lp.LogEvent(crid, EventType.Error, "Failed to update last scan for {0}", sCode);
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "{0}: Failed to update last scan!", bki.Title);
+                m_lp.LogEvent(crids, EventType.Error, "Failed to update last scan for {0}", sCode);
+                m_isr.AddMessage(AlertType.BadInfo, "{0}: Failed to update last scan!", bki.Title);
             }
 
-            del(workId, sCode, crid, bki.Title, true);
+            del(workId, sCode, crids, bki.Title, true);
         }
 
         #endregion
 
         #endregion
     }
-#endif 
 }
