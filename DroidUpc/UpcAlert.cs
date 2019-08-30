@@ -7,33 +7,19 @@ using Android.Media;
 using Android.OS;
 using Android.Support.V7.App;
 using Java.Lang;
+using UpcShared;
+
 #pragma warning disable 1998
 
 namespace DroidUpc
 {
-    public interface IAlert
-    {
-        void DoAlert(UpcAlert.AlertType at);
-    }
-
     public class UpcAlert : IAlert
     {
         private SoundPool m_sp;
         private AppCompatActivity m_act;
         private Handler m_handler;
 
-        public enum AlertType
-        {
-            GoodInfo,
-            BadInfo,
-            Halt,
-            Duplicate,
-            Drink,
-            UPCScanBeep,
-            None
-        };
-
-    private Dictionary<AlertType, int> m_mpAlertMedia;
+        private Dictionary<AlertType, int> m_mpAlertMedia;
 
         private async Task<int> LoadSoundFile(SoundPool sp, string v)
         {

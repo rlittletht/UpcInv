@@ -46,6 +46,8 @@ namespace UpcShared
 
     public class UpcInvCore
     {
+        public static int s_workIdNil = -1;
+
         private WebApi m_api = null;
 
         private IAlert m_ia;

@@ -13,6 +13,8 @@ using Android.Views;
 using Android.Views.InputMethods;
 using TCore.Logging;
 using TCore.StatusBox;
+using UpcShared;
+using EventType = UpcShared.EventType;
 
 namespace DroidUpc
 {
@@ -76,7 +78,7 @@ namespace DroidUpc
             if (result != null)
             {
                 m_txtStatus.Text = "result != null, format = " + result.BarcodeFormat + ", text = " + result.Text;
-                m_upca.Play(UpcAlert.AlertType.GoodInfo);
+                m_upca.Play(AlertType.GoodInfo);
             }
             else
             {
@@ -101,7 +103,7 @@ namespace DroidUpc
 
             if (result == null)
             {
-                m_upca.Play(UpcAlert.AlertType.BadInfo);
+                m_upca.Play(AlertType.BadInfo);
                 m_lp.LogEvent(crid, EventType.Error, "result == null");
                 RunOnUiThread(() => m_ebScanCode.Text = "");
                 return;
@@ -123,7 +125,7 @@ namespace DroidUpc
         ----------------------------------------------------------------------------*/
         private void DispatchScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
-            m_isr.AddMessage(UpcAlert.AlertType.UPCScanBeep, $"Scan received: {sResultText}");
+            m_isr.AddMessage(AlertType.UPCScanBeep, $"Scan received: {sResultText}");
 
             if (AdasCurrent() == UpcInvCore.ADAS.DVD)
                 DispatchDvdScanCode(sResultText, fCheckOnly, crid);
@@ -155,7 +157,7 @@ namespace DroidUpc
                 });
         }
 
-        void DispatchWineScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
+        async void DispatchWineScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
             string sScanCode = sResultText;
 
@@ -169,12 +171,14 @@ namespace DroidUpc
             RunOnUiThread(() => m_ebScanCode.Text = sScanCode);
 
             // The removal of the reentrancy guard will happen asynchronously
-            m_upccCore.DoHandleWineScanCode(
+            await m_upccCore.DoHandleWineScanCode(
+                UpcInvCore.s_workIdNil,
                 sScanCode,
                 m_ebNotes.Text,
                 fCheckOnly,
+                false /* fErrorSoundsOnly*/,
                 crid,
-                (cridDel, sTitle, fResult) =>
+                (workId, scanCode, crids, sTitle, fResult) =>
                 {
                     RunOnUiThread(
                         () =>
@@ -191,24 +195,24 @@ namespace DroidUpc
                             }
 
                             m_lp.LogEvent(
-                                cridDel,
+                                crids,
                                 fResult ? EventType.Information : EventType.Error,
                                 "FinalScanCodeCleanup: {0}: {1}",
                                 fResult,
                                 sTitle);
-                            FinishCode(sScanCode, cridDel);
+                            FinishCode(sScanCode, CorrelationID.FromCrids(crids));
                         });
                 });
         }
 
-        void DispatchBookScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
+        async void DispatchBookScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
             string sIsbn13 = m_upccCore.SEnsureIsbn13(sResultText);
 
             if (sIsbn13.StartsWith("!!"))
             {
                 m_lp.LogEvent(crid, EventType.Error, sIsbn13);
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, sIsbn13);
+                m_isr.AddMessage(AlertType.BadInfo, sIsbn13);
                 return;
             }
 
@@ -222,12 +226,14 @@ namespace DroidUpc
             RunOnUiThread(() => m_ebScanCode.Text = sIsbn13);
 
             // The removal of the reentrancy guard will happen asynchronously
-            m_upccCore.DoHandleBookScanCode(
+            await m_upccCore.DoHandleBookScanCode(
+                UpcInvCore.s_workIdNil,
                 sIsbn13,
                 m_ebLocation.Text,
                 fCheckOnly,
+                false /*fErrorSoundsOnly*/,
                 crid,
-                (cridDel, sTitle, fResult) =>
+                (workId, scanCode, crids, sTitle, fResult) =>
                 {
                     RunOnUiThread(
                         () =>
@@ -245,16 +251,16 @@ namespace DroidUpc
                         });
 
                     m_lp.LogEvent(
-                        cridDel,
+                        crids,
                         fResult ? EventType.Information : EventType.Error,
                         "FinalScanCodeCleanup: {0}: {1}",
                         fResult,
                         sTitle);
-                    FinishCode(sIsbn13, cridDel);
+                    FinishCode(sIsbn13, CorrelationID.FromCrids(crids));
                 });
         }
 
-        private void DispatchDvdScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
+        async private void DispatchDvdScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
             string sCode = m_upccCore.SEnsureEan13(sResultText);
 
@@ -267,18 +273,21 @@ namespace DroidUpc
             }
             catch (Exception exc)
             {
-                this.RunOnUiThread(() => { m_isr.AddMessage(UpcAlert.AlertType.Halt, "Exception caught: {0}", exc.Message); });
+                this.RunOnUiThread(() => { m_isr.AddMessage(AlertType.Halt, "Exception caught: {0}", exc.Message); });
             }
             // now handle this scan code
 
             this.RunOnUiThread(() => m_ebScanCode.Text = sCode);
 
             // The removal of the reentrancy guard will happen asynchronously
-            m_upccCore.DoHandleDvdScanCode(
+            await m_upccCore.DoHandleDvdScanCode(
+                UpcInvCore.s_workIdNil,
                 sCode,
+                null /*sExtra*/,
                 fCheckOnly,
+                false /*fErrorSoundsOnly*/,
                 crid,
-                (cridDel, sTitle, fResult) =>
+                (workId, scanCode, crids, sTitle, fResult) =>
                 {
                     this.RunOnUiThread(
                         () =>
@@ -296,12 +305,12 @@ namespace DroidUpc
                         });
 
                     m_lp.LogEvent(
-                        cridDel,
+                        crids,
                         fResult ? EventType.Information : EventType.Error,
                         "FinalScanCodeCleanup: {0}: {1}",
                         fResult,
                         sTitle);
-                    FinishCode(sCode, cridDel);
+                    FinishCode(sCode, CorrelationID.FromCrids(crids));
                 });
         }
 
@@ -337,14 +346,14 @@ namespace DroidUpc
                 else if (AdasCurrent() == UpcInvCore.ADAS.Book)
                     await m_upccCore.DoCheckBookTitleInventory(sTitle, new CorrelationID());
                 else if (AdasCurrent() == UpcInvCore.ADAS.Wine)
-                    m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "No manual operation available for Wine");
+                    m_isr.AddMessage(AlertType.BadInfo, "No manual operation available for Wine");
 
                 return;
             }
 
             if (sTitle.StartsWith("!!"))
             {
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "Can't add title with leading error text '!!'");
+                m_isr.AddMessage(AlertType.BadInfo, "Can't add title with leading error text '!!'");
                 return;
             }
 
@@ -353,16 +362,16 @@ namespace DroidUpc
             bool fResult = false;
 
             if (m_adasCurrent == UpcInvCore.ADAS.DVD)
-                fResult = await m_upccCore.DoCreateDvdTitle(m_ebScanCode.Text, sTitle, m_cbCheckOnly.Checked, crid);
+                fResult = await m_upccCore.DoCreateDvdTitle(m_ebScanCode.Text, sTitle, m_cbCheckOnly.Checked, false, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Book)
-                fResult = await m_upccCore.DoCreateBookTitle(m_ebScanCode.Text, sTitle, m_ebLocation.Text, m_cbCheckOnly.Checked, crid);
+                fResult = await m_upccCore.DoCreateBookTitle(m_ebScanCode.Text, sTitle, m_ebLocation.Text, m_cbCheckOnly.Checked, false, crid);
             else if (m_adasCurrent == UpcInvCore.ADAS.Wine)
-                m_isr.AddMessage(UpcAlert.AlertType.BadInfo, "No manual operation available for Wine");
+                m_isr.AddMessage(AlertType.BadInfo, "No manual operation available for Wine");
 
             if (fResult)
-                m_isr.AddMessage(UpcAlert.AlertType.GoodInfo, "Added {0} as {1}", m_ebScanCode.Text, sTitle);
+                m_isr.AddMessage(AlertType.GoodInfo, "Added {0} as {1}", m_ebScanCode.Text, sTitle);
             else
-                m_isr.AddMessage(UpcAlert.AlertType.Halt, "FAILED  to Added {0} as {1}", m_ebScanCode.Text, sTitle);
+                m_isr.AddMessage(AlertType.Halt, "FAILED  to Added {0} as {1}", m_ebScanCode.Text, sTitle);
         }
 
         private void SetNewMediaType(object sender, EventArgs e)

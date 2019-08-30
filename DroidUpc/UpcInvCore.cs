@@ -11,6 +11,7 @@ using UpcShared;
 
 namespace DroidUpc
 {
+    #if no
     public class UpcInvCore
     {
         private WebApi m_api = null;
@@ -679,4 +680,5 @@ namespace DroidUpc
         #endregion
 
     }
+#endif // no
 }
