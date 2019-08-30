@@ -270,7 +270,7 @@ namespace UniversalUpc
             string sExtra, // location for book, notes for wine, null for dvd
             bool fCheckOnly,
             bool fErrorSoundsOnly,
-            CorrelationID crid,
+            Guid crids,
             UpcInvCore.FinalScanCodeReportAndCleanupDelegate delReportAndCleanup);
 
 
