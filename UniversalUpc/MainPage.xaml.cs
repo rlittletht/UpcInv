@@ -108,10 +108,10 @@ namespace UniversalUpc
         /// generic remove the given code from the reentrancy protection. This code MUST match the code that
         /// that was added to the queue
         /// </summary>
-        /// <param name="crid"></param>
+        /// <param name="crids"></param>
         /// <param name="sTitle"></param>
         /// <param name="fResult"></param>
-        void ReportAndRemoveReentrancyEntry(int workId, string scanCode, CorrelationID crid, string sTitle, bool fResult)
+        void ReportAndRemoveReentrancyEntry(int workId, string scanCode, Guid crids, string sTitle, bool fResult)
         {
             string sDescription = sTitle;
 
@@ -129,14 +129,14 @@ namespace UniversalUpc
             }
 
             m_lp.LogEvent(
-                crid,
+                crids,
                 fResult ? EventType.Information : EventType.Error,
                 "FinalScanCodeCleanup: {0}: {1}",
                 fResult,
                 sTitle);
 
             m_board.UpdateWork(workId, fResult, sDescription);
-            FinishCode(scanCode, crid);
+            FinishCode(scanCode, CorrelationID.FromCrids(crids));
         }
         #endregion
 
@@ -305,7 +305,7 @@ namespace UniversalUpc
 
             // guard against reentrancy on the same scan code.
             m_lp.LogEvent(crids, EventType.Verbose, "About to check for already processing: {0}", scanCodeAdjusted);
-            if (!FAddProcessingCode(scanCodeAdjusted, crids))
+            if (!FAddProcessingCode(scanCodeAdjusted, CorrelationID.FromCrids(crids)))
             {
                 // even if we bail out...set the focus
                 SetFocus(ebScanCode, false);
