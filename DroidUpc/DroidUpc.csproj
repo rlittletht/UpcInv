@@ -81,7 +81,6 @@
     <Compile Include="scanner.cs" />
     <Compile Include="StatusBox.cs" />
     <Compile Include="UpcAlert.cs" />
-    <Compile Include="UpcInvCore.cs" />
     <Compile Include="UpcTypeSpinnerAdapter.cs" />
   </ItemGroup>
   <ItemGroup>

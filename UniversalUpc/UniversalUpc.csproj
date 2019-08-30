@@ -120,7 +120,6 @@
     <Compile Include="WorkBoard.cs" />
     <Compile Include="WorkItem.cs" />
     <Compile Include="UpcAlert.cs" />
-    <Compile Include="UpcInvCore.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
