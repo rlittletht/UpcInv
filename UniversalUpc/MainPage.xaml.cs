@@ -409,10 +409,11 @@ namespace UniversalUpc
             DeviceInformationCollection devices =
                 await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
 
+            scannerControl.Visibility = Visibility.Collapsed; // always collapsed until they press the scan button
+
             if (devices.Count > 0)
                 return;
 
-            scannerControl.Visibility = Visibility.Collapsed;
             pbScan.Visibility = Visibility.Collapsed;
         }
 
@@ -434,6 +435,7 @@ namespace UniversalUpc
         {
             if (m_fScannerOn == false)
             {
+                scannerControl.Visibility = Visibility.Visible;
                 if (!m_fScannerSetup)
                 {
                     m_fScannerSetup = true;
@@ -447,6 +449,7 @@ namespace UniversalUpc
             {
                 m_ups.StopScanner();
                 m_fScannerOn = false;
+                scannerControl.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -510,6 +513,23 @@ namespace UniversalUpc
             AdjustUIForMediaType(m_adasCurrent);
         }
 
+
+        private void DoIsbnify(object sender, RoutedEventArgs e)
+        {
+            // take a 9 digit ISBN number and calculate the check digit and create
+            // a 13 digit ISBN number
+            if (ebScanCode.Text.Length != 9
+                && ebScanCode.Text.Length != 10
+                && ebScanCode.Text.Length != 12
+                && ebScanCode.Text.Length != 13)
+            {
+                m_sb.AddMessage(AlertType.BadInfo, "Scancode is not 9 or 12 digits");
+                return;
+            }
+
+            SetTextBoxText(ebScanCode, m_upccCore.SCreateIsbn13FromIsbn(ebScanCode.Text));
+        }
+
         void AdjustUIForMediaType(UpcInvCore.ADAS adas)
         {
             if (txtLocation == null || ebLocation == null || ebNotes == null)
@@ -521,21 +541,25 @@ namespace UniversalUpc
                     txtLocation.Visibility = Visibility.Visible;
                     ebLocation.Visibility = Visibility.Visible;
                     ebNotes.Visibility = Visibility.Collapsed;
+                    pbIsbnify.Visibility = Visibility.Visible;
                     break;
                 case UpcInvCore.ADAS.Wine:
                     txtLocation.Visibility = Visibility.Collapsed;
                     ebLocation.Visibility = Visibility.Collapsed;
                     ebNotes.Visibility = Visibility.Visible;
+                    pbIsbnify.Visibility = Visibility.Collapsed;
                     break;
                 case UpcInvCore.ADAS.DVD:
                     txtLocation.Visibility = Visibility.Collapsed;
                     ebLocation.Visibility = Visibility.Collapsed;
                     ebNotes.Visibility = Visibility.Collapsed;
+                    pbIsbnify.Visibility = Visibility.Collapsed;
                     break;
                 case UpcInvCore.ADAS.Generic:
                     txtLocation.Visibility = Visibility.Collapsed;
                     ebLocation.Visibility = Visibility.Collapsed;
                     ebNotes.Visibility = Visibility.Collapsed;
+                    pbIsbnify.Visibility = Visibility.Collapsed;
                     break;
             }
         }

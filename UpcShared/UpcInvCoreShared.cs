@@ -296,6 +296,23 @@ namespace UpcShared
             return s;
         }
 
+        public string SCreateIsbn13FromIsbn(string s)
+        {
+            if (s.Length == 9)
+            {
+                s = $"{s}{SCheckCalcIsbn10(s)}";
+            }
+            else if (s.Length == 12)
+            {
+                s = $"{s}{SCheckCalcIsbn13(s)}";
+            }
+
+            if (s.Length != 10 && s.Length != 13)
+                return null;
+
+            return SEnsureIsbn13(s);
+        }
+
         public string SEnsureIsbn13(string s)
         {
             string sIsbn13 = null;
