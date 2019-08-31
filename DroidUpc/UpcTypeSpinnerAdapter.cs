@@ -4,6 +4,7 @@ using Android.Support.V7.App;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using UpcShared;
 
 namespace DroidUpc
 {

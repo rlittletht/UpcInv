@@ -8,14 +8,10 @@ using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml.Controls;
 using UniversalUpc;
+using UpcShared;
 
 namespace TCore.StatusBox
 {
-    public interface IStatusReporting
-    {
-        void AddMessage(UpcAlert.AlertType at, string sMessage, params object[] rgo);
-    }
-
     class StatusBox : IStatusReporting
     {
         private RichEditBox m_rec;
@@ -31,7 +27,7 @@ namespace TCore.StatusBox
             m_fInit = true;
         }
 
-        public void AddMessageCore(UpcAlert.AlertType at, string sMessage, params object[] rgo)
+        public void AddMessageCore(AlertType at, string sMessage, params object[] rgo)
         {
             ITextDocument iDoc = m_rec.Document;
 
@@ -42,11 +38,11 @@ namespace TCore.StatusBox
             s = s + "\r" + s2;
 
             iDoc.SetText(TextSetOptions.None, s);
-            if (at != UpcAlert.AlertType.None)
+            if (at != AlertType.None)
                 m_ia.DoAlert(at);
         }
 
-        public async void AddMessage(UpcAlert.AlertType at, string sMessage, params object[] rgo)
+        public async void AddMessage(AlertType at, string sMessage, params object[] rgo)
         {
             if (!m_fInit)
                 return;

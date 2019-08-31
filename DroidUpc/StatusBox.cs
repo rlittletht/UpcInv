@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 using Android.Support.V7.App;
 using Android.Widget;
 using DroidUpc;
+using UpcShared;
 
 namespace TCore.StatusBox
 {
-    public interface IStatusReporting
-    {
-        void AddMessage(UpcAlert.AlertType at, string sMessage, params object[] rgo);
-    }
-
     class StatusBox : IStatusReporting
     {
         private TextView m_tv;
@@ -31,12 +27,12 @@ namespace TCore.StatusBox
             m_act = act;
         }
 
-        public void AddMessage(UpcAlert.AlertType at, string sMessage, params object[] rgo)
+        public void AddMessage(AlertType at, string sMessage, params object[] rgo)
         {
             if (!m_fInit)
                 return;
 
-            if (at != UpcAlert.AlertType.None && m_ia != null)
+            if (at != AlertType.None && m_ia != null)
                 m_ia.DoAlert(at);
 
             string s2;

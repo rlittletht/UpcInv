@@ -16,6 +16,8 @@ using TCore.StatusBox;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using UpcShared;
+using IStatusReporting = UpcShared.IStatusReporting;
 
 namespace DroidUpc
 {
@@ -30,7 +32,8 @@ namespace DroidUpc
 
         private bool m_fScannerOn;
 
-        private LogProvider m_lp;
+        private LogProvider m_lpActual;
+        private UpcLogProvider m_lp;
         private IStatusReporting m_isr;
         private EditText m_ebTitle;
         private EditText m_ebScanCode;
@@ -101,7 +104,8 @@ namespace DroidUpc
             sb.Initialize(tv, m_upca, this);
 
             m_isr = sb;
-            m_lp = new LogProvider(null);
+            m_lpActual = new LogProvider(null);
+            m_lp = new UpcLogProvider(m_lpActual);
             m_upccCore = new UpcInvCore(m_upca, m_isr, m_lp);
             m_plsProcessing = new List<string>();
 
@@ -146,14 +150,14 @@ namespace DroidUpc
         
         void TestAlert(object sender, EventArgs e)
         {
-            UpcAlert.AlertType[] rgat =
+            AlertType[] rgat =
             {
-                UpcAlert.AlertType.GoodInfo,
-                UpcAlert.AlertType.BadInfo,
-                UpcAlert.AlertType.Halt,
-                UpcAlert.AlertType.Duplicate,
-                UpcAlert.AlertType.Drink,
-                UpcAlert.AlertType.UPCScanBeep
+                AlertType.GoodInfo,
+                AlertType.BadInfo,
+                AlertType.Halt,
+                AlertType.Duplicate,
+                AlertType.Drink,
+                AlertType.UPCScanBeep
             };
 
             if (++iAlert >= rgat.Length)
@@ -172,14 +176,14 @@ namespace DroidUpc
                 {
                     m_frmScanner.Visibility = ViewStates.Visible;
                     m_ups.StartScanner(ScannerControlDispatchScanCode);
-                    m_isr.AddMessage(UpcAlert.AlertType.None, "Turning Scanner on");
+                    m_isr.AddMessage(AlertType.None, "Turning Scanner on");
                     m_fScannerOn = true;
                 }
             }
             else
             {
                 m_ups.StopScanner();
-                m_isr.AddMessage(UpcAlert.AlertType.None, "Turning Scanner off");
+                m_isr.AddMessage(AlertType.None, "Turning Scanner off");
                 m_frmScanner.Visibility = ViewStates.Gone;
                 m_fScannerOn = false;
             }
