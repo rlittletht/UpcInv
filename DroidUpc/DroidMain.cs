@@ -216,6 +216,12 @@ namespace DroidUpc
                 return;
             }
 
+            if (String.IsNullOrEmpty(m_ebLocation.Text))
+            {
+                m_isr.AddMessage(AlertType.Halt, "Cannot scan book without location!");
+                return;
+            }
+
             // guard against reentrancy on the same scan code.
             m_lp.LogEvent(crid, EventType.Verbose, "About to check for already processing: {0}", sIsbn13);
             if (!FAddProcessingCode(sIsbn13, crid))
@@ -316,14 +322,20 @@ namespace DroidUpc
 
         private void DoCodeKeyPress(object sender, View.KeyEventArgs eventArgs)
         {
-            if (eventArgs.KeyCode == Keycode.Enter && eventArgs.Event.Action == KeyEventActions.Up)
+            eventArgs.Handled = false;
+
+            if (eventArgs.KeyCode == Keycode.Enter)
             {
-                CorrelationID crid = new CorrelationID();
-                string sResultText = m_ebScanCode.Text;
+                if (eventArgs.Event.Action == KeyEventActions.Up)
+                {
+                    CorrelationID crid = new CorrelationID();
+                    string sResultText = m_ebScanCode.Text;
 
-                m_lp.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", sResultText);
+                    m_lp.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", sResultText);
 
-                DispatchScanCode(sResultText, m_cbCheckOnly.Checked, crid);
+                    DispatchScanCode(sResultText, m_cbCheckOnly.Checked, crid);
+                }
+                // handle both down and up so we don't get the default behavior...
                 eventArgs.Handled = true;
             }
         }

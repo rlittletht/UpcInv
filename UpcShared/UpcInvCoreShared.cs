@@ -246,7 +246,16 @@ namespace UpcShared
         public async Task<bool> CreateBook(string sScanCode, string sTitle, string sLocation, Guid crids)
         {
             EnsureServiceConnection();
-            USR usr = await m_api.CreateBook(sScanCode, sTitle, sLocation);
+            USR usr;
+
+            try
+            {
+                usr = await m_api.CreateBook(sScanCode, sTitle, sLocation);
+            }
+            catch (Exception exc)
+            {
+                usr = USR.Failed(exc);
+            }
 
             if (usr.Result)
                 m_lp.LogEvent(crids, EventType.Verbose, "Successfully added title for {0}", sScanCode);
