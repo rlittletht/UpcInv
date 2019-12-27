@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using NUnit.Framework;
 using TCore;
 using TCore.Logging;
 using UpcShared;
@@ -150,6 +151,19 @@ namespace UpcApi
             return Shared.DoGenericQueryDelegateRead(sFullQuery, ReaderGetBookScanInfoListDelegate, USR_BookInfoList.FromTCSR);
         }
 
+        static string ToSqlDateTime(DateTime dttm)
+        {
+            return dttm.ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        [TestCase("12-25-2019 14:00", "2019-12-25T14:00:00")]
+        [Test]
+        public static void Test_ToSqlDateTime(string sInput, string sExpected)
+        {
+            Assert.AreEqual(sExpected, ToSqlDateTime(DateTime.Parse(sInput)));
+        }
+
+
         /*----------------------------------------------------------------------------
         	%%Function: GetBookScanInfosFromTitle
         	%%Qualified: UpcApi.UpcBook.GetBookScanInfosFromTitle
@@ -160,7 +174,8 @@ namespace UpcApi
             string sTitleSubstring,
             string sAuthorSubstring,
             string sSeriesSubstring,
-            string sSummarySubstring)
+            string sSummarySubstring,
+            DateTime? dttmSince)
         {
             SqlWhere sqlw = new SqlWhere();
             sqlw.AddAliases(s_mpBookAlias);
@@ -172,6 +187,8 @@ namespace UpcApi
                 sqlw.Add(String.Format("$$upc_books$$.Series like '%{0}%'", Sql.Sqlify(sSeriesSubstring)), SqlWhere.Op.And);
             if (sSummarySubstring != null)
                 sqlw.Add(String.Format("$$upc_books$$.Summary like '%{0}%'", Sql.Sqlify(sSummarySubstring)), SqlWhere.Op.And);
+            if (dttmSince != null)
+                sqlw.Add(String.Format("$$upc_codes$$.FirstScanDate > '{0}'", ToSqlDateTime(dttmSince.Value)), SqlWhere.Op.And);
 
             string sFullQuery = String.Format("SELECT {0}", sqlw.GetWhere(s_sQueryBook));
 

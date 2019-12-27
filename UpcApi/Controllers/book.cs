@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using System.Web.Http.Cors;
 using TCore.Logging;
 
@@ -31,7 +32,16 @@ namespace UpcApi.Controllers
         [Route("api/book/QueryBookScanInfos")]
         public IHttpActionResult QueryBookScanInfos(string Title, string Author, string Series, string Summary)
         {
-            return Ok(UpcBook.QueryBookScanInfos(Title, Author, Series, Summary));
+            return Ok(UpcBook.QueryBookScanInfos(Title, Author, Series, Summary, null));
+        }
+
+        [HttpGet]
+        [Route("api/book/QueryBookScanInfosSince")]
+        public IHttpActionResult QueryBookScanInfos(string Title, string Author, string Series, string Summary, string SinceDate)
+        {
+            DateTime dttm = DateTime.Parse(SinceDate);
+
+            return Ok(UpcBook.QueryBookScanInfos(Title, Author, Series, Summary, dttm));
         }
 
         [HttpGet]
