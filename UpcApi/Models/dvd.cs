@@ -10,10 +10,27 @@ namespace UpcApi
     public class UpcDvd
     {
 
-        private static string s_sQueryDvd = "$$upc_codes$$.ScanCode, $$upc_codes$$.LastScanDate, $$upc_codes$$.FirstScanDate, $$upc_dvd$$.Title " +
-                                     " FROM $$#upc_codes$$ " +
-                                     " INNER JOIN $$#upc_dvd$$ " +
-                                     "   ON $$upc_codes$$.ScanCode = $$upc_dvd$$.ScanCode";
+        private static string s_sQueryDvd = 
+            "$$upc_codes$$.ScanCode, "
+            + "$$upc_codes$$.LastScanDate, "
+            + "$$upc_codes$$.FirstScanDate, "
+            + "$$upc_dvd$$.Title "
+            + "FROM $$#upc_codes$$ "
+            + " INNER JOIN $$#upc_dvd$$ " 
+            + "   ON $$upc_codes$$.ScanCode = $$upc_dvd$$.ScanCode";
+
+        private static string s_sQueryDvdEx =
+            "$$upc_codes$$.ScanCode, "
+            + "$$upc_codes$$.LastScanDate, "
+            + "$$upc_codes$$.FirstScanDate, "
+            + "$$upc_dvd$$.Title, "
+            + "$$upc_dvd$$.Summary, "
+            + "$$upc_dvd$$.Classification, "
+            + "$$upc_dvd$$.MediaType, "
+            + "$$upc_dvd$$.CoverSrc "
+            + "FROM $$#upc_codes$$ "
+            + " INNER JOIN $$#upc_dvd$$ "
+            + "   ON $$upc_codes$$.ScanCode = $$upc_dvd$$.ScanCode";
 
         private static Dictionary<string, string> s_mpDvdAlias = new Dictionary<string, string>
                                                                      {
@@ -38,6 +55,28 @@ namespace UpcApi
 
             usrd = USR_DvdInfo.FromTCSR(USR.SuccessCorrelate(crid));
             usrd.TheValue = dvdi;
+        }
+
+        /*----------------------------------------------------------------------------
+        	%%Function: ReaderGetDvdScanInfoExDelegate
+        	%%Qualified: UpcSvc.UpcSvc.ReaderGetDvdScanInfoExDelegate
+        	%%Contact: rlittle
+        	
+        ----------------------------------------------------------------------------*/
+        public static void ReaderGetDvdScanInfoExDelegate(SqlReader sqlr, CorrelationID crid, ref USR_DvdInfoEx usrd)
+        {
+            USR_DvdInfo dvdInfo = null;
+            ReaderGetDvdScanInfoDelegate(sqlr, crid, ref dvdInfo);
+
+            DvdInfoEx dvdix = DvdInfoEx.FromDvdInfo(dvdInfo.TheValue);
+
+            dvdix.Summary = sqlr.Reader.IsDBNull(4) ? null : sqlr.Reader.GetString(4);
+            dvdix.Classification = sqlr.Reader.IsDBNull(5) ? null : sqlr.Reader.GetString(5);
+            dvdix.MediaType = sqlr.Reader.IsDBNull(6) ? null : sqlr.Reader.GetString(6);
+            dvdix.CoverSrc = sqlr.Reader.IsDBNull(7) ? null : sqlr.Reader.GetString(7);
+
+            usrd = USR_DvdInfoEx.FromTCSR(USR.SuccessCorrelate(crid));
+            usrd.TheValue = dvdix;
         }
 
         /*----------------------------------------------------------------------------
@@ -79,6 +118,23 @@ namespace UpcApi
             string sFullQuery = String.Format("SELECT {0}", sqlw.GetWhere(s_sQueryDvd));
 
             return Shared.DoGenericQueryDelegateRead(sFullQuery, ReaderGetDvdScanInfoDelegate, USR_DvdInfo.FromTCSR);
+        }
+
+        /*----------------------------------------------------------------------------
+            %%Function: GetFullDvdScanInfo
+            %%Qualified: UpcSvc.UpcSvc.GetFullDvdScanInfo
+    
+            Get the information for the DVD for the given scancode
+        ----------------------------------------------------------------------------*/
+        public static USR_DvdInfoEx GetFullDvdScanInfo(string sScanCode)
+        {
+            SqlWhere sqlw = new SqlWhere();
+            sqlw.AddAliases(s_mpDvdAlias);
+            sqlw.Add(String.Format("$$upc_codes$$.ScanCode='{0}'", Sql.Sqlify(sScanCode)), SqlWhere.Op.And);
+
+            string sFullQuery = String.Format("SELECT {0}", sqlw.GetWhere(s_sQueryDvdEx));
+
+            return Shared.DoGenericQueryDelegateRead(sFullQuery, ReaderGetDvdScanInfoExDelegate, USR_DvdInfoEx.FromTCSR);
         }
 
         /*----------------------------------------------------------------------------

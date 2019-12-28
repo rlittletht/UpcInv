@@ -13,6 +13,13 @@ namespace UpcApi.Controllers
         }
 
         [HttpGet]
+        [Route("api/dvd/GetFullDvdScanInfo")]
+        public IHttpActionResult GetFullDvdScanInfo(string ScanCode)
+        {
+            return Ok(UpcDvd.GetFullDvdScanInfo(ScanCode));
+        }
+
+        [HttpGet]
         [Route("api/dvd/GetDvdScanInfosFromTitle")]
         public IHttpActionResult GetDvdScanInfosFromTitle(string Title)
         {

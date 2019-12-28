@@ -259,12 +259,44 @@ namespace UpcShared
         public DateTime FirstScan { get; set; }
         public DateTime LastScan { get; set; }
     }
+    
+    public class DvdInfoEx : DvdInfo
+    {
+        public string Summary { get; set; }
+        public string CoverSrc { get; set; }
+        public string Classification  { get; set; }
+        public string MediaType { get; set; }
 
+        public static DvdInfoEx FromDvdInfo(DvdInfo dvdi)
+        {
+            DvdInfoEx dvdix = new DvdInfoEx();
+
+            dvdix.Code = dvdi.Code;
+            dvdix.Title = dvdi.Title;
+            dvdix.FirstScan = dvdi.FirstScan;
+            dvdix.LastScan = dvdi.LastScan;
+
+            return dvdix;
+        }
+    }
     public class USR_DvdInfo : TUSR<DvdInfo>
     {
         public static USR_DvdInfo FromTCSR(USR usr)
         {
             USR_DvdInfo usrs = new USR_DvdInfo();
+            usrs.Reason = usr.Reason;
+            usrs.Result = usr.Result;
+            usrs.CorrelationID = usr.CorrelationID;
+
+            return usrs;
+        }
+    }
+
+    public class USR_DvdInfoEx : TUSR<DvdInfoEx>
+    {
+        public static USR_DvdInfoEx FromTCSR(USR usr)
+        {
+            USR_DvdInfoEx usrs = new USR_DvdInfoEx();
             usrs.Reason = usr.Reason;
             usrs.Result = usr.Result;
             usrs.CorrelationID = usr.CorrelationID;
