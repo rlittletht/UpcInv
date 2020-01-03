@@ -28,6 +28,7 @@ namespace Bulker
                 new CmdLineSwitch("L", false, false, "Log file", "Log file", null),
                 new CmdLineSwitch("C", false, false, "Cover source full path to root", "Cover source full path to root", null), 
                 new CmdLineSwitch("B", true, false, "Bulk update books", "Bulk update books", null), 
+                new CmdLineSwitch("Bs", true, false, "Update book summary (force)", "Summary", null), 
             });
 
             CmdLine cmdLine = new CmdLine(cfg);

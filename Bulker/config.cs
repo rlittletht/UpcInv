@@ -10,6 +10,7 @@ namespace Bulker
         private string m_sLogFile; // where to log errors
         private string m_sSqlFile; // this is the sql file to use when recording and not just directly updating the database
         private string m_sLocalCoverRoot;
+        private bool m_fForceUpdateSummary;
 
         private RequestedAction m_action;
 
@@ -17,6 +18,7 @@ namespace Bulker
         public string LogFile => m_sLogFile;
         public string SqlFile => m_sSqlFile;
         public string LocalCoverRoot => m_sLocalCoverRoot;
+        public bool ForceUpdateSummary => m_fForceUpdateSummary;
 
         public enum RequestedAction
         {
@@ -42,6 +44,10 @@ namespace Bulker
             else if (cls.Switch == "B")
             {
                 m_action = RequestedAction.Books;
+            }
+            else if (cls.Switch == "Bs")
+            {
+                m_fForceUpdateSummary = !m_fForceUpdateSummary;
             }
             else
             {
