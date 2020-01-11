@@ -81,7 +81,6 @@ namespace Bulker
 
             try
             {
-                SqlReader sqlr;
                 sr = Sql.ExecuteQuery(sql, sqls.ToString(), this, null);
 
                 if (!sr.Succeeded)
