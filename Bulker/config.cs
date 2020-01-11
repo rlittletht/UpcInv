@@ -22,7 +22,8 @@ namespace Bulker
 
         public enum RequestedAction
         {
-            Books
+            Books,
+            Dvds
         }
        
         public bool FDispatchCmdLineSwitch(TCore.CmdLine.CmdLineSwitch cls, string sParam, object oClient, out string sError)
@@ -45,7 +46,11 @@ namespace Bulker
             {
                 m_action = RequestedAction.Books;
             }
-            else if (cls.Switch == "Bs")
+            else if (cls.Switch == "D")
+            {
+                m_action = RequestedAction.Dvds;
+            }
+            else if (cls.Switch == "Bs" || cls.Switch == "Ds")
             {
                 m_fForceUpdateSummary = !m_fForceUpdateSummary;
             }

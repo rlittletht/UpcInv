@@ -28,7 +28,9 @@ namespace Bulker
                 new CmdLineSwitch("L", false, false, "Log file", "Log file", null),
                 new CmdLineSwitch("C", false, false, "Cover source full path to root", "Cover source full path to root", null), 
                 new CmdLineSwitch("B", true, false, "Bulk update books", "Bulk update books", null), 
-                new CmdLineSwitch("Bs", true, false, "Update book summary (force)", "Summary", null), 
+                new CmdLineSwitch("Bs", true, false, "Update book summary (force)", "Summary", null),
+                new CmdLineSwitch("D", true, false, "Bulk update dvds", "Bulk update dvds", null),
+                new CmdLineSwitch("Ds", true, false, "Update dvd summary (force)", "Summary", null),
             });
 
             CmdLine cmdLine = new CmdLine(cfg);
@@ -50,7 +52,8 @@ namespace Bulker
         {
             ParseCmdLine(args);
 
-            if (m_config.Action != BulkerConfig.RequestedAction.Books)
+            if (m_config.Action != BulkerConfig.RequestedAction.Books
+                && m_config.Action != BulkerConfig.RequestedAction.Dvds)
                 throw new Exception("no action specified");
 
             switch (m_config.Action)
@@ -60,6 +63,13 @@ namespace Bulker
                     BookUpdater books = new BookUpdater(m_config);
 
                     books.DoUpdate();
+                    break;
+                }
+                case BulkerConfig.RequestedAction.Dvds:
+                {
+                    DvdUpdater dvd = new DvdUpdater(m_config);
+
+                    dvd.DoUpdate();
                     break;
                 }
             }

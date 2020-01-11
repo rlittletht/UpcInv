@@ -99,6 +99,7 @@
     <Compile Include="Books.cs" />
     <Compile Include="bulker.cs" />
     <Compile Include="config.cs" />
+    <Compile Include="Dvds.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
