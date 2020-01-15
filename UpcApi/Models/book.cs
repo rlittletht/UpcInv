@@ -151,7 +151,7 @@ namespace UpcApi
             return Shared.DoGenericQueryDelegateRead(sFullQuery, ReaderGetBookScanInfoListDelegate, USR_BookInfoList.FromTCSR);
         }
 
-        static string ToSqlDateTime(DateTime dttm)
+        public static string ToSqlDateTime(DateTime dttm)
         {
             return dttm.ToString("yyyy-MM-ddTHH:mm:ss");
         }

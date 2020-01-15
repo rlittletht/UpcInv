@@ -155,6 +155,25 @@ namespace UpcApi
             return Shared.DoGenericQueryDelegateRead(sFullQuery, ReaderGetDvdScanInfoListDelegate, USR_DvdInfoList.FromTCSR);
         }
 
+        public static USR_DvdInfoList QueryDvdScanInfos(
+            string sTitleSubstring,
+            string sSummarySubstring,
+            DateTime? dttmSince)
+        {
+            SqlWhere sqlw = new SqlWhere();
+            sqlw.AddAliases(s_mpDvdAlias);
+            if (!string.IsNullOrEmpty(sTitleSubstring))
+                sqlw.Add(String.Format("$$upc_dvd$$.Title like '%{0}%'", Sql.Sqlify(sTitleSubstring)), SqlWhere.Op.And);
+            if (!string.IsNullOrEmpty(sSummarySubstring))
+                sqlw.Add(String.Format("$$upc_dvd$$.Summary like '%{0}%'", Sql.Sqlify(sSummarySubstring)), SqlWhere.Op.And);
+            if (dttmSince != null)
+                sqlw.Add(String.Format("$$upc_codes$$.FirstScanDate > '{0}'", UpcBook.ToSqlDateTime(dttmSince.Value)), SqlWhere.Op.And);
+
+            string sFullQuery = String.Format("SELECT {0}", sqlw.GetWhere(s_sQueryDvd));
+
+            return Shared.DoGenericQueryDelegateRead(sFullQuery, ReaderGetDvdScanInfoListDelegate, USR_DvdInfoList.FromTCSR);
+        }
+
         public static USR CreateDvd(string sScanCode, string sTitle)
         {
             string sNow = DateTime.Now.ToString();

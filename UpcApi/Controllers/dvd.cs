@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using TCore.Logging;
+using System;
 
 namespace UpcApi.Controllers
 {
@@ -24,6 +25,15 @@ namespace UpcApi.Controllers
         public IHttpActionResult GetDvdScanInfosFromTitle(string Title)
         {
             return Ok(UpcDvd.GetDvdScanInfosFromTitle(Title));
+        }
+
+        [HttpGet]
+        [Route("api/dvd/QueryDvdScanInfos")]
+        public IHttpActionResult GetDvdScanInfos(string Title, string Summary, string Since)
+        {
+            DateTime? dttm = string.IsNullOrEmpty(Since) ? (DateTime? ) null : DateTime.Parse(Since);
+
+            return Ok(UpcDvd.QueryDvdScanInfos(Title, Summary, dttm));
         }
 
         [HttpGet]
