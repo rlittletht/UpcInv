@@ -410,4 +410,23 @@ namespace UpcShared
             return usrw;
         }
     }
+
+    public enum DiagnosticResult
+    {
+        ServiceRunning = 0
+    }
+
+    public class USR_DiagnosticResult : TUSR<DiagnosticResult>
+    {
+        public static USR_DiagnosticResult FromTCSR(USR usr)
+        {
+            USR_DiagnosticResult usrd = new USR_DiagnosticResult();
+
+            usrd.Reason = usr.Reason;
+            usrd.Result = usr.Result;
+            usrd.CorrelationID = usr.CorrelationID;
+
+            return usrd;
+        }
+    }
 }
