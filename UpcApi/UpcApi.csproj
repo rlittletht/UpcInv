@@ -108,6 +108,7 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\book.cs" />
+    <Compile Include="Controllers\diagnostics.cs" />
     <Compile Include="Controllers\dvd.cs" />
     <Compile Include="Controllers\upc.cs" />
     <Compile Include="Controllers\wine.cs" />
