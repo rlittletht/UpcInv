@@ -6,6 +6,7 @@ using Android.Content.Res;
 using Android.Media;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Test;
 using Java.Lang;
 using UpcShared;
 
@@ -21,24 +22,36 @@ namespace DroidUpc
 
         private Dictionary<AlertType, int> m_mpAlertMedia;
 
-        private async Task<int> LoadSoundFile(SoundPool sp, string v)
+        private async Task<int> LoadSoundFile(SoundPool sp, string v, AssetManager assets = null)
         {
+#if debugging_assets
+            string[] rgs = global::Android.App.Application.Context.Assets.List("");
+            string[] rgs2 = global::Android.App.Application.Context.Assets.List("Audio");
+            string[] rgs3 = global::Android.App.Application.Context.Assets.List("images");
+
+            if (assets != null)
+            {
+                string[] args = assets.List("");
+                string[] args2 = assets.List("Audio");
+                string[] args3 = assets.List("images");
+            }
+#endif
             AssetFileDescriptor afd = global::Android.App.Application.Context.Assets.OpenFd(v);
 
             int soundId = sp.Load(afd, 1);
             return soundId;
         }
 
-        async Task<SoundPool> LoadEffects()
+        async Task<SoundPool> LoadEffects(AssetManager assets)
         {
             SoundPool sp = new SoundPool.Builder().SetMaxStreams(2).Build();
 
-            m_mpAlertMedia.Add(AlertType.GoodInfo, await LoadSoundFile(sp, "Audio/exclamation.wav"));
-            m_mpAlertMedia.Add(AlertType.Duplicate, await LoadSoundFile(sp, "Audio/doh.wav"));
-            m_mpAlertMedia.Add(AlertType.Drink, await LoadSoundFile(sp, "Audio/hicup_392.wav"));
-            m_mpAlertMedia.Add(AlertType.BadInfo, await LoadSoundFile(sp, "Audio/ding.wav"));
-            m_mpAlertMedia.Add(AlertType.Halt, await LoadSoundFile(sp, "Audio/ding.wav"));
-            m_mpAlertMedia.Add(AlertType.UPCScanBeep, await LoadSoundFile(sp, "Audio/263133__pan14__tone-beep.wav"));
+            m_mpAlertMedia.Add(AlertType.GoodInfo, await LoadSoundFile(sp, "exclamation.wav", assets));
+            m_mpAlertMedia.Add(AlertType.Duplicate, await LoadSoundFile(sp, "doh.wav"));
+            m_mpAlertMedia.Add(AlertType.Drink, await LoadSoundFile(sp, "hicup_392.wav"));
+            m_mpAlertMedia.Add(AlertType.BadInfo, await LoadSoundFile(sp, "ding.wav"));
+            m_mpAlertMedia.Add(AlertType.Halt, await LoadSoundFile(sp, "ding.wav"));
+            m_mpAlertMedia.Add(AlertType.UPCScanBeep, await LoadSoundFile(sp, "263133__pan14__tone-beep.wav"));
 
             return sp;
         }
@@ -49,7 +62,7 @@ namespace DroidUpc
             m_act = act;
             m_handler = handler;
 
-            Task<SoundPool> tsp = LoadEffects();
+            Task<SoundPool> tsp = LoadEffects(act.Assets);
 
             tsp.Wait();
             m_sp = tsp.Result;

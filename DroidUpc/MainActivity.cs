@@ -137,6 +137,7 @@ namespace DroidUpc
 
             SetupScannerFragment();
             InitializeApplication();
+            DoServiceHeartbeat();
             SetFocus(m_ebScanCode, false);
         }
 
@@ -164,6 +165,18 @@ namespace DroidUpc
                 iAlert = 0;
 
             m_upca.Play(rgat[iAlert]);
+        }
+
+        async void DoServiceHeartbeat()
+        {
+            m_isr.AddMessage(AlertType.None, "Checking server for heartbeat...");
+
+            ServiceStatus status = await m_upccCore.GetServiceStatusHeartBeat();
+
+            if (status == ServiceStatus.Running)
+                m_isr.AddMessage(AlertType.None, "Server is running.");
+            else
+                m_isr.AddMessage(AlertType.Halt, "Server is not running!");
         }
 
         void OnScanClick(object sender, EventArgs e)

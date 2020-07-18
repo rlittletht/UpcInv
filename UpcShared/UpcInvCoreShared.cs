@@ -25,6 +25,12 @@ namespace UpcShared
         None
     };
 
+    public enum ServiceStatus
+    {
+        Unknown = -1,
+        Running = 0
+    };
+
     public interface IStatusReporting
     {
         void AddMessage(AlertType at, string sMessage, params object[] rgo);
@@ -91,6 +97,20 @@ namespace UpcShared
         {
             if (m_api == null)
                 m_api = new WebApi(new WebApiInterop("https://thetasoft2.azurewebsites.net/UpcApi", null));
+        }
+
+        /*----------------------------------------------------------------------------
+        	%%Function: GetServiceStatusHeartBeat
+        	%%Qualified: UpcShared.UpcInvCore.GetServiceStatusHeartBeat
+        	
+        ----------------------------------------------------------------------------*/
+        public async Task<ServiceStatus> GetServiceStatusHeartBeat()
+        {
+            EnsureServiceConnection();
+
+            USR_DiagnosticResult result = await m_api.GetHeartbeat();
+
+            return (ServiceStatus) (int) result.TheValue;
         }
 
         /*----------------------------------------------------------------------------
