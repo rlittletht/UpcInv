@@ -118,6 +118,14 @@ namespace UpcApi.Proxy
 
         #endregion
 
+        #region Diagnostics
+
+        public async Task<USR_DiagnosticResult> GetHeartbeat()
+        {
+            return await Generic<USR_DiagnosticResult>("api/diagnostics/Heartbeat");
+        }
+
+        #endregion
 #if no
         public async Task<TTTT> APINAME(args)
         {

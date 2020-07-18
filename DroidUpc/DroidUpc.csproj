@@ -53,6 +53,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugApk|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\DebugApk\</OutputPath>
+    <Optimize>False</Optimize>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>portable</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -62,6 +64,9 @@
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <Debugger>Xamarin</Debugger>
+    <AndroidLinkMode>None</AndroidLinkMode>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -176,19 +181,16 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Audio\263133__pan14__tone-beep.wav" />
+    <AndroidAsset Include="Assets\263133__pan14__tone-beep.wav" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Audio\ding.wav" />
+    <AndroidAsset Include="Assets\ding.wav" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Audio\doh.wav" />
+    <AndroidAsset Include="Assets\doh.wav" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Audio\exclamation.wav" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Audio\hicup_392.wav" />
+    <AndroidAsset Include="Assets\hicup_392.wav" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\mipmap-mdpi\UPCLogo_Square.png" />
@@ -204,6 +206,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\mipmap-hdpi\UPCLogo_Square.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\exclamation.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\Audio\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
