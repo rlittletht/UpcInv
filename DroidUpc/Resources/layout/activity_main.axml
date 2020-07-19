@@ -119,7 +119,7 @@
 			android:id="@+id/tvStatus"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-		    android:text="Status Here" />
+		    android:text="Status:" />
 		<ScrollView
 			android:id="@+id/svLog"
 			android:layout_width="fill_parent"
@@ -132,7 +132,7 @@
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
 				android:scrollbars = "vertical"
-				android:text="Log here"
+				android:text=""
 				android:scrollIndicators="none|right"
 				android:scrollbarStyle="outsideOverlay" />
 		</ScrollView>
