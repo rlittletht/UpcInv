@@ -83,6 +83,9 @@
       <HintPath>..\packages\TCore.Exceptions.1.0.0\lib\net45\TCore.Exceptions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="TCore.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TCore.Logging.1.0.0.0\lib\net462\TCore.Logging.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
@@ -121,14 +124,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\liblet\cs\TCore.Logging\Logging.csproj">
-      <Project>{ee681c45-8416-4de7-9e62-ae1371a7de9a}</Project>
-      <Name>Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\liblet\cs\TCore.Scrappy\TCore.Scrappy.csproj">
       <Project>{43787649-7722-45cb-886d-c5c5f78d473a}</Project>
       <Name>TCore.Scrappy</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -83,6 +83,9 @@
     <Reference Include="TCore.Exceptions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TCore.Exceptions.1.0.0\lib\net45\TCore.Exceptions.dll</HintPath>
     </Reference>
+    <Reference Include="TCore.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TCore.Logging.1.0.0.0\lib\net462\TCore.Logging.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -141,10 +144,6 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\liblet\cs\TCore.Logging\Logging.csproj">
-      <Project>{ee681c45-8416-4de7-9e62-ae1371a7de9a}</Project>
-      <Name>Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\liblet\cs\TCore.Scrappy\TCore.Scrappy.csproj">
       <Project>{43787649-7722-45cb-886d-c5c5f78d473a}</Project>
       <Name>TCore.Scrappy</Name>
