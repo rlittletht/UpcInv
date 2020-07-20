@@ -29,8 +29,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UwpDist", "UwpDist\UwpDist.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCore.MsalWeb", "..\liblet\cs\TCore.MsalWeb.Working\TCore.MsalWeb\TCore.MsalWeb.csproj", "{2A614ABE-23AE-4064-BD31-4EA1BCC4DAE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalUpc", "UniversalUpc\UniversalUpc.csproj", "{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AzureRelease|Any CPU = AzureRelease|Any CPU
