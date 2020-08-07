@@ -2,6 +2,8 @@
 using System;
 using TCore.CmdLine;
 using System.Configuration;
+using System.Threading.Tasks;
+using TCore.KeyVault;
 using TCore.Scrappy.BarnesAndNoble;
 
 namespace Bulker
@@ -31,6 +33,7 @@ namespace Bulker
                 new CmdLineSwitch("Bs", true, false, "Update book summary (force)", "Summary", null),
                 new CmdLineSwitch("D", true, false, "Bulk update dvds", "Bulk update dvds", null),
                 new CmdLineSwitch("Ds", true, false, "Update dvd summary (force)", "Summary", null),
+                new CmdLineSwitch("PW", true, false, "Show password", "show password for debugging purposes", null), 
             });
 
             CmdLine cmdLine = new CmdLine(cfg);
@@ -48,10 +51,18 @@ namespace Bulker
             Console.WriteLine(s);
         }
 
-        public void Run(string[] args)
+        public async Task Run(string[] args)
         {
             ParseCmdLine(args);
 
+            if (m_config.ShowPassword)
+            {
+                Client client = new Client();
+
+                Console.WriteLine($"Secret: {await client.GetSecret(null)}");
+                Console.WriteLine($"Password: {s_sConnectionString}");
+                return;
+            }
             if (m_config.Action != BulkerConfig.RequestedAction.Books
                 && m_config.Action != BulkerConfig.RequestedAction.Dvds)
                 throw new Exception("no action specified");

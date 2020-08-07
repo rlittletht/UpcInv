@@ -3,6 +3,7 @@
 
 # ignore secret configs (passwords and such)
 *secret*.config
+*secret*.xml
 *secret*.resx
 *.cscfg
 
