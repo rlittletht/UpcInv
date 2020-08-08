@@ -14,10 +14,6 @@ namespace Bulker
     class Bulker
     {
         private BulkerConfig m_config;
-
-        public static string s_sConnectionString =
-            ConfigurationManager.AppSettings["Thetasoft.Azure.ConnectionString"];
-
         public Bulker(){}
 
         public void ParseCmdLine(string[] args)
@@ -51,18 +47,23 @@ namespace Bulker
             Console.WriteLine(s);
         }
 
+        private Client m_clientKeyVault;
+        private string s_sAppID = "bfbaffd7-2217-4deb-a85a-4f697e6bdf94";
+        private string m_sAppTenant = "b90f9ef3-5e11-43e0-a75c-1f45e6b223fb";
+        private string s_sConnectionStringSecretID = "Thetasoft-Azure-ConnectionString/324deaac388a480ab992ccef03072b61";
+        public string ConnectionString { get; set; }
+
         public async Task Run(string[] args)
         {
             ParseCmdLine(args);
 
+            m_clientKeyVault = new Client(m_sAppTenant, s_sAppID);
+            ConnectionString = await m_clientKeyVault.GetSecret(s_sConnectionStringSecretID);
             if (m_config.ShowPassword)
             {
-                Client client = new Client();
-
-                Console.WriteLine($"Secret: {await client.GetSecret(null)}");
-                Console.WriteLine($"Password: {s_sConnectionString}");
-                return;
+                Console.WriteLine($"Secret: {ConnectionString}");
             }
+
             if (m_config.Action != BulkerConfig.RequestedAction.Books
                 && m_config.Action != BulkerConfig.RequestedAction.Dvds)
                 throw new Exception("no action specified");
@@ -73,14 +74,14 @@ namespace Bulker
                 {
                     BookUpdater books = new BookUpdater(m_config);
 
-                    books.DoUpdate();
+                    books.DoUpdate(ConnectionString);
                     break;
                 }
                 case BulkerConfig.RequestedAction.Dvds:
                 {
                     DvdUpdater dvd = new DvdUpdater(m_config);
 
-                    dvd.DoUpdate();
+                    dvd.DoUpdate(ConnectionString);
                     break;
                 }
             }
