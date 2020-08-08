@@ -66,7 +66,10 @@ namespace Bulker
 
             if (m_config.Action != BulkerConfig.RequestedAction.Books
                 && m_config.Action != BulkerConfig.RequestedAction.Dvds)
-                throw new Exception("no action specified");
+            {
+                Console.WriteLine("No action specified. Terminating.");
+                return;
+            }
 
             switch (m_config.Action)
             {

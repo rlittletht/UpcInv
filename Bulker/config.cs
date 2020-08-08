@@ -12,7 +12,7 @@ namespace Bulker
         private string m_sLocalCoverRoot;
         private bool m_fForceUpdateSummary;
         
-        private RequestedAction m_action;
+        private RequestedAction m_action = RequestedAction.None;
 
         public RequestedAction Action => m_action;
         public string LogFile => m_sLogFile;
@@ -23,6 +23,7 @@ namespace Bulker
 
         public enum RequestedAction
         {
+            None,
             Books,
             Dvds
         }
@@ -34,8 +35,8 @@ namespace Bulker
             if (cls.Switch == "PW")
             {
                 ShowPassword = true;
-            }
-            if (cls.Switch == "R")
+            } 
+            else if (cls.Switch == "R")
             {
                 m_sSqlFile = sParam;
             }
