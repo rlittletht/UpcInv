@@ -112,7 +112,7 @@ namespace DroidUpc
             m_txtLocation = FindViewById<TextView>(Resource.Id.tvLocationLabel);
             m_ebNotes = FindViewById<EditText>(Resource.Id.ebTastingNotes);
             m_ebTitle = FindViewById<EditText>(Resource.Id.ebTitle);
-            m_ebScanCode = FindViewById<EditText>(Resource.Id.ebCode);
+            m_ebScanCode = FindViewById<EditText>(Resource.Id.ebCode); // hook to UI here
             m_ebLocation = FindViewById<EditText>(Resource.Id.ebLocation);
             m_txtStatus = FindViewById<TextView>(Resource.Id.tvStatus);
             m_cbCheckOnly = FindViewById<CheckBox>(Resource.Id.cbCheckOnly);
