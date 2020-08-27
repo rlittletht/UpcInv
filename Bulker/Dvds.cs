@@ -214,7 +214,7 @@ namespace Bulker
             }
 
             StringBuilder sb = new StringBuilder(256);
-            sb.Append($"UPDATE upc_Books SET UpdateStatus={(int)status} ");
+            sb.Append($"UPDATE upc_DVD SET UpdateStatus={(int)status} ");
 
             foreach (string s in plsSet)
             {
