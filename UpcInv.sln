@@ -25,6 +25,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B8E8A0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UwpDist", "UwpDist\UwpDist.csproj", "{E57B6A49-44DF-4D70-97D1-8F8638A4E685}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{DC45ACE4-EACB-437E-9E63-E02BA75CB857}"
+	ProjectSection(SolutionItems) = preProject
+		SQL\CalcIsbn10Check.sql = SQL\CalcIsbn10Check.sql
+		SQL\CalcIsbn13Check.sql = SQL\CalcIsbn13Check.sql
+		SQL\CreateIsbn13FromIsbn10.sql = SQL\CreateIsbn13FromIsbn10.sql
+		SQL\sp_createbook.sql = SQL\sp_createbook.sql
+		SQL\sp_CreateCustomScan.sql = SQL\sp_CreateCustomScan.sql
+		SQL\sp_CreateDvd.sql = SQL\sp_CreateDvd.sql
+		SQL\sp_CreateScan.sql = SQL\sp_CreateScan.sql
+		SQL\sp_DrinkWine.sql = SQL\sp_DrinkWine.sql
+		SQL\sp_NextCustomScan.sql = SQL\sp_NextCustomScan.sql
+		SQL\sp_UpdateBookScan.sql = SQL\sp_UpdateBookScan.sql
+		SQL\sp_UpdateBookScanLocation.sql = SQL\sp_UpdateBookScanLocation.sql
+		SQL\sp_UpdateDvdScan.sql = SQL\sp_UpdateDvdScan.sql
+		SQL\sp_UpdateScan.sql = SQL\sp_UpdateScan.sql
+		SQL\sp_UpdateWineInventory.sql = SQL\sp_UpdateWineInventory.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AzureRelease|Any CPU = AzureRelease|Any CPU
