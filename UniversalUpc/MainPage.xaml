@@ -81,13 +81,42 @@
             <TextBlock Text="Title: " Grid.Row="2" Grid.Column="0"/>
             <TextBlock Text="Location: " Grid.Row="4" Grid.Column="0" x:Name="txtLocation"/>
 
-            <TextBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" x:Name="ebScanCode" Text="" InputScope="Number" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" KeyUp="OnCodeKeyUp" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
+            <Grid Style="{StaticResource NoPaddedGrid}" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="180"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBox IsEnabled="True"  Grid.Row="0" Grid.Column="0" x:Name="ebScanCode" Text="" InputScope="Number" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" KeyUp="OnCodeKeyUp" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
+                <TextBlock x:Name="txtBinColumn" Text="Col: " Grid.Row="0" Grid.Column="2"/>
+                <TextBox IsEnabled="False" Grid.Row="0" Grid.Column="4" x:Name="ebBinColumn" Text="" InputScope="Number" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
+                <TextBlock x:Name="txtBinRow" Text="Row: " Grid.Row="0" Grid.Column="6"/>
+                <TextBox IsEnabled="False" Grid.Row="0" Grid.Column="8" x:Name="ebBinRow" Text="" InputScope="Number" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
+                <TextBlock x:Name="txtBinCode" Text="Scan/Bin: " Grid.Row="0" Grid.Column="10"/>
+                <TextBox IsEnabled="False" Grid.Row="0" Grid.Column="12" x:Name="ebWineCode" Text="" InputScope="Number" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
+                <TextBox IsEnabled="False" Grid.Row="0" Grid.Column="14" x:Name="ebBinCode" Text="" InputScope="Number" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
+            </Grid>
             <Button Grid.Row="0" Grid.Column="4" Height="Auto" Content="ISBNify" x:Name="pbIsbnify" Click="DoIsbnify"/>
             <TextBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="3" x:Name="ebTitle" Text="" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
             <TextBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="5" x:Name="ebLocation" Text="!!Location" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
             <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="6" x:Name="ebNotes" Text="!!Private tasting notes" HorizontalAlignment="Stretch" Width="Auto" GotFocus="OnEnterSelectAll" PreventKeyboardDisplayOnProgrammaticFocus="True"/>
             
-            <ComboBox x:Name="cbMediaType" Grid.Row="0" Grid.Column="5" Grid.RowSpan="3" Height="70" SelectedIndex="0" BorderThickness="0" SelectionChanged="SetNewMediaType">
+            <ComboBox x:Name="cbMediaType" Grid.Row="0" Grid.Column="5" Grid.RowSpan="3" Width="100"  Height="70" SelectedIndex="0" BorderThickness="0" SelectionChanged="SetNewMediaType">
                 <ComboBoxItem Tag="dvd">
                     <Image Source="{StaticResource dvdIcon}" Width="50" Height="50"/>
                 </ComboBoxItem>
@@ -107,6 +136,10 @@
             <!--<Grid HorizontalAlignment="Left" Height="559" Margin="10,71,0,0" VerticalAlignment="Top" Width="340"> -->
             <!--<CaptureElement Name="previewVideo" VerticalAlignment="Center"/>-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ComboBox x:Name="cbDrinkInventory" Height="Auto" Width="120" Margin="0,0,12,0" SelectionChanged="DoDrinkInventoryChange">
+                    <ComboBoxItem Content="Drink" IsSelected="True"/>
+                    <ComboBoxItem Content="Inventory"/>
+                </ComboBox>
                 <CheckBox x:Name="cbErrorSoundsOnly" Checked="DoErrorSoundsChange" Unchecked="DoErrorSoundsChange" Margin="0,0,12,0">Bulk Mode: Error Sounds Only</CheckBox>
                 <CheckBox x:Name="cbCheckOnly" Checked="DoCheckChange" Unchecked="DoCheckChange">Check Only</CheckBox>
                 <Button Height="Auto" Content="Manual" x:Name="pbManualAdd" Click="DoManual"/>

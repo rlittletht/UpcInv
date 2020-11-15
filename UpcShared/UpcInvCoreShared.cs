@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
 using TCore.WebInterop;
 using UpcApi.Proxy;
@@ -67,6 +68,13 @@ namespace UpcShared
             DVD = 2,
             Wine = 3,
             Max = 4
+        }
+
+        public enum WDI // Wine Drink or Inventory
+        {
+            Drink = 0,
+            Inventory = 1,
+            Max = 2
         }
 
         /*----------------------------------------------------------------------------
@@ -440,6 +448,7 @@ namespace UpcShared
             int workId,
             string sCode,
             string sUnused,
+            string sUnused2,
             bool fCheckOnly,
             bool fErrorSoundsOnly,
             Guid crids,
@@ -620,12 +629,15 @@ namespace UpcShared
             int workId,
             string sCode,
             string sNotes,
+            string sBinCode,
             bool fCheckOnly,
             bool fErrorSoundsOnly,
             Guid crids,
             FinalScanCodeReportAndCleanupDelegate del)
         {
-            if (sNotes.StartsWith("!!"))
+            bool fInventory = sBinCode != null;
+
+            if (sNotes.StartsWith("!!") && !fInventory)
             {
                 m_isr.AddMessage(AlertType.BadInfo, "Notes not set: {0}", sNotes);
                 del(workId, sCode, crids, null, false);
@@ -683,6 +695,52 @@ namespace UpcShared
             del(workId, sCode, crids, wni.Wine, true);
         }
 
+
+        public static string BinCodeFromRowColumn(string sRow, string sColumn)
+        {
+            sRow = sRow.Trim();
+            sColumn = sColumn.Trim();
+
+            if (!sRow.StartsWith("R_"))
+                return null;
+
+            if (!sColumn.StartsWith("C_"))
+                return null;
+
+            foreach (char ch in sRow.Substring(2))
+                if (!char.IsDigit(ch))
+                    return null;
+
+            foreach (char ch in sColumn.Substring(2))
+                if (!char.IsDigit(ch))
+                    return null;
+
+            sRow = sRow.Substring(2);
+            sColumn = sColumn.Substring(2);
+
+            // we want a 3 digit column and a 3 digit row
+            if (sColumn.Length > 3)
+            {
+                // confirm all leading digits are 0
+                foreach (char ch in sColumn.Substring(0, sColumn.Length - 3))
+                    if (ch != '0')
+                        return null;
+            }
+            if (sRow.Length > 3)
+            {
+                // confirm all leading digits are 0
+                foreach(char ch in sRow.Substring(0, sRow.Length - 3))
+                    if (ch != '0')
+                        return null;
+            }
+
+            string sBinCode;
+            sBinCode = sColumn.Substring(0, Math.Max(3, sColumn.Length)).PadLeft(3, '0');
+            sBinCode += sRow.Substring(0, Math.Max(3, sRow.Length)).PadLeft(3, '0');
+
+            return sBinCode;
+        }
+
         #endregion
 
         #region Book Client
@@ -699,6 +757,7 @@ namespace UpcShared
             int workId,
             string sCode,
             string sLocation,
+            string sUnused2,
             bool fCheckOnly,
             bool fErrorSoundsOnly,
             Guid crids,

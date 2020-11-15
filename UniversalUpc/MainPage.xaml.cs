@@ -35,6 +35,7 @@ namespace UniversalUpc
         private bool m_fErrorSoundsOnly;
 
         private UpcInvCore.ADAS m_adasCurrent;
+        private UpcInvCore.WDI m_wdiCurrent;
 
         private LogProvider m_lpActual;
         private UpcLogProvider m_lp;
@@ -53,7 +54,7 @@ namespace UniversalUpc
             m_plsProcessing = new List<string>();
 
             m_sb.Initialize(recStatus, m_upca);
-            AdjustUIForMediaType(m_adasCurrent);
+            AdjustUIForMediaType(m_adasCurrent, m_wdiCurrent);
             AdjustUIForAvailableHardware();
 
             m_board = new WorkBoard(UpdateWorkBoard);
@@ -230,6 +231,7 @@ namespace UniversalUpc
                 m_upccCore.DoHandleWineScanCode,
                 sResultText,
                 ebNotes.Text,
+                m_wdiCurrent == UpcInvCore.WDI.Drink ? null : ebBinCode.Text,
                 fCheckOnly,
                 fErrorSoundsOnly,
                 crid
@@ -243,6 +245,7 @@ namespace UniversalUpc
                 m_upccCore.DoHandleBookScanCode,
                 sResultText,
                 ebLocation.Text,
+                null,
                 fCheckOnly,
                 fErrorSoundsOnly,
                 crid
@@ -256,6 +259,7 @@ namespace UniversalUpc
                 m_upccCore.DoHandleDvdScanCode,
                 sResultText,
                 null, // sExtra
+                null, // sExtra2
                 fCheckOnly,
                 fErrorSoundsOnly,
                 crid
@@ -268,6 +272,7 @@ namespace UniversalUpc
             int workId,
             string sCode,
             string sExtra, // location for book, notes for wine, null for dvd
+            string sExtra2, // binCode for win, null for book or dvd
             bool fCheckOnly,
             bool fErrorSoundsOnly,
             Guid crids,
@@ -289,6 +294,7 @@ namespace UniversalUpc
             DoHandleDispatchScanCodeDelegate delDispatch,
             string scanCode,
             string sExtra,
+            string sExtra2,
             bool fCheckOnly,
             bool fErrorSoundsOnly,
             Guid crids)
@@ -322,6 +328,7 @@ namespace UniversalUpc
                     workId,
                     scanCodeAdjusted,
                     sExtra,
+                    sExtra2,
                     fCheckOnly,
                     fErrorSoundsOnly,
                     crids,
@@ -417,6 +424,16 @@ namespace UniversalUpc
             pbScan.Visibility = Visibility.Collapsed;
         }
 
+        UpcInvCore.WDI WdiFromDropdownItem(ComboBoxItem cbi)
+        {
+            if (String.Compare((string)cbi.Content, "drink", true) == 0)
+                return UpcInvCore.WDI.Drink;
+            if (String.Compare((string)cbi.Content, "inventory", true) == 0)
+                return UpcInvCore.WDI.Inventory;
+
+            throw new Exception("Illegal WDI combobox item");
+        }
+
         UpcInvCore.ADAS AdasFromDropdownItem(ComboBoxItem cbi)
         {
             if (String.Compare((string)cbi.Tag, "dvd") == 0)
@@ -510,7 +527,8 @@ namespace UniversalUpc
         private void SetNewMediaType(object sender, RoutedEventArgs e)
         {
             m_adasCurrent = AdasFromDropdownItem(cbMediaType.SelectedItem as ComboBoxItem);
-            AdjustUIForMediaType(m_adasCurrent);
+            AdjustUIForMediaType(m_adasCurrent, m_wdiCurrent);
+            SetFocus(ebScanCode, false);
         }
 
 
@@ -530,43 +548,65 @@ namespace UniversalUpc
             SetTextBoxText(ebScanCode, m_upccCore.SCreateIsbn13FromIsbn(ebScanCode.Text));
         }
 
-        void AdjustUIForMediaType(UpcInvCore.ADAS adas)
+        void AdjustUIForMediaType(UpcInvCore.ADAS adas, UpcInvCore.WDI wdi)
         {
             if (txtLocation == null || ebLocation == null || ebNotes == null)
                 return;
 
+            Visibility visWineInventory = Visibility.Collapsed;
+            Visibility visLocation = Visibility.Collapsed;
+            Visibility visNotes = Visibility.Collapsed;
+            Visibility visIsbnify = Visibility.Collapsed;
+            Visibility visWine = Visibility.Collapsed;
+
             switch (adas)
             {
                 case UpcInvCore.ADAS.Book:
-                    txtLocation.Visibility = Visibility.Visible;
-                    ebLocation.Visibility = Visibility.Visible;
-                    ebNotes.Visibility = Visibility.Collapsed;
-                    pbIsbnify.Visibility = Visibility.Visible;
+                    visLocation = Visibility.Visible;
+                    visIsbnify = Visibility.Visible;
                     break;
                 case UpcInvCore.ADAS.Wine:
-                    txtLocation.Visibility = Visibility.Collapsed;
-                    ebLocation.Visibility = Visibility.Collapsed;
-                    ebNotes.Visibility = Visibility.Visible;
-                    pbIsbnify.Visibility = Visibility.Collapsed;
+                    if (wdi == UpcInvCore.WDI.Inventory)
+                        visWineInventory = Visibility.Visible;
+                    else
+                        visNotes = Visibility.Visible;
+
+                    visWine = Visibility.Visible;
                     break;
                 case UpcInvCore.ADAS.DVD:
-                    txtLocation.Visibility = Visibility.Collapsed;
-                    ebLocation.Visibility = Visibility.Collapsed;
-                    ebNotes.Visibility = Visibility.Collapsed;
-                    pbIsbnify.Visibility = Visibility.Collapsed;
                     break;
                 case UpcInvCore.ADAS.Generic:
-                    txtLocation.Visibility = Visibility.Collapsed;
-                    ebLocation.Visibility = Visibility.Collapsed;
-                    ebNotes.Visibility = Visibility.Collapsed;
-                    pbIsbnify.Visibility = Visibility.Collapsed;
                     break;
             }
+
+            if (cbDrinkInventory != null)
+                cbDrinkInventory.Visibility = visWine;
+
+            txtBinCode.Visibility = visWineInventory;
+            ebBinCode.Visibility = visWineInventory;
+            txtBinRow.Visibility = visWineInventory;
+            ebBinRow.Visibility = visWineInventory;
+            ebWineCode.Visibility = visWineInventory;
+            txtBinColumn.Visibility = visWineInventory;
+            ebBinColumn.Visibility = visWineInventory;
+
+            txtLocation.Visibility = visLocation;
+            ebLocation.Visibility = visLocation;
+
+            ebNotes.Visibility = visNotes;
+            pbIsbnify.Visibility = visIsbnify;
         }
 
         private void DoCheckChange(object sender, RoutedEventArgs e)
         {
             m_fCheckOnly = cbCheckOnly.IsChecked ?? false;
+        }
+
+        private void DoDrinkInventoryChange(object sender, RoutedEventArgs e)
+        {
+            m_wdiCurrent = WdiFromDropdownItem(cbDrinkInventory.SelectedItem as ComboBoxItem);
+            AdjustUIForMediaType(m_adasCurrent, m_wdiCurrent);
+            SetFocus(ebScanCode, false);
         }
 
         private void DoErrorSoundsChange(object sender, RoutedEventArgs e)
@@ -580,17 +620,81 @@ namespace UniversalUpc
             eb.Select(0, eb.Text.Length);
         }
 
+        private void DispatchScanCodeFromEnter(string sScanCode)
+        {
+            CorrelationID crid = new CorrelationID();
+
+            m_lp.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", sScanCode);
+
+            DispatchScanCode(sScanCode, m_fCheckOnly, crid);
+        }
+
+        void UpdateBinCode()
+        {
+            string sBinCode = UpcInvCore.BinCodeFromRowColumn(ebBinRow.Text, ebBinColumn.Text);
+
+            if (sBinCode != null)
+                ebBinCode.Text = sBinCode;
+        }
+
+        // every wine inventory scan is a composite. reset the items we need to have 
+        // scanned in every time (row and scan code)
+        void ResetWineInventoryControls()
+        {
+            ebBinRow.Text = "";
+            ebBinCode.Text = "";
+            ebWineCode.Text = "";
+        }
+
+        void RouteWineScanOnEnter(string sScanCode)
+        {
+            if (sScanCode.ToUpper().StartsWith("C_"))
+            {
+                // this is a column code
+                ebBinColumn.Text = sScanCode;
+            }
+            if (sScanCode.ToUpper().StartsWith("R_"))
+            {
+                // this is a column code
+                ebBinRow.Text = sScanCode;
+            }
+
+            // if the row and column codes are complete, calculate the bin code
+            UpdateBinCode();
+
+            // if its all numbers, then its a wine scan code
+            if (Char.IsDigit(sScanCode[0]))
+            {
+                ebWineCode.Text = sScanCode;
+            }
+
+            // now, if all the bin code is done, and the scan code is done
+            // we can dispatch. otherwise, set focus back to ourselves (and select
+            // all waiting for the next input)
+            if (!string.IsNullOrEmpty(ebWineCode.Text)
+                && !string.IsNullOrEmpty(ebBinCode.Text))
+            {
+                DispatchScanCodeFromEnter(ebWineCode.Text);
+                return;
+            }
+
+            SetFocus(ebScanCode, false);
+        }
+
         private void OnCodeKeyUp(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Enter)
             {
-                CorrelationID crid = new CorrelationID();
-                string sResultText = ebScanCode.Text;
-
-                m_lp.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", sResultText);
-
-                DispatchScanCode(sResultText, m_fCheckOnly, crid);
                 e.Handled = true;
+                if (m_adasCurrent == UpcInvCore.ADAS.Wine && m_wdiCurrent == UpcInvCore.WDI.Inventory)
+                {
+                    // in wine inventory mode, several scans must compose together to make a
+                    // complete scan. they all come into the same control
+                    RouteWineScanOnEnter(ebScanCode.Text);
+                    return;
+                }
+
+                DispatchScanCodeFromEnter(ebScanCode.Text);
                 return;
             }
 

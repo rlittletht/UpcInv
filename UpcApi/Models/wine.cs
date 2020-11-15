@@ -67,5 +67,15 @@ namespace UpcApi
             string sCmd = String.Format("sp_drinkwine '{0}', '{1}', '{2}', '{3}', '{4}'", Sql.Sqlify(sScanCode), Sql.Sqlify(sWine ?? ""), Sql.Sqlify(sVintage ?? ""), Sql.Sqlify(sNotes ?? ""), sNow);
             return Shared.DoGenericQueryDelegateRead(sCmd, null, Shared.FromUSR);
         }
+
+        public static USR UpdateInventory(string sScanCode, string sWine, string sBinCode)
+        {
+            string sNow = DateTime.Now.ToString();
+
+            string sCmd = String.Format("sp_updatewineinventory '{0}', '{1}', '{2}', '{3}'", Sql.Sqlify(sScanCode), Sql.Sqlify(sWine ?? ""), Sql.Sqlify(sBinCode ?? ""), sNow);
+
+            return Shared.DoGenericQueryDelegateRead(sCmd, null, Shared.FromUSR);
+        }
+
     }
 }
