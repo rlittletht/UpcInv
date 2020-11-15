@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
 using TCore.WebInterop;
 using UpcApi.Proxy;
@@ -67,6 +68,13 @@ namespace UpcShared
             DVD = 2,
             Wine = 3,
             Max = 4
+        }
+
+        public enum WDI // Wine Drink or Inventory
+        {
+            Drink = 0,
+            Inventory = 1,
+            Max = 2
         }
 
         /*----------------------------------------------------------------------------
@@ -288,8 +296,22 @@ namespace UpcShared
         public async Task<WineInfo> WineInfoRetrieve(string sScanCode)
         {
             EnsureServiceConnection();
-            USR_WineInfo usrd = await m_api.GetWineScanInfo(sScanCode);
-            WineInfo wni = usrd.TheValue;
+            // we will try this a few times, trying to correct for leading zeros in the scan code
+            int cZerosLeft = 2;
+
+            USR_WineInfo usrd;
+            WineInfo wni;
+
+            while (true)
+            {
+                usrd = await m_api.GetWineScanInfo(sScanCode);
+                wni = usrd.TheValue;
+
+                if (usrd.Succeeded || cZerosLeft-- <= 0)
+                    break;
+
+                sScanCode = $"0{sScanCode}";
+            }
 
             return wni;
         }
@@ -308,6 +330,22 @@ namespace UpcShared
 
             return usr.Result;
         }
+
+        public async Task<bool> UpdateWineInventory(string sScanCode, string sWine, string sBinCode, Guid crids)
+        {
+            EnsureServiceConnection();
+            USR usr;
+
+            usr = await m_api.UpdateWineInventory(sScanCode, sWine, sBinCode);
+
+            if (usr.Result)
+                m_lp.LogEvent(crids, EventType.Verbose, "Successfully added title for {0}", sScanCode);
+            else
+                m_lp.LogEvent(crids, EventType.Error, "Failed to add title for {0}", sScanCode);
+
+            return usr.Result;
+        }
+
         #endregion
 
         #region UPC/EAN Support
@@ -440,6 +478,7 @@ namespace UpcShared
             int workId,
             string sCode,
             string sUnused,
+            string sUnused2,
             bool fCheckOnly,
             bool fErrorSoundsOnly,
             Guid crids,
@@ -620,12 +659,15 @@ namespace UpcShared
             int workId,
             string sCode,
             string sNotes,
+            string sBinCode,
             bool fCheckOnly,
             bool fErrorSoundsOnly,
             Guid crids,
             FinalScanCodeReportAndCleanupDelegate del)
         {
-            if (sNotes.StartsWith("!!"))
+            bool fInventory = sBinCode != null;
+
+            if (sNotes.StartsWith("!!") && !fInventory)
             {
                 m_isr.AddMessage(AlertType.BadInfo, "Notes not set: {0}", sNotes);
                 del(workId, sCode, crids, null, false);
@@ -639,7 +681,22 @@ namespace UpcShared
 
             if (wni != null)
             {
-                DoDrinkWine(workId, sCode, sNotes, wni, fCheckOnly, fErrorSoundsOnly, crids, del);
+                string sOriginalCode = sCode;
+
+                // we want to refresh the code to what we just retrieved, but first we have to capture the 
+                // original scancode so it can be sent to the delgate correctly
+                FinalScanCodeReportAndCleanupDelegate delWrapper =
+                    (int workIdDel, string scanCodeDel, Guid cridsDel, string sFinalTitleDel, bool fResultDel) =>
+                    {
+                        del(workIdDel, sOriginalCode, cridsDel, sFinalTitleDel, fResultDel);
+                    };
+
+                sCode = wni.Code;
+
+                if (fInventory)
+                    await DoUpdateWineInventory(workId, sCode, sBinCode, wni, fCheckOnly, fErrorSoundsOnly, crids, delWrapper);
+                else
+                    await DoDrinkWine(workId, sCode, sNotes, wni, fCheckOnly, fErrorSoundsOnly, crids, delWrapper);
             }
             else
             {
@@ -651,7 +708,7 @@ namespace UpcShared
             }
         }
 
-        private async void DoDrinkWine(
+        private async Task DoDrinkWine(
             int workId,
             string sCode,
             string sNotes,
@@ -683,6 +740,84 @@ namespace UpcShared
             del(workId, sCode, crids, wni.Wine, true);
         }
 
+        private async Task DoUpdateWineInventory(
+            int workId,
+            string sCode,
+            string sBinCode,
+            WineInfo wni,
+            bool fCheckOnly,
+            bool fErrorSoundsOnly, // we ignore this for wines -- we don't do bulk wine scanning
+            Guid crids,
+            FinalScanCodeReportAndCleanupDelegate del)
+        {
+            string sCheck = fCheckOnly ? "[CheckOnly] " : "";
+            m_lp.LogEvent(crids, EventType.Verbose, "Service returned info for {0}", sCode);
+
+            m_lp.LogEvent(crids, EventType.Verbose, "{1}Updating inventory for wine {0} ({2})", sCode, sCheck, sBinCode);
+
+            // now update the last scan date
+            bool fResult = fCheckOnly || await UpdateWineInventory(sCode, wni.Wine, sBinCode, crids);
+
+            if (fResult)
+            {
+                m_lp.LogEvent(crids, EventType.Verbose, "{1}Successfully updated inventory for wine for {0}", sCode, sCheck);
+                m_isr.AddMessage(fErrorSoundsOnly ? AlertType.None : AlertType.GoodInfo, "{1}{0}: Updated inventory for wine!", wni.Wine, sCheck);
+            }
+            else
+            {
+                m_lp.LogEvent(crids, EventType.Error, "Failed to update inventory for wine {0}", sCode);
+                m_isr.AddMessage(AlertType.BadInfo, "{0}: Failed to update inventory for wine!", wni.Wine);
+            }
+
+            del(workId, sCode, crids, wni.Wine, true);
+        }
+
+
+        public static string BinCodeFromRowColumn(string sRow, string sColumn)
+        {
+            sRow = sRow.Trim();
+            sColumn = sColumn.Trim();
+
+            if (!sRow.StartsWith("R_"))
+                return null;
+
+            if (!sColumn.StartsWith("C_"))
+                return null;
+
+            foreach (char ch in sRow.Substring(2))
+                if (!char.IsDigit(ch))
+                    return null;
+
+            foreach (char ch in sColumn.Substring(2))
+                if (!char.IsDigit(ch))
+                    return null;
+
+            sRow = sRow.Substring(2);
+            sColumn = sColumn.Substring(2);
+
+            // we want a 3 digit column and a 3 digit row
+            if (sColumn.Length > 3)
+            {
+                // confirm all leading digits are 0
+                foreach (char ch in sColumn.Substring(0, sColumn.Length - 3))
+                    if (ch != '0')
+                        return null;
+            }
+            if (sRow.Length > 3)
+            {
+                // confirm all leading digits are 0
+                foreach(char ch in sRow.Substring(0, sRow.Length - 3))
+                    if (ch != '0')
+                        return null;
+            }
+
+            string sBinCode;
+            sBinCode = sColumn.Substring(0, Math.Max(3, sColumn.Length)).PadLeft(3, '0');
+            sBinCode += sRow.Substring(0, Math.Max(3, sRow.Length)).PadLeft(3, '0');
+
+            return sBinCode;
+        }
+
         #endregion
 
         #region Book Client
@@ -699,6 +834,7 @@ namespace UpcShared
             int workId,
             string sCode,
             string sLocation,
+            string sUnused2,
             bool fCheckOnly,
             bool fErrorSoundsOnly,
             Guid crids,

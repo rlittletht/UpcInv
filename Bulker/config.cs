@@ -11,17 +11,19 @@ namespace Bulker
         private string m_sSqlFile; // this is the sql file to use when recording and not just directly updating the database
         private string m_sLocalCoverRoot;
         private bool m_fForceUpdateSummary;
-
-        private RequestedAction m_action;
+        
+        private RequestedAction m_action = RequestedAction.None;
 
         public RequestedAction Action => m_action;
         public string LogFile => m_sLogFile;
         public string SqlFile => m_sSqlFile;
         public string LocalCoverRoot => m_sLocalCoverRoot;
         public bool ForceUpdateSummary => m_fForceUpdateSummary;
+        public bool ShowPassword { get; set; }
 
         public enum RequestedAction
         {
+            None,
             Books,
             Dvds
         }
@@ -30,7 +32,11 @@ namespace Bulker
         {
             sError = "";
 
-            if (cls.Switch == "R")
+            if (cls.Switch == "PW")
+            {
+                ShowPassword = true;
+            } 
+            else if (cls.Switch == "R")
             {
                 m_sSqlFile = sParam;
             }

@@ -10,7 +10,7 @@ namespace UpcApi
 {
     public class UpcWine
     {
-        private static string s_sQueryWine = "$$upc_codes$$.ScanCode, $$upc_codes$$.LastScanDate, $$upc_codes$$.FirstScanDate, $$upc_wines$$.Wine, $$upc_wines$$.Vintage, $$upc_wines$$.Notes " +
+        private static string s_sQueryWine = "$$upc_codes$$.ScanCode, $$upc_codes$$.LastScanDate, $$upc_codes$$.FirstScanDate, $$upc_wines$$.Wine, $$upc_wines$$.Vintage, $$upc_wines$$.Notes, $$upc_wines$$.Bin, $$upc_wines$$.Location " +
                                      " FROM $$#upc_codes$$ " +
                                      " INNER JOIN $$#upc_wines$$ " +
                                      "   ON $$upc_codes$$.ScanCode = $$upc_wines$$.ScanCode";
@@ -37,6 +37,8 @@ namespace UpcApi
             wni.Wine = sqlr.Reader.GetString(3);
             wni.Vintage = sqlr.Reader.GetString(4);
             wni.Notes = sqlr.Reader.IsDBNull(5) ? null : sqlr.Reader.GetString(5);
+            wni.Bin = sqlr.Reader.GetString(6);
+            wni.Location = sqlr.Reader.GetString(7);
 
             usrw = USR_WineInfo.FromTCSR(USR.SuccessCorrelate(crid));
             usrw.TheValue = wni;
@@ -67,5 +69,15 @@ namespace UpcApi
             string sCmd = String.Format("sp_drinkwine '{0}', '{1}', '{2}', '{3}', '{4}'", Sql.Sqlify(sScanCode), Sql.Sqlify(sWine ?? ""), Sql.Sqlify(sVintage ?? ""), Sql.Sqlify(sNotes ?? ""), sNow);
             return Shared.DoGenericQueryDelegateRead(sCmd, null, Shared.FromUSR);
         }
+
+        public static USR UpdateInventory(string sScanCode, string sWine, string sBinCode)
+        {
+            string sNow = DateTime.Now.ToString();
+
+            string sCmd = String.Format("sp_updatewineinventory '{0}', '{1}', '{2}', '{3}'", Sql.Sqlify(sScanCode), Sql.Sqlify(sWine ?? ""), Sql.Sqlify(sBinCode ?? ""), sNow);
+
+            return Shared.DoGenericQueryDelegateRead(sCmd, null, Shared.FromUSR);
+        }
+
     }
 }

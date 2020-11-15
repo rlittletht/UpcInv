@@ -394,6 +394,9 @@ namespace UpcShared
         public string Wine { get; set; }
         public string Notes { get; set; }
         public string Vintage { get; set; }
+        public string Location { get; set; }
+        public string Bin { get; set; }
+
         public DateTime FirstScan { get; set; }
         public DateTime LastScan { get; set; }
     }

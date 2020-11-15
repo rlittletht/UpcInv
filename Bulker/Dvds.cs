@@ -42,7 +42,7 @@ namespace Bulker
         private static string s_sBaseQuery =
             "SELECT TOP 1000 $$upc_dvd$$.ID, $$upc_dvd$$.Title, $$upc_dvd$$.Classification, $$upc_dvd$$.MediaType, $$upc_dvd$$.Summary, $$upc_dvd$$.UpdateStatus, $$upc_codes$$.LastScanDate, $$upc_codes$$.ScanCode, $$upc_dvd$$.CoverSrc FROM $$#upc_dvd$$";
         //                        0                    1                    2                     3                      4                       5                        6                              7                         8
-        public void DoUpdate()
+        public void DoUpdate(string sConnectionString)
         {
             // get the set of books that we want to update
             TCore.Sql sql;
@@ -69,7 +69,7 @@ namespace Bulker
             // and lets update the latest scanned items first
             sqls.AddOrderBy("$$upc_codes$$.LastScanDate DESC");
 
-            SR sr = Sql.OpenConnection(out sql, Bulker.s_sConnectionString);
+            SR sr = Sql.OpenConnection(out sql, sConnectionString);
 
             if (!sr.Succeeded)
                 throw new Exception(sr.Reason);
@@ -214,7 +214,7 @@ namespace Bulker
             }
 
             StringBuilder sb = new StringBuilder(256);
-            sb.Append($"UPDATE upc_Books SET UpdateStatus={(int)status} ");
+            sb.Append($"UPDATE upc_DVD SET UpdateStatus={(int)status} ");
 
             foreach (string s in plsSet)
             {

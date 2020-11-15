@@ -12,7 +12,9 @@ namespace Bulker
         {
             Bulker bulker = new Bulker();
 
-            bulker.Run(args);
+            Task tsk = bulker.Run(args);
+
+            tsk.Wait();
         }
     }
 }
