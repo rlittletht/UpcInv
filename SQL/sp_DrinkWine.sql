@@ -45,7 +45,20 @@ BEGIN
 	(@sScanCode, @sWine, @dttmDrink, @dttmDrink)
 END
 else
-	UPDATE upc_Wines SET Notes=@sNotes, Consumed=@dttmDrink WHERE ScanCode=@sScanCode
+-- check if the wine already has notes
 
+declare @notesT as varchar(255)
+
+	select @notesT = Notes FROM upc_Wines where ScanCode = @sScanCode
+
+	IF (LEN(@notesT) > 0)
+	BEGIN
+		IF (LEN(@sNotes) > 0)
+			set @sNotes = CONCAT(@sNotes, ' (was ', @notesT, ')')
+		ELSE
+			set @sNotes = @notesT
+	END
+
+	UPDATE upc_Wines SET Notes=@sNotes, Consumed=@dttmDrink WHERE ScanCode=@sScanCode
 GO
 

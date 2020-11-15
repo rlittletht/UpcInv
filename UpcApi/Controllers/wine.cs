@@ -23,5 +23,16 @@ namespace UpcApi.Controllers
         {
             return Ok(UpcWine.DrinkWine(ScanCode, Wine, Vintage, Notes));
         }
+
+        [HttpGet]
+        [Route("api/wine/UpdateInventory")]
+        public IHttpActionResult UpdateInventory(
+            [FromUri] string ScanCode,
+            [FromUri] string Wine,
+            [FromUri] string BinCode)
+        {
+            return Ok(UpcWine.UpdateInventory(ScanCode, Wine, BinCode));
+        }
+
     }
 }

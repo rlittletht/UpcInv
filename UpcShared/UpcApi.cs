@@ -116,6 +116,15 @@ namespace UpcApi.Proxy
                 Notes ?? "");
         }
 
+        public async Task<USR> UpdateWineInventory(string ScanCode, string Wine, string sBinCode)
+        {
+            return await Generic<USR>(
+                "api/wine/UpdateInventory?ScanCode={0}&Wine={1}&BinCode={2}",
+                ScanCode ?? "",
+                Wine ?? "",
+                sBinCode ?? "");
+        }
+
         #endregion
 
         #region Diagnostics
