@@ -296,8 +296,22 @@ namespace UpcShared
         public async Task<WineInfo> WineInfoRetrieve(string sScanCode)
         {
             EnsureServiceConnection();
-            USR_WineInfo usrd = await m_api.GetWineScanInfo(sScanCode);
-            WineInfo wni = usrd.TheValue;
+            // we will try this a few times, trying to correct for leading zeros in the scan code
+            int cZerosLeft = 2;
+
+            USR_WineInfo usrd;
+            WineInfo wni;
+
+            while (true)
+            {
+                usrd = await m_api.GetWineScanInfo(sScanCode);
+                wni = usrd.TheValue;
+
+                if (usrd.Succeeded || cZerosLeft-- <= 0)
+                    break;
+
+                sScanCode = $"0{sScanCode}";
+            }
 
             return wni;
         }
@@ -667,10 +681,22 @@ namespace UpcShared
 
             if (wni != null)
             {
+                string sOriginalCode = sCode;
+
+                // we want to refresh the code to what we just retrieved, but first we have to capture the 
+                // original scancode so it can be sent to the delgate correctly
+                FinalScanCodeReportAndCleanupDelegate delWrapper =
+                    (int workIdDel, string scanCodeDel, Guid cridsDel, string sFinalTitleDel, bool fResultDel) =>
+                    {
+                        del(workIdDel, sOriginalCode, cridsDel, sFinalTitleDel, fResultDel);
+                    };
+
+                sCode = wni.Code;
+
                 if (fInventory)
-                    await DoUpdateWineInventory(workId, sCode, sBinCode, wni, fCheckOnly, fErrorSoundsOnly, crids, del);
+                    await DoUpdateWineInventory(workId, sCode, sBinCode, wni, fCheckOnly, fErrorSoundsOnly, crids, delWrapper);
                 else
-                    await DoDrinkWine(workId, sCode, sNotes, wni, fCheckOnly, fErrorSoundsOnly, crids, del);
+                    await DoDrinkWine(workId, sCode, sNotes, wni, fCheckOnly, fErrorSoundsOnly, crids, delWrapper);
             }
             else
             {
