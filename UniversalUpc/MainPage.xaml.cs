@@ -342,6 +342,7 @@ namespace UniversalUpc
             lstWorkBoard.Items.Insert(0, view);
             m_pipeline.Producer.QueueRecord(new Transaction(workId));
             SetFocus(ebScanCode, false);
+            ResetWineInventoryControls();
         }
 
         #endregion
@@ -641,6 +642,9 @@ namespace UniversalUpc
         // scanned in every time (row and scan code)
         void ResetWineInventoryControls()
         {
+            if (m_adasCurrent != UpcInvCore.ADAS.Wine || m_wdiCurrent != UpcInvCore.WDI.Inventory)
+                return;
+
             ebBinRow.Text = "";
             ebBinCode.Text = "";
             ebWineCode.Text = "";

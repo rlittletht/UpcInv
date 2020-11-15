@@ -316,6 +316,22 @@ namespace UpcShared
 
             return usr.Result;
         }
+
+        public async Task<bool> UpdateWineInventory(string sScanCode, string sWine, string sBinCode, Guid crids)
+        {
+            EnsureServiceConnection();
+            USR usr;
+
+            usr = await m_api.UpdateWineInventory(sScanCode, sWine, sBinCode);
+
+            if (usr.Result)
+                m_lp.LogEvent(crids, EventType.Verbose, "Successfully added title for {0}", sScanCode);
+            else
+                m_lp.LogEvent(crids, EventType.Error, "Failed to add title for {0}", sScanCode);
+
+            return usr.Result;
+        }
+
         #endregion
 
         #region UPC/EAN Support
@@ -651,7 +667,10 @@ namespace UpcShared
 
             if (wni != null)
             {
-                DoDrinkWine(workId, sCode, sNotes, wni, fCheckOnly, fErrorSoundsOnly, crids, del);
+                if (fInventory)
+                    await DoUpdateWineInventory(workId, sCode, sBinCode, wni, fCheckOnly, fErrorSoundsOnly, crids, del);
+                else
+                    await DoDrinkWine(workId, sCode, sNotes, wni, fCheckOnly, fErrorSoundsOnly, crids, del);
             }
             else
             {
@@ -663,7 +682,7 @@ namespace UpcShared
             }
         }
 
-        private async void DoDrinkWine(
+        private async Task DoDrinkWine(
             int workId,
             string sCode,
             string sNotes,
@@ -690,6 +709,38 @@ namespace UpcShared
             {
                 m_lp.LogEvent(crids, EventType.Error, "Failed to drink wine {0}", sCode);
                 m_isr.AddMessage(AlertType.BadInfo, "{0}: Failed to drink wine!", wni.Wine);
+            }
+
+            del(workId, sCode, crids, wni.Wine, true);
+        }
+
+        private async Task DoUpdateWineInventory(
+            int workId,
+            string sCode,
+            string sBinCode,
+            WineInfo wni,
+            bool fCheckOnly,
+            bool fErrorSoundsOnly, // we ignore this for wines -- we don't do bulk wine scanning
+            Guid crids,
+            FinalScanCodeReportAndCleanupDelegate del)
+        {
+            string sCheck = fCheckOnly ? "[CheckOnly] " : "";
+            m_lp.LogEvent(crids, EventType.Verbose, "Service returned info for {0}", sCode);
+
+            m_lp.LogEvent(crids, EventType.Verbose, "{1}Updating inventory for wine {0} ({2})", sCode, sCheck, sBinCode);
+
+            // now update the last scan date
+            bool fResult = fCheckOnly || await UpdateWineInventory(sCode, wni.Wine, sBinCode, crids);
+
+            if (fResult)
+            {
+                m_lp.LogEvent(crids, EventType.Verbose, "{1}Successfully updated inventory for wine for {0}", sCode, sCheck);
+                m_isr.AddMessage(fErrorSoundsOnly ? AlertType.None : AlertType.GoodInfo, "{1}{0}: Updated inventory for wine!", wni.Wine, sCheck);
+            }
+            else
+            {
+                m_lp.LogEvent(crids, EventType.Error, "Failed to update inventory for wine {0}", sCode);
+                m_isr.AddMessage(AlertType.BadInfo, "{0}: Failed to update inventory for wine!", wni.Wine);
             }
 
             del(workId, sCode, crids, wni.Wine, true);
