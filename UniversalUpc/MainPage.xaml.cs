@@ -655,12 +655,12 @@ namespace UniversalUpc
             if (sScanCode.ToUpper().StartsWith("C_"))
             {
                 // this is a column code
-                ebBinColumn.Text = sScanCode;
+                ebBinColumn.Text = sScanCode.ToUpper();
             }
             if (sScanCode.ToUpper().StartsWith("R_"))
             {
                 // this is a column code
-                ebBinRow.Text = sScanCode;
+                ebBinRow.Text = sScanCode.ToUpper();
             }
 
             // if the row and column codes are complete, calculate the bin code
