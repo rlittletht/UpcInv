@@ -100,7 +100,8 @@
 				android:layout_marginLeft="4dip"
 				android:id="@+id/tvColumnLabel" />
 			<EditText
-				android:layout_width="55dip"
+				android:layout_width="65dip"
+                android:textAppearance="?android:attr/textAppearanceSmall"
 				android:layout_height="wrap_content"
 				android:layout_toRightOf="@id/tvColumnLabel"
 				android:id="@+id/ebColumn"
@@ -115,7 +116,8 @@
 				android:layout_marginLeft="4dip"
 				android:id="@+id/tvRowLabel" />
 			<EditText
-				android:layout_width="55dip"
+				android:layout_width="65dip"
+                android:textAppearance="?android:attr/textAppearanceSmall"
 				android:layout_height="wrap_content"
 				android:layout_toRightOf="@id/tvRowLabel"
 				android:id="@+id/ebRow"
@@ -131,6 +133,7 @@
 				android:id="@+id/tvBinLabel" />
 			<EditText
 				android:layout_width="85dip"
+                android:textAppearance="?android:attr/textAppearanceSmall"
 				android:layout_height="wrap_content"
 				android:layout_toRightOf="@id/tvBinLabel"
 				android:id="@+id/ebBin"
