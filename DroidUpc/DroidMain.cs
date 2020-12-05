@@ -403,29 +403,37 @@ namespace DroidUpc
             RunOnUiThread(
                 () =>
                 {
+                    ViewStates visLocation = ViewStates.Gone;
+                    ViewStates visNotes = ViewStates.Gone;
+                    ViewStates visBin = ViewStates.Gone;
+
                     switch (adas)
                     {
                         case UpcInvCore.ADAS.Book:
-                            m_txtLocation.Visibility = Android.Views.ViewStates.Visible;
-                            m_ebLocation.Visibility = Android.Views.ViewStates.Visible;
-                            m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
+                            visLocation = ViewStates.Visible;
                             break;
                         case UpcInvCore.ADAS.Wine:
-                            m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebNotes.Visibility = Android.Views.ViewStates.Visible;
+                            visNotes = ViewStates.Visible;
+                            break;
+                        case UpcInvCore.ADAS.WineRack:
+                            visBin = ViewStates.Visible;
                             break;
                         case UpcInvCore.ADAS.DVD:
-                            m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
                             break;
                         case UpcInvCore.ADAS.Generic:
-                            m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
                             break;
                     }
+
+                    m_txtLocation.Visibility = visLocation;
+                    m_ebLocation.Visibility = visLocation;
+                    m_ebNotes.Visibility = visNotes;
+                    m_txtBinCode.Visibility = visBin;
+                    m_txtColumn.Visibility = visBin;
+                    m_txtRow.Visibility = visBin;
+                    m_ebBinCode.Visibility = visBin;
+                    m_ebColumn.Visibility = visBin;
+                    m_ebRow.Visibility = visBin;
+
                 });
         }
 

@@ -41,6 +41,12 @@ namespace DroidUpc
         private EditText m_ebLocation;
         private CheckBox m_cbCheckOnly;
         private TextView m_txtLocation;
+        private TextView m_txtBinCode;
+        private TextView m_txtRow;
+        private TextView m_txtColumn;
+        private EditText m_ebBinCode;
+        private EditText m_ebRow;
+        private EditText m_ebColumn;
         private TextView m_txtStatus;
         private FrameLayout m_frmScanner;
         private Handler m_handlerAlert;
@@ -116,6 +122,12 @@ namespace DroidUpc
             m_ebLocation = FindViewById<EditText>(Resource.Id.ebLocation);
             m_txtStatus = FindViewById<TextView>(Resource.Id.tvStatus);
             m_cbCheckOnly = FindViewById<CheckBox>(Resource.Id.cbCheckOnly);
+            m_txtBinCode = FindViewById<TextView>(Resource.Id.tvBinLabel);
+            m_txtRow = FindViewById<TextView>(Resource.Id.tvRowLabel);
+            m_txtColumn = FindViewById<TextView>(Resource.Id.tvColumnLabel);
+            m_ebBinCode = FindViewById<EditText>(Resource.Id.ebBin);
+            m_ebRow = FindViewById<EditText>(Resource.Id.ebRow);
+            m_ebColumn = FindViewById<EditText>(Resource.Id.ebColumn);
         }
 
         /*----------------------------------------------------------------------------
