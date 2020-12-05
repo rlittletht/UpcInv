@@ -180,8 +180,6 @@ namespace UniversalUpc
         	%%Contact: rlittle
         	
             Handle the scanner dispatching a scan code to us.
-
-            For now, this is just a DVD scan code, but later will handle others...
         ----------------------------------------------------------------------------*/
         private void ScannerControlDispatchScanCode(Result result)
         {
