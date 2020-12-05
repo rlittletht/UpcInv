@@ -23,6 +23,10 @@ namespace DroidUpc
         private List<string> m_plsProcessing;
         private UpcInvCore.ADAS m_adasCurrent;
 
+        /*----------------------------------------------------------------------------
+        	%%Function: AdasCurrent
+        	%%Qualified: DroidUpc.MainActivity.AdasCurrent
+        ----------------------------------------------------------------------------*/
         UpcInvCore.ADAS AdasCurrent()
         {
             Spinner spinner = FindViewById<Spinner>(Resource.Id.spinType);
@@ -30,6 +34,12 @@ namespace DroidUpc
             return (UpcInvCore.ADAS) spinner.SelectedItemPosition;
         }
 
+        /*----------------------------------------------------------------------------
+        	%%Function: FinishCode
+        	%%Qualified: DroidUpc.MainActivity.FinishCode
+        	
+            remove the given code from the processing list
+        ----------------------------------------------------------------------------*/
         void FinishCode(string sCode, CorrelationID crid)
         {
             lock (m_plsProcessing)
@@ -50,6 +60,13 @@ namespace DroidUpc
             m_lp.LogEvent(crid, EventType.Error, "FAILED TO FIND {0} in processing list during remove", sCode);
         }
 
+        /*----------------------------------------------------------------------------
+        	%%Function: FAddProcessingCode
+        	%%Qualified: DroidUpc.MainActivity.FAddProcessingCode
+        	
+            add the given code to the processing list (so we don't process multiple
+            times if scanner dispatches multiple times)
+        ----------------------------------------------------------------------------*/
         bool FAddProcessingCode(string sCode, CorrelationID crid)
         {
             lock (m_plsProcessing)
@@ -92,8 +109,6 @@ namespace DroidUpc
             %%Contact: rlittle
 
             Handle the scanner dispatching a scan code to us.
-
-            For now, this is just a DVD scan code, but later will handle others...
         ----------------------------------------------------------------------------*/
         private void ScannerControlDispatchScanCode(ZXing.Result result)
         {
@@ -114,6 +129,76 @@ namespace DroidUpc
             DispatchScanCode(sResultText, m_cbCheckOnly.Checked, crid);
         }
 
+        void UpdateBinCode()
+        {
+            string sBinCode = UpcInvCore.BinCodeFromRowColumn(m_ebRow.Text, m_ebColumn.Text);
+
+            if (sBinCode != null)
+                RunOnUiThread(() => m_ebBinCode.Text = sBinCode);
+        }
+
+        // every wine inventory scan is a composite. reset the items we need to have 
+        // scanned in every time (row and scan code)
+        void ResetWineInventoryControls()
+        {
+            if (m_adasCurrent != UpcInvCore.ADAS.WineRack)
+                return;
+
+            RunOnUiThread(
+                () =>
+                {
+                    m_ebRow.Text = "";
+                    m_ebBinCode.Text = "";
+                    m_ebScanCode.Text = "";
+                });
+        }
+
+        /*----------------------------------------------------------------------------
+        	%%Function: RouteWineScanOnEnter
+        	%%Qualified: DroidUpc.MainActivity.RouteWineScanOnEnter
+        	
+            When doing wine inventory (in winerack mode), multiple scans compose
+            together to accrue a scan
+        ----------------------------------------------------------------------------*/
+        void RouteWineRackScanCode(string sScanCode, bool fCheckOnly, CorrelationID crid)
+        {
+            if (sScanCode.ToUpper().StartsWith("C_"))
+            {
+                // this is a column code
+                RunOnUiThread(() => m_ebColumn.Text = sScanCode.ToUpper());
+            }
+            if (sScanCode.ToUpper().StartsWith("R_"))
+            {
+                // this is a column code
+                RunOnUiThread(() => m_ebRow.Text = sScanCode.ToUpper());
+            }
+
+            // if the row and column codes are complete, calculate the bin code
+            UpdateBinCode();
+
+            // if its all numbers, then its a wine scan code
+            if (Char.IsDigit(sScanCode[0]))
+            {
+                RunOnUiThread(() => m_ebScanCode.Text = sScanCode);
+            }
+            else
+            {
+                RunOnUiThread(() => m_ebScanCode.Text = "");
+            }
+
+            // now, if all the bin code is done, and the scan code is done
+            // we can dispatch. otherwise, set focus back to ourselves (and select
+            // all waiting for the next input)
+            if (!string.IsNullOrEmpty(m_ebScanCode.Text)
+                && !string.IsNullOrEmpty(m_ebBinCode.Text))
+            {
+                DispatchWineScanCode(m_ebScanCode.Text, m_ebBinCode.Text, fCheckOnly, crid);
+                return;
+            }
+
+            SetFocus(m_ebScanCode, false);
+        }
+
         /*----------------------------------------------------------------------------
             %%Function: DispatchScanCode
             %%Qualified: UniversalUpc.MainPage.DispatchScanCode
@@ -132,9 +217,17 @@ namespace DroidUpc
             else if (AdasCurrent() == UpcInvCore.ADAS.Book)
                 DispatchBookScanCode(sResultText, fCheckOnly, crid);
             else if (AdasCurrent() == UpcInvCore.ADAS.Wine)
-                DispatchWineScanCode(sResultText, fCheckOnly, crid);
+                DispatchWineScanCode(sResultText, null /*sBinCode*/, fCheckOnly, crid);
+            else if (AdasCurrent() == UpcInvCore.ADAS.WineRack)
+                RouteWineRackScanCode(sResultText, fCheckOnly, crid);
         }
 
+        /*----------------------------------------------------------------------------
+        	%%Function: SetFocus
+        	%%Qualified: DroidUpc.MainActivity.SetFocus
+        	
+            set focus to the given editbox
+        ----------------------------------------------------------------------------*/
         void SetFocus(EditText eb, bool fWantKeyboard)
         {
             RunOnUiThread(
@@ -157,7 +250,13 @@ namespace DroidUpc
                 });
         }
 
-        async void DispatchWineScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
+        /*----------------------------------------------------------------------------
+        	%%Function: DispatchWineScanCode
+        	%%Qualified: DroidUpc.MainActivity.DispatchWineScanCode
+        	
+            dispatch the wine code (drink the wine, or look it up)
+        ----------------------------------------------------------------------------*/
+        async void DispatchWineScanCode(string sResultText, string sBinCode, bool fCheckOnly, CorrelationID crid)
         {
             string sScanCode = sResultText;
 
@@ -175,7 +274,7 @@ namespace DroidUpc
                 UpcInvCore.s_workIdNil,
                 sScanCode,
                 m_ebNotes.Text,
-                null,
+                sBinCode,
                 fCheckOnly,
                 false /* fErrorSoundsOnly*/,
                 crid,
@@ -204,6 +303,8 @@ namespace DroidUpc
                             FinishCode(sScanCode, CorrelationID.FromCrids(crids));
                         });
                 });
+
+            ResetWineInventoryControls();
         }
 
         async void DispatchBookScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
@@ -403,29 +504,37 @@ namespace DroidUpc
             RunOnUiThread(
                 () =>
                 {
+                    ViewStates visLocation = ViewStates.Gone;
+                    ViewStates visNotes = ViewStates.Gone;
+                    ViewStates visBin = ViewStates.Gone;
+
                     switch (adas)
                     {
                         case UpcInvCore.ADAS.Book:
-                            m_txtLocation.Visibility = Android.Views.ViewStates.Visible;
-                            m_ebLocation.Visibility = Android.Views.ViewStates.Visible;
-                            m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
+                            visLocation = ViewStates.Visible;
                             break;
                         case UpcInvCore.ADAS.Wine:
-                            m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebNotes.Visibility = Android.Views.ViewStates.Visible;
+                            visNotes = ViewStates.Visible;
+                            break;
+                        case UpcInvCore.ADAS.WineRack:
+                            visBin = ViewStates.Visible;
                             break;
                         case UpcInvCore.ADAS.DVD:
-                            m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
                             break;
                         case UpcInvCore.ADAS.Generic:
-                            m_txtLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebLocation.Visibility = Android.Views.ViewStates.Gone;
-                            m_ebNotes.Visibility = Android.Views.ViewStates.Gone;
                             break;
                     }
+
+                    m_txtLocation.Visibility = visLocation;
+                    m_ebLocation.Visibility = visLocation;
+                    m_ebNotes.Visibility = visNotes;
+                    m_txtBinCode.Visibility = visBin;
+                    m_txtColumn.Visibility = visBin;
+                    m_txtRow.Visibility = visBin;
+                    m_ebBinCode.Visibility = visBin;
+                    m_ebColumn.Visibility = visBin;
+                    m_ebRow.Visibility = visBin;
+
                 });
         }
 

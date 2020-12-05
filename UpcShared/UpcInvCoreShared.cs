@@ -67,7 +67,8 @@ namespace UpcShared
             Book = 1,
             DVD = 2,
             Wine = 3,
-            Max = 4
+            WineRack = 4,
+            Max = 5
         }
 
         public enum WDI // Wine Drink or Inventory

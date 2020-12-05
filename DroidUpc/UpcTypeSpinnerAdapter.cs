@@ -39,7 +39,6 @@ namespace DroidUpc
             {
                 case (int)UpcInvCore.ADAS.Book:
                     image.SetImageResource(Resource.Drawable.books);
-                    
                     break;
                 case (int)UpcInvCore.ADAS.DVD:
                     image.SetImageResource(Resource.Drawable.dvds);
@@ -49,6 +48,9 @@ namespace DroidUpc
                     break;
                 case (int)UpcInvCore.ADAS.Wine:
                     image.SetImageResource(Resource.Drawable.wine);
+                    break;
+                case (int)UpcInvCore.ADAS.WineRack:
+                    image.SetImageResource(Resource.Drawable.racks);
                     break;
             }
             return view;
