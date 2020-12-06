@@ -465,7 +465,7 @@ namespace UpcShared
 
         #region DVD Client
 
-        public delegate void FinalScanCodeReportAndCleanupDelegate(int workId, string scanCode, Guid crids, string sFinalTitle, bool fResult);
+        public delegate Task FinalScanCodeReportAndCleanupDelegate(int workId, string scanCode, Guid crids, string sFinalTitle, bool fResult);
 
         /*----------------------------------------------------------------------------
         	%%Function: DoHandleDvdScanCode
@@ -516,7 +516,7 @@ namespace UpcShared
                 }
                 finally
                 {
-                    del(workId, sCode, crids, sTitle, fResult);
+                    await del(workId, sCode, crids, sTitle, fResult);
                 }
             }
         }
@@ -628,7 +628,7 @@ namespace UpcShared
                 m_lp.LogEvent(crids, EventType.Verbose, "{1}Avoiding duplicate scan for {0}", sCode, sCheck);
                 m_isr.AddMessage(AlertType.Duplicate, "{2}{0}: Duplicate?! LastScan was {1}", dvdi.Title,
                     dvdi.LastScan.ToString(), sCheck);
-                del(workId, sCode, crids, dvdi.Title, true);
+                await del(workId, sCode, crids, dvdi.Title, true);
                 return;
             }
 
@@ -649,7 +649,7 @@ namespace UpcShared
                 m_isr.AddMessage(AlertType.BadInfo, "{1}{0}: Failed to update last scan!", dvdi.Title, sCheck);
             }
 
-            del(workId, sCode, crids, dvdi.Title, true);
+            await del(workId, sCode, crids, dvdi.Title, true);
         }
 
         #endregion
@@ -671,7 +671,7 @@ namespace UpcShared
             if (sNotes.StartsWith("!!") && !fInventory)
             {
                 m_isr.AddMessage(AlertType.BadInfo, "Notes not set: {0}", sNotes);
-                del(workId, sCode, crids, null, false);
+                await del(workId, sCode, crids, null, false);
                 return;
             }
 
@@ -687,9 +687,9 @@ namespace UpcShared
                 // we want to refresh the code to what we just retrieved, but first we have to capture the 
                 // original scancode so it can be sent to the delgate correctly
                 FinalScanCodeReportAndCleanupDelegate delWrapper =
-                    (int workIdDel, string scanCodeDel, Guid cridsDel, string sFinalTitleDel, bool fResultDel) =>
+                    async (int workIdDel, string scanCodeDel, Guid cridsDel, string sFinalTitleDel, bool fResultDel) =>
                     {
-                        del(workIdDel, sOriginalCode, cridsDel, sFinalTitleDel, fResultDel);
+                        await del(workIdDel, sOriginalCode, cridsDel, sFinalTitleDel, fResultDel);
                     };
 
                 sCode = wni.Code;
@@ -705,7 +705,7 @@ namespace UpcShared
 
                 sTitle = "!!WINE NOTE FOUND";
 
-                del(workId, sCode, crids, sTitle, false);
+                await del(workId, sCode, crids, sTitle, false);
             }
         }
 
@@ -738,7 +738,7 @@ namespace UpcShared
                 m_isr.AddMessage(AlertType.BadInfo, "{0}: Failed to drink wine!", wni.Wine);
             }
 
-            del(workId, sCode, crids, wni.Wine, true);
+            await del(workId, sCode, crids, wni.Wine, true);
         }
 
         private async Task DoUpdateWineInventory(
@@ -770,7 +770,7 @@ namespace UpcShared
                 m_isr.AddMessage(AlertType.BadInfo, "{0}: Failed to update inventory for wine!", wni.Wine);
             }
 
-            del(workId, sCode, crids, wni.Wine, true);
+            await del(workId, sCode, crids, wni.Wine, true);
         }
 
 
@@ -844,7 +844,7 @@ namespace UpcShared
             if (sLocation.StartsWith("!!"))
             {
                 m_isr.AddMessage(AlertType.BadInfo, "Location not set: {0}", sLocation);
-                del(workId, sCode, crids, null, false);
+                await del(workId, sCode, crids, null, false);
                 return;
             }
 
@@ -874,7 +874,7 @@ namespace UpcShared
                 }
                 finally
                 {
-                    del(workId, sCode, crids, sTitle, fResult);
+                    await del(workId, sCode, crids, sTitle, fResult);
                 }
 
             }
@@ -977,7 +977,7 @@ namespace UpcShared
                 m_lp.LogEvent(crids, EventType.Verbose, "{1}Avoiding duplicate scan for {0}", sCode, sCheck);
                 m_isr.AddMessage(AlertType.Duplicate, "{2}{0}: Duplicate?! LastScan was {1}", bki.Title,
                     bki.LastScan.ToString(), sCheck);
-                del(workId, sCode, crids, bki.Title, true);
+                await del(workId, sCode, crids, bki.Title, true);
                 return;
             }
 
@@ -998,7 +998,7 @@ namespace UpcShared
                 m_isr.AddMessage(AlertType.BadInfo, "{0}: Failed to update last scan!", bki.Title);
             }
 
-            del(workId, sCode, crids, bki.Title, true);
+            await del(workId, sCode, crids, bki.Title, true);
         }
 
         #endregion
