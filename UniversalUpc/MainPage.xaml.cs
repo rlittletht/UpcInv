@@ -112,20 +112,20 @@ namespace UniversalUpc
         /// <param name="crids"></param>
         /// <param name="sTitle"></param>
         /// <param name="fResult"></param>
-        void ReportAndRemoveReentrancyEntry(int workId, string scanCode, Guid crids, string sTitle, bool fResult)
+        async Task ReportAndRemoveReentrancyEntry(int workId, string scanCode, Guid crids, string sTitle, bool fResult)
         {
             string sDescription = sTitle;
 
             if (sTitle == null)
             {
                 //                SetTextBoxText(ebScanCode, "");
-                SetTextBoxText(ebTitle, "!!TITLE NOT FOUND");
+                await SetTextBoxText(ebTitle, "!!TITLE NOT FOUND");
                 sDescription = "";
                 // SetFocus(ebTitle, true);
             }
             else
             {
-                SetTextBoxText(ebTitle, sTitle);
+                await SetTextBoxText(ebTitle, sTitle);
                 //SetFocus(ebScanCode, false);
             }
 
@@ -162,7 +162,7 @@ namespace UniversalUpc
             eb.Select(0, eb.Text.Length);
         }
 
-        async void SetTextBoxText(TextBox eb, string text)
+        async Task SetTextBoxText(TextBox eb, string text)
         {
             if (eb.Dispatcher.HasThreadAccess)
                 eb.Text = text;

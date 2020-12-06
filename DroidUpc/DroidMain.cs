@@ -7,6 +7,8 @@ using Android.Runtime;
 using Android.Widget;
 using ZXing.Mobile;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Android;
 using Android.Support.V4.Content;
 using Android.Views;
@@ -126,6 +128,8 @@ namespace DroidUpc
 
             string sResultText = result.Text;
 
+            // we don't bother to await this call -- it wouldn't mean much anyway since the next
+            // control dispatch would just come in and execute before we were done anyway...
             DispatchScanCode(sResultText, m_cbCheckOnly.Checked, crid);
         }
 
@@ -153,6 +157,24 @@ namespace DroidUpc
                 });
         }
 
+        delegate void UiThreadDelegate();
+
+        async Task RunOnUiThreadAsync(UiThreadDelegate del)
+        {
+            ManualResetEventSlim mres = new ManualResetEventSlim(false);
+
+            RunOnUiThread(
+                () =>
+                {
+                    del();
+                    mres.Set();
+                });
+
+            // wait on a background thread. this way caller can choose to await it,
+            // or just let it run...
+            await Task.Run(() => mres.Wait());
+        }
+
         /*----------------------------------------------------------------------------
         	%%Function: RouteWineScanOnEnter
         	%%Qualified: DroidUpc.MainActivity.RouteWineScanOnEnter
@@ -160,30 +182,33 @@ namespace DroidUpc
             When doing wine inventory (in winerack mode), multiple scans compose
             together to accrue a scan
         ----------------------------------------------------------------------------*/
-        void RouteWineRackScanCode(string sScanCode, bool fCheckOnly, CorrelationID crid)
+        async Task RouteWineRackScanCode(string sScanCode, bool fCheckOnly, CorrelationID crid)
         {
             if (sScanCode.ToUpper().StartsWith("C_"))
             {
                 // this is a column code
-                RunOnUiThread(() => m_ebColumn.Text = sScanCode.ToUpper());
+                await RunOnUiThreadAsync(() => m_ebColumn.Text = sScanCode.ToUpper());
             }
             if (sScanCode.ToUpper().StartsWith("R_"))
             {
                 // this is a column code
-                RunOnUiThread(() => m_ebRow.Text = sScanCode.ToUpper());
+                await RunOnUiThreadAsync(() => m_ebRow.Text = sScanCode.ToUpper());
             }
 
+            // FUTURE: All of these RunOnUiThread calls run ASYNC, which means we have 
+            // to wait for them to finish. they need to signal us that they are done so we can continue. 
+            // MAKE a generic run on Ui thread that is async so we can await them.
             // if the row and column codes are complete, calculate the bin code
             UpdateBinCode();
 
             // if its all numbers, then its a wine scan code
             if (Char.IsDigit(sScanCode[0]))
             {
-                RunOnUiThread(() => m_ebScanCode.Text = sScanCode);
+                await RunOnUiThreadAsync(() => m_ebScanCode.Text = sScanCode);
             }
             else
             {
-                RunOnUiThread(() => m_ebScanCode.Text = "");
+                await RunOnUiThreadAsync(() => m_ebScanCode.Text = "");
             }
 
             // now, if all the bin code is done, and the scan code is done
@@ -208,7 +233,7 @@ namespace DroidUpc
             automatically scanned (from the camera) or it was typed in (possibly
             from an attached wand scanner)
         ----------------------------------------------------------------------------*/
-        private void DispatchScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
+        private async void DispatchScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
             m_isr.AddMessage(AlertType.UPCScanBeep, $"Scan received: {sResultText}");
 
@@ -219,7 +244,7 @@ namespace DroidUpc
             else if (AdasCurrent() == UpcInvCore.ADAS.Wine)
                 DispatchWineScanCode(sResultText, null /*sBinCode*/, fCheckOnly, crid);
             else if (AdasCurrent() == UpcInvCore.ADAS.WineRack)
-                RouteWineRackScanCode(sResultText, fCheckOnly, crid);
+                await RouteWineRackScanCode(sResultText, fCheckOnly, crid);
         }
 
         /*----------------------------------------------------------------------------
@@ -278,9 +303,9 @@ namespace DroidUpc
                 fCheckOnly,
                 false /* fErrorSoundsOnly*/,
                 crid,
-                (workId, scanCode, crids, sTitle, fResult) =>
+                async (workId, scanCode, crids, sTitle, fResult) =>
                 {
-                    RunOnUiThread(
+                    await RunOnUiThreadAsync(
                         () =>
                         {
                             if (sTitle == null)
@@ -342,9 +367,9 @@ namespace DroidUpc
                 fCheckOnly,
                 false /*fErrorSoundsOnly*/,
                 crid,
-                (workId, scanCode, crids, sTitle, fResult) =>
+                async (workId, scanCode, crids, sTitle, fResult) =>
                 {
-                    RunOnUiThread(
+                    await RunOnUiThreadAsync(
                         () =>
                         {
                             if (sTitle == null)
@@ -397,9 +422,9 @@ namespace DroidUpc
                 fCheckOnly,
                 false /*fErrorSoundsOnly*/,
                 crid,
-                (workId, scanCode, crids, sTitle, fResult) =>
+                async (workId, scanCode, crids, sTitle, fResult) =>
                 {
-                    this.RunOnUiThread(
+                    await RunOnUiThreadAsync(
                         () =>
                         {
                             if (sTitle == null)
