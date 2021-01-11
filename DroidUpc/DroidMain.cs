@@ -201,6 +201,12 @@ namespace DroidUpc
             // if the row and column codes are complete, calculate the bin code
             UpdateBinCode();
 
+            if (string.IsNullOrEmpty(sScanCode))
+            {
+	            SetFocus(m_ebScanCode, false);
+	            return;
+            }
+            
             // if its all numbers, then its a wine scan code
             if (Char.IsDigit(sScanCode[0]))
             {
@@ -217,6 +223,13 @@ namespace DroidUpc
             if (!string.IsNullOrEmpty(m_ebScanCode.Text)
                 && !string.IsNullOrEmpty(m_ebBinCode.Text))
             {
+	            if (m_ebBinCode.Text.Length != 8)
+	            {
+		            m_isr.AddMessage(AlertType.BadInfo, $"Bincode {m_ebBinCode.Text} is not 8 digits. Skipping partial bincode");
+		            SetFocus(m_ebBinCode, false);
+                    return;
+	            }
+	            
                 DispatchWineScanCode(m_ebScanCode.Text, m_ebBinCode.Text, fCheckOnly, crid);
                 return;
             }
@@ -233,7 +246,7 @@ namespace DroidUpc
             automatically scanned (from the camera) or it was typed in (possibly
             from an attached wand scanner)
         ----------------------------------------------------------------------------*/
-        private async void DispatchScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
+        private async Task DispatchScanCode(string sResultText, bool fCheckOnly, CorrelationID crid)
         {
             m_isr.AddMessage(AlertType.UPCScanBeep, $"Scan received: {sResultText}");
 
@@ -449,24 +462,67 @@ namespace DroidUpc
                 });
         }
 
-        private void DoCodeKeyPress(object sender, View.KeyEventArgs eventArgs)
+        string ZeroPrefixString(string sOriginal)
         {
-            eventArgs.Handled = false;
+	        return sOriginal.PadLeft(4, '0');
+        }
+        
+        delegate string AdjustTextDelegate(string s);
+        delegate void AfterOnEnterDelegate();
+        
+        private async Task DoKeyPressCommon(string sPrefix, object sender, View.KeyEventArgs eventArgs, AdjustTextDelegate adjustText, AfterOnEnterDelegate afterOnEnter)
+		{
+			eventArgs.Handled = false;
 
-            if (eventArgs.KeyCode == Keycode.Enter)
-            {
-                if (eventArgs.Event.Action == KeyEventActions.Up)
-                {
-                    CorrelationID crid = new CorrelationID();
-                    string sResultText = m_ebScanCode.Text;
+			if (eventArgs.KeyCode == Keycode.Enter)
+			{
+				if (eventArgs.Event.Action == KeyEventActions.Up)
+				{
+					EditText eb = (EditText)sender;
+					string sResultText = eb.Text;
+					if (adjustText != null)
+						sResultText = adjustText(sResultText);
+					
+					CorrelationID crid = new CorrelationID();
 
-                    m_lp.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", sResultText);
+					m_lp.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", sResultText);
 
-                    DispatchScanCode(sResultText, m_cbCheckOnly.Checked, crid);
-                }
+					await RunOnUiThreadAsync(() => eb.Text = $"{sPrefix}{sResultText}");
+
+                    await DispatchScanCode(eb.Text, m_cbCheckOnly.Checked, crid);
+                    afterOnEnter?.Invoke();
+				}
+
                 // handle both down and up so we don't get the default behavior...
                 eventArgs.Handled = true;
-            }
+			}
+        }
+
+        private async void DoColumnCodeKeyPress(object sender, View.KeyEventArgs eventArgs)
+        {
+	        await DoKeyPressCommon("C_", sender, eventArgs, ZeroPrefixString, () => SetFocus(m_ebRow, true));
+        }
+
+        private async void DoRowCodeKeyPress(object sender, View.KeyEventArgs eventArgs)
+        {
+	        await DoKeyPressCommon("R_", sender, eventArgs, ZeroPrefixString, () => SetFocus(m_ebBinCode, true));
+        }
+
+        /*----------------------------------------------------------------------------
+			%%Function:DoBinCodeKeyPress
+			%%Qualified:DroidUpc.MainActivity.DoBinCodeKeyPress
+
+			We're going to cleverly lie here and pass in the scancode control since
+			enter here means we might be ready to complete the scancode...
+        ----------------------------------------------------------------------------*/
+        private async void DoBinCodeKeyPress(object sender, View.KeyEventArgs eventArgs)
+        {
+	        await DoKeyPressCommon("", m_ebScanCode, eventArgs, null, null);
+        }
+
+        private async void DoCodeKeyPress(object sender, View.KeyEventArgs eventArgs)
+        {
+	        await DoKeyPressCommon("", sender, eventArgs, null, null);
         }
 
         /*----------------------------------------------------------------------------

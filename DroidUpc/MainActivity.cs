@@ -64,7 +64,11 @@ namespace DroidUpc
             // set those up yet...
             FindViewById<Button>(Resource.Id.buttonManual).Click += DoManual;
             FindViewById<EditText>(Resource.Id.ebCode).KeyPress += DoCodeKeyPress;
-//            FindViewById<Button>(Resource.Id.buttonManual).Click += TestAlert;
+            
+            FindViewById<EditText>(Resource.Id.ebBin).KeyPress += DoBinCodeKeyPress;
+            FindViewById<EditText>(Resource.Id.ebColumn).KeyPress += DoColumnCodeKeyPress;
+            FindViewById<EditText>(Resource.Id.ebRow).KeyPress += DoRowCodeKeyPress;
+            //            FindViewById<Button>(Resource.Id.buttonManual).Click += TestAlert;
 
             buttonScan.Click += OnScanClick;
         }

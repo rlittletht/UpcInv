@@ -779,21 +779,13 @@ namespace UpcShared
             sRow = sRow.Trim();
             sColumn = sColumn.Trim();
 
-            if (!sRow.StartsWith("R_"))
-                return null;
-
             if (!sColumn.StartsWith("C_"))
-                return null;
-
-            foreach (char ch in sRow.Substring(2))
-                if (!char.IsDigit(ch))
-                    return null;
+	            return null;
 
             foreach (char ch in sColumn.Substring(2))
                 if (!char.IsDigit(ch))
                     return null;
 
-            sRow = sRow.Substring(2);
             sColumn = sColumn.Substring(2);
 
             // we want a 3 digit column and a 3 digit row
@@ -804,16 +796,26 @@ namespace UpcShared
                     if (ch != '0')
                         return null;
             }
+
+            string sBinCode = sColumn.Substring(0, Math.Max(3, sColumn.Length)).PadLeft(3, '0');
+            
+            if (!sRow.StartsWith("R_"))
+	            return sBinCode; // return the partial code...
+
+            foreach (char ch in sRow.Substring(2))
+	            if (!char.IsDigit(ch))
+		            return sBinCode; // return the partial code...
+
+            sRow = sRow.Substring(2);
+
             if (sRow.Length > 3)
             {
                 // confirm all leading digits are 0
                 foreach(char ch in sRow.Substring(0, sRow.Length - 3))
                     if (ch != '0')
-                        return null;
+                        return sBinCode;
             }
 
-            string sBinCode;
-            sBinCode = sColumn.Substring(0, Math.Max(3, sColumn.Length)).PadLeft(3, '0');
             sBinCode += sRow.Substring(0, Math.Max(3, sRow.Length)).PadLeft(3, '0');
 
             return sBinCode;
