@@ -67,6 +67,7 @@
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <Debugger>Xamarin</Debugger>
     <AndroidLinkMode>None</AndroidLinkMode>
+    <MandroidI18n />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
