@@ -2,14 +2,14 @@
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.V7.App;
-using Android.Runtime;
+using AndroidX.AppCompat.App;
 using Android.Widget;
 using ZXing.Mobile;
 using System.Collections.Generic;
+using System.Linq;
 using Android;
 using Android.Media;
-using Android.Support.V4.Content;
+using AndroidX.Core.Content;
 using Android.Views;
 using TCore.Logging;
 using TCore.StatusBox;
@@ -17,6 +17,7 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using UpcShared;
+using Xamarin.Essentials;
 using IStatusReporting = UpcShared.IStatusReporting;
 
 namespace DroidUpc
@@ -73,20 +74,70 @@ namespace DroidUpc
             buttonScan.Click += OnScanClick;
         }
 
+        public CameraResolution SelectLowestResolutionMatchingDisplayAspectRatio(List<CameraResolution> availableResolutions)
+        {
+	        CameraResolution result = null;
+#if false
+            //a tolerance of 0.1 should not be visible to the user
+            double aspectTolerance = 0.1;
+	        var displayOrientationHeight = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait ? DeviceDisplay.MainDisplayInfo.Height : DeviceDisplay.MainDisplayInfo.Width;
+	        var displayOrientationWidth = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait ? DeviceDisplay.MainDisplayInfo.Width : DeviceDisplay.MainDisplayInfo.Height;
+
+	        //calculatiing our targetRatio
+	        var targetRatio = displayOrientationHeight / displayOrientationWidth;
+	        var targetHeight = displayOrientationHeight;
+	        var minDiff = double.MaxValue;
+
+	        //camera API lists all available resolutions from highest to lowest, perfect for us
+	        //making use of this sorting, following code runs some comparisons to select the lowest resolution that matches the screen aspect ratio and lies within tolerance
+	        //selecting the lowest makes Qr detection actual faster most of the time
+	        foreach (var r in availableResolutions.Where(r => Math.Abs(((double)r.Width / r.Height) - targetRatio) < aspectTolerance))
+	        {
+		        //slowly going down the list to the lowest matching solution with the correct aspect ratio
+		        if (Math.Abs(r.Height - targetHeight) < minDiff)
+			        minDiff = Math.Abs(r.Height - targetHeight);
+		        result = r;
+	        }
+
+	        if (result != null)
+		        return result;
+#endif 
+	        var smallestDiff = availableResolutions.OrderBy(s =>
+	        {
+		        var ratio = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait ? (double)s.Width / s.Height : (double)s.Height / s.Width;
+		        return Math.Abs(ratio = (DeviceDisplay.MainDisplayInfo.Height / DeviceDisplay.MainDisplayInfo.Width));
+
+	        }).FirstOrDefault();
+
+	        result = new CameraResolution()
+	        {
+		        Width = smallestDiff.Width,
+		        Height = smallestDiff.Height
+	        };
+
+            return result;
+        }
+
+
         void SetupScannerFragment()
         {
             m_ups = new Scanner(Application);
 
-            SupportFragmentManager.BeginTransaction()
-                .Replace(Resource.Id.frameScanner, m_ups.Fragment)
-                .Commit();
+
+            SupportFragmentManager.BeginTransaction().Add(Resource.Id.frameScanner, m_ups.Fragment).Commit();
+
+//            SupportFragmentManager.BeginTransaction()
+                //.Replace(Resource.Id.frameScanner, m_ups.Fragment)
+                //.Commit();
 
             MobileBarcodeScanningOptions options = new MobileBarcodeScanningOptions();
 
             options.PossibleFormats = new List<ZXing.BarcodeFormat> {ZXing.BarcodeFormat.All_1D};
             options.DelayBetweenContinuousScans = 750;
 
-            options.CameraResolutionSelector = (availableResolutions) =>
+            options.CameraResolutionSelector = new MobileBarcodeScanningOptions.CameraResolutionSelectorDelegate(SelectLowestResolutionMatchingDisplayAspectRatio);
+#if false
+					= (availableResolutions) =>
             {
                 CameraResolution arRet = null;
 
@@ -97,7 +148,7 @@ namespace DroidUpc
 
                 return arRet;
             };
-            
+#endif
 
             m_ups.SetupScanner(options, true);
             m_frmScanner = FindViewById<FrameLayout>(Resource.Id.frameScanner);
@@ -154,7 +205,7 @@ namespace DroidUpc
             SetupScannerFragment();
             InitializeApplication();
             DoServiceHeartbeat();
-            SetFocus(m_ebScanCode, false);
+            // SetFocus(m_ebScanCode, false);
         }
 
         protected override void OnResume()

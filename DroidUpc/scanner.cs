@@ -1,25 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-
-using Android.App;
-using Android.Content.PM;
-using Android.Views;
-using Android.OS;
-using Android.Hardware;
-using Android.Graphics;
-
-using Android.Content;
-using Android.Runtime;
-using Android.Widget;
-
-using ZXing;
-using Android.Support.V7.App;
+﻿
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-using System;
+using AndroidX.Fragment.App;
+using Xamarin.Essentials;
 using ZXing.Mobile;
-using Fragment = Android.Support.V4.App.Fragment;
 
 namespace DroidUpc
 {
@@ -27,7 +13,7 @@ namespace DroidUpc
     {
         private ZXingScannerFragment m_scannerControl;
 
-        public Fragment Fragment => (Fragment)m_scannerControl;
+        public Fragment Fragment => m_scannerControl;
         public ZXingScannerFragment ScannerFragment => m_scannerControl;
 
         public Scanner(Android.App.Application app)
