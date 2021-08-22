@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Android.Support.V7.App;
+using AndroidX.AppCompat.App;
 using Android.Widget;
 using DroidUpc;
 using UpcShared;
