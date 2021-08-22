@@ -2,7 +2,7 @@
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.V7.App;
+using AndroidX.AppCompat.App;
 using Android.Runtime;
 using Android.Widget;
 using ZXing.Mobile;
@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Android;
-using Android.Support.V4.Content;
 using Android.Views;
 using Android.Views.InputMethods;
 using TCore.Logging;
