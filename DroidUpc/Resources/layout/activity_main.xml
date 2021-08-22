@@ -170,10 +170,16 @@
 				android:layout_gravity="right"
 				android:text="Scan"/>
 		</LinearLayout>
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center">
 		<androidx.fragment.app.FragmentContainerView
 			android:id="@+id/frameScanner"
-			android:layout_width="fill_parent"
+			android:layout_width="wrap_content"
 			android:layout_height="250dip"/>
+		</LinearLayout>
 		<TextView
 			android:id="@+id/tvStatus"
 			android:layout_width="fill_parent"

@@ -155,7 +155,7 @@
       <Version>1.4.0.2</Version>
     </PackageReference>
     <PackageReference Include="ZXing.Net.Mobile">
-      <Version>3.1.0-beta2</Version>
+      <Version>3.1.0-alpha1156608737</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

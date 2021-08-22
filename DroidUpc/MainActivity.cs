@@ -18,6 +18,7 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using UpcShared;
 using Xamarin.Essentials;
+using ActionBar = Android.App.ActionBar;
 using IStatusReporting = UpcShared.IStatusReporting;
 
 namespace DroidUpc
@@ -69,29 +70,40 @@ namespace DroidUpc
             FindViewById<EditText>(Resource.Id.ebBin).KeyPress += DoBinCodeKeyPress;
             FindViewById<EditText>(Resource.Id.ebColumn).KeyPress += DoColumnCodeKeyPress;
             FindViewById<EditText>(Resource.Id.ebRow).KeyPress += DoRowCodeKeyPress;
-            //            FindViewById<Button>(Resource.Id.buttonManual).Click += TestAlert;
 
             buttonScan.Click += OnScanClick;
         }
 
-        public CameraResolution SelectLowestResolutionMatchingDisplayAspectRatio(List<CameraResolution> availableResolutions)
+        // we need to remember the last resolution we requested for the preview -- we
+        // will use this later to resize the scanner control so we can get the
+        // right aspect ration on the control
+        private CameraResolution lastResolutionSet;
+
+        public CameraResolution SelectLowestResolutionMatchingDisplayAspectRatio(
+	        List<CameraResolution> availableResolutions)
         {
 	        CameraResolution result = null;
-#if false
-            //a tolerance of 0.1 should not be visible to the user
-            double aspectTolerance = 0.1;
-	        var displayOrientationHeight = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait ? DeviceDisplay.MainDisplayInfo.Height : DeviceDisplay.MainDisplayInfo.Width;
-	        var displayOrientationWidth = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait ? DeviceDisplay.MainDisplayInfo.Width : DeviceDisplay.MainDisplayInfo.Height;
+	        //a tolerance of 0.1 should not be visible to the user
+	        double aspectTolerance = 0.1;
+	        var displayOrientationHeight = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait
+		        ? DeviceDisplay.MainDisplayInfo.Height
+		        : DeviceDisplay.MainDisplayInfo.Width;
+	        var displayOrientationWidth = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait
+		        ? DeviceDisplay.MainDisplayInfo.Width
+		        : DeviceDisplay.MainDisplayInfo.Height;
 
-	        //calculatiing our targetRatio
+	        //calculating our targetRatio
 	        var targetRatio = displayOrientationHeight / displayOrientationWidth;
 	        var targetHeight = displayOrientationHeight;
 	        var minDiff = double.MaxValue;
 
 	        //camera API lists all available resolutions from highest to lowest, perfect for us
-	        //making use of this sorting, following code runs some comparisons to select the lowest resolution that matches the screen aspect ratio and lies within tolerance
+	        //making use of this sorting, following code runs some comparisons to select the lowest
+	        //resolution that matches the screen aspect ratio and lies within tolerance
 	        //selecting the lowest makes Qr detection actual faster most of the time
-	        foreach (var r in availableResolutions.Where(r => Math.Abs(((double)r.Width / r.Height) - targetRatio) < aspectTolerance))
+            // (make sure we at least get 600 pixels on the width)
+	        foreach (var r in availableResolutions.Where(r =>
+		        (Math.Abs(((double) r.Width / r.Height) - targetRatio) < aspectTolerance) && r.Width > 600))
 	        {
 		        //slowly going down the list to the lowest matching solution with the correct aspect ratio
 		        if (Math.Abs(r.Height - targetHeight) < minDiff)
@@ -99,23 +111,30 @@ namespace DroidUpc
 		        result = r;
 	        }
 
-	        if (result != null)
-		        return result;
-#endif 
-	        var smallestDiff = availableResolutions.OrderBy(s =>
+	        if (result == null)
 	        {
-		        var ratio = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait ? (double)s.Width / s.Height : (double)s.Height / s.Width;
-		        return Math.Abs(ratio = (DeviceDisplay.MainDisplayInfo.Height / DeviceDisplay.MainDisplayInfo.Width));
+		        var smallestDiff = availableResolutions.OrderBy(s =>
+		        {
+			        var ratio = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait
+				        ? (double) s.Width / s.Height
+				        : (double) s.Height / s.Width;
+			        return Math.Abs(
+				        ratio = (DeviceDisplay.MainDisplayInfo.Height / DeviceDisplay.MainDisplayInfo.Width));
 
-	        }).FirstOrDefault();
+		        }).FirstOrDefault();
 
-	        result = new CameraResolution()
-	        {
-		        Width = smallestDiff.Width,
-		        Height = smallestDiff.Height
-	        };
+		        result = new CameraResolution()
+		        {
+			        Width = smallestDiff.Width,
+			        Height = smallestDiff.Height
+		        };
+	        }
 
-            return result;
+	        lastResolutionSet = new CameraResolution();
+	        lastResolutionSet.Width = result.Width;
+	        lastResolutionSet.Height = result.Height;
+
+			return result;
         }
 
 
@@ -123,35 +142,20 @@ namespace DroidUpc
         {
             m_ups = new Scanner(Application);
 
-
-            SupportFragmentManager.BeginTransaction().Add(Resource.Id.frameScanner, m_ups.Fragment).Commit();
-
-//            SupportFragmentManager.BeginTransaction()
-                //.Replace(Resource.Id.frameScanner, m_ups.Fragment)
-                //.Commit();
-
             MobileBarcodeScanningOptions options = new MobileBarcodeScanningOptions();
 
             options.PossibleFormats = new List<ZXing.BarcodeFormat> {ZXing.BarcodeFormat.All_1D};
-            options.DelayBetweenContinuousScans = 750;
 
             options.CameraResolutionSelector = new MobileBarcodeScanningOptions.CameraResolutionSelectorDelegate(SelectLowestResolutionMatchingDisplayAspectRatio);
-#if false
-					= (availableResolutions) =>
-            {
-                CameraResolution arRet = null;
 
-                foreach (var ar in availableResolutions)
-                {
-                    Console.WriteLine("Resolution: " + ar.Width + "x" + ar.Height);
-                }
-
-                return arRet;
-            };
-#endif
-
+            options.ScanningArea = ScanningArea.From(0f, 0.49f, 1f, 0.51f);
+            
             m_ups.SetupScanner(options, true);
+
             m_frmScanner = FindViewById<FrameLayout>(Resource.Id.frameScanner);
+
+            SupportFragmentManager.BeginTransaction().Add(Resource.Id.frameScanner, m_ups.Fragment).Commit();
+
             m_frmScanner.Visibility = ViewStates.Gone;
         }
 
@@ -254,18 +258,29 @@ namespace DroidUpc
                     RequestPermissions(new string[] { Manifest.Permission.Camera}, 0);
                 else
                 {
-                    m_frmScanner.Visibility = ViewStates.Visible;
+                    // start scanner here so we can get lastResolutionSet populated
                     m_ups.StartScanner(ScannerControlDispatchScanCode);
+
+	                if (lastResolutionSet != null)
+	                {
+		                float ratio = (float)lastResolutionSet.Width / (float)lastResolutionSet.Height;
+		                float newWidth = (float)m_frmScanner.LayoutParameters.Height * ratio;
+
+		                m_frmScanner.LayoutParameters =
+			                new LinearLayout.LayoutParams((int)newWidth, m_frmScanner.LayoutParameters.Height);
+	                }
+
+                    m_frmScanner.Visibility = ViewStates.Visible;
                     m_isr.AddMessage(AlertType.None, "Turning Scanner on");
                     m_fScannerOn = true;
                 }
             }
             else
             {
-                m_ups.StopScanner();
-                m_isr.AddMessage(AlertType.None, "Turning Scanner off");
-                m_frmScanner.Visibility = ViewStates.Gone;
-                m_fScannerOn = false;
+	            m_ups.StopScanner();
+	            m_isr.AddMessage(AlertType.None, "Turning Scanner off");
+	            m_frmScanner.Visibility = ViewStates.Gone;
+	            m_fScannerOn = false;
             }
         }
     }
