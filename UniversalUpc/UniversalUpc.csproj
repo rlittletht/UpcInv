@@ -24,7 +24,7 @@
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
     <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
-    <PackageCertificateThumbprint>83915AEBAAE0A939B41450CB46325835A14D7367</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>46065224B33045D052A245A4A0C2402E30C4E9CB</PackageCertificateThumbprint>
     <AppInstallerUri>https://thetasoft2.azurewebsites.net/UpcInv.Appx</AppInstallerUri>
     <AppInstallerUpdateFrequency>0</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
