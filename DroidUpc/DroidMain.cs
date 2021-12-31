@@ -14,7 +14,7 @@ using Android;
 using Android.Content;
 using Android.Views;
 using Android.Views.InputMethods;
-using ApxLabs.FastAndroidCamera;
+//using ApxLabs.FastAndroidCamera;
 using TCore.Logging;
 using TCore.StatusBox;
 using UpcShared;
@@ -571,6 +571,7 @@ namespace DroidUpc
             if (resultCode != Result.Ok)
                 return;
 
+#if dead
             Stream stream = ContentResolver.OpenInputStream(intent.Data);
             
             FastJavaByteArray fastArray = new FastJavaByteArray((int)stream.Length);
@@ -592,6 +593,7 @@ namespace DroidUpc
             }
             fastArray.Dispose();
             fastArray = null;
+#endif // dead
         }
 
         void DoSimScan()

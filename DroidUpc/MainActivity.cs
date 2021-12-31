@@ -148,7 +148,7 @@ namespace DroidUpc
 
             options.PossibleFormats = new List<ZXing.BarcodeFormat> {ZXing.BarcodeFormat.All_1D};
 
-            options.CameraResolutionSelector = new MobileBarcodeScanningOptions.CameraResolutionSelectorDelegate(SelectLowestResolutionMatchingDisplayAspectRatio);
+            // options.CameraResolutionSelector = new MobileBarcodeScanningOptions.CameraResolutionSelectorDelegate(SelectLowestResolutionMatchingDisplayAspectRatio);
 
 //            options.ScanningArea = ScanningArea.From(0f, 0.49f, 1f, 0.51f);
             
