@@ -42,10 +42,12 @@ namespace DroidUpc
         private EditText m_ebNotes;
         private EditText m_ebLocation;
         private CheckBox m_cbCheckOnly;
+        private CheckBox m_cbSimScan;
         private TextView m_txtLocation;
         private TextView m_txtBinCode;
         private TextView m_txtRow;
         private TextView m_txtColumn;
+        private EditText m_ebSimScanId;
         private EditText m_ebBinCode;
         private EditText m_ebRow;
         private EditText m_ebColumn;
@@ -148,7 +150,7 @@ namespace DroidUpc
 
             options.CameraResolutionSelector = new MobileBarcodeScanningOptions.CameraResolutionSelectorDelegate(SelectLowestResolutionMatchingDisplayAspectRatio);
 
-            options.ScanningArea = ScanningArea.From(0f, 0.49f, 1f, 0.51f);
+//            options.ScanningArea = ScanningArea.From(0f, 0.49f, 1f, 0.51f);
             
             m_ups.SetupScanner(options, true);
 
@@ -181,6 +183,7 @@ namespace DroidUpc
             m_ebLocation = FindViewById<EditText>(Resource.Id.ebLocation);
             m_txtStatus = FindViewById<TextView>(Resource.Id.tvStatus);
             m_cbCheckOnly = FindViewById<CheckBox>(Resource.Id.cbCheckOnly);
+            m_cbSimScan = FindViewById<CheckBox>(Resource.Id.cbSimScan);
             m_txtBinCode = FindViewById<TextView>(Resource.Id.tvBinLabel);
             m_txtRow = FindViewById<TextView>(Resource.Id.tvRowLabel);
             m_txtColumn = FindViewById<TextView>(Resource.Id.tvColumnLabel);

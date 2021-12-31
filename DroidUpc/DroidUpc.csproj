@@ -151,9 +151,6 @@
     <PackageReference Include="Xamarin.Google.Android.Material">
       <Version>1.4.0.2</Version>
     </PackageReference>
-    <PackageReference Include="ZXing.Net.Mobile">
-      <Version>3.1.0-alpha1156608737</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\arrays.xml" />
@@ -174,6 +171,14 @@
     <AndroidResource Include="Resources\layout\spinner_type.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\git\FastAndroidCamera\FastAndroidCamera.csproj">
+      <Project>{b544c08c-7f75-4b68-91f5-3b0afe17937b}</Project>
+      <Name>FastAndroidCamera</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\git\ZXing-master\ZXing.Net.Mobile\ZXing.Net.Mobile.csproj">
+      <Project>{37c51078-aec2-465e-bac3-bb2ac2578884}</Project>
+      <Name>ZXing.Net.Mobile</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UpcShared\UpcShared.csproj">
       <Project>{85c5de2b-7d29-4744-9406-98858dbc5b33}</Project>
       <Name>UpcShared</Name>
