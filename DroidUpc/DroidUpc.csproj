@@ -171,10 +171,6 @@
     <AndroidResource Include="Resources\layout\spinner_type.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\git\FastAndroidCamera\FastAndroidCamera.csproj">
-      <Project>{b544c08c-7f75-4b68-91f5-3b0afe17937b}</Project>
-      <Name>FastAndroidCamera</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\git\ZXing-master\ZXing.Net.Mobile\ZXing.Net.Mobile.csproj">
       <Project>{37c51078-aec2-465e-bac3-bb2ac2578884}</Project>
       <Name>ZXing.Net.Mobile</Name>

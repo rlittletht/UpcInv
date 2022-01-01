@@ -548,57 +548,6 @@ namespace DroidUpc
 	        await DoKeyPressCommon("", sender, eventArgs, null, null);
         }
 
-        // Request code for selecting a PDF document.
-        private static int PICK_SIMFILE_FILE = 2;
-
-        private void openFile()
-        {
-            Intent intent = new Intent(Intent.ActionOpenDocument);
-            intent.AddCategory(Intent.CategoryOpenable);
-            intent.SetType("application/octet-stream");
-
-            RegisterActivityDelegate(
-                PICK_SIMFILE_FILE, 
-                (intent1, code) =>
-                {
-                    FinishSimScan(intent1, code);
-                });
-            StartActivityForResult(intent, PICK_SIMFILE_FILE);
-        }
-
-        void FinishSimScan(Intent? intent, Result resultCode)
-        {
-            if (resultCode != Result.Ok)
-                return;
-
-            Stream stream = ContentResolver.OpenInputStream(intent.Data);
-            
-            FastJavaByteArray fastArray = new FastJavaByteArray((int)stream.Length);
-            int b;
-            int i = 0;
-            while ((b = stream.ReadByte()) != -1)
-                fastArray[i++] = (byte)b;
-
-
-            ZXing.Result result = m_ups.ScannerFragment.DoDecode(fastArray, new CameraResolution() { Height=480, Width=640 }, 90, new ScanningArea(0, 0, 1, 1));
-
-            if (result != null)
-            {
-                RunOnUiThreadAsync(() => m_ebScanCode.Text = $"{result.Text}");
-            }
-            else
-            {
-                RunOnUiThreadAsync(() => m_ebScanCode.Text = $"<not recognized>");
-            }
-            fastArray.Dispose();
-            fastArray = null;
-        }
-
-        void DoSimScan()
-        {
-            openFile();
-        }
-
         /*----------------------------------------------------------------------------
         	%%Function: DoManual
         	%%Qualified: UniversalUpc.MainPage.DoManual
@@ -611,12 +560,6 @@ namespace DroidUpc
         ----------------------------------------------------------------------------*/
         private async void DoManual(object sender, EventArgs e)
         {
-            if (m_cbSimScan.Checked)
-            {
-                DoSimScan();
-                return;
-            }
-
             string sTitle = m_ebTitle.Text;
 
             if (m_cbCheckOnly.Checked)
