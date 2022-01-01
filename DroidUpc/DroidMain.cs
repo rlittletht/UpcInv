@@ -7,11 +7,14 @@ using Android.Runtime;
 using Android.Widget;
 using ZXing.Mobile;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Android;
+using Android.Content;
 using Android.Views;
 using Android.Views.InputMethods;
+using ApxLabs.FastAndroidCamera;
 using TCore.Logging;
 using TCore.StatusBox;
 using UpcShared;
@@ -24,6 +27,19 @@ namespace DroidUpc
         private List<string> m_plsProcessing;
         private UpcInvCore.ADAS m_adasCurrent;
 
+        delegate void ActivityResultDelegate(Intent? intent, Result resultCode);
+
+        private Dictionary<int, ActivityResultDelegate> m_activityDelegates =
+            new Dictionary<int, ActivityResultDelegate>();
+
+        void RegisterActivityDelegate(int requestCode, ActivityResultDelegate del)
+        {
+            if (!m_activityDelegates.ContainsKey(requestCode))
+                m_activityDelegates.Add(requestCode, null);
+
+            m_activityDelegates[requestCode] = del;
+        }
+
         /*----------------------------------------------------------------------------
         	%%Function: AdasCurrent
         	%%Qualified: DroidUpc.MainActivity.AdasCurrent
@@ -33,6 +49,14 @@ namespace DroidUpc
             Spinner spinner = FindViewById<Spinner>(Resource.Id.spinType);
 
             return (UpcInvCore.ADAS) spinner.SelectedItemPosition;
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent? data)
+        {
+            if (m_activityDelegates.ContainsKey(requestCode))
+                m_activityDelegates[requestCode](data, resultCode);
+
+            base.OnActivityResult(requestCode, resultCode, data);
         }
 
         /*----------------------------------------------------------------------------
@@ -129,7 +153,7 @@ namespace DroidUpc
 
             // we don't bother to await this call -- it wouldn't mean much anyway since the next
             // control dispatch would just come in and execute before we were done anyway...
-            DispatchScanCode(sResultText, m_cbCheckOnly.Checked, crid);
+            _ = DispatchScanCode(sResultText, m_cbCheckOnly.Checked, crid);
         }
 
         void UpdateBinCode()
@@ -530,6 +554,9 @@ namespace DroidUpc
         	%%Contact: rlittle
         	
             take the current title and scan code and create an entry for it.
+
+            if SimScan is checked, then this will perform a simulated scan by
+            directly invoking the code that the frame preview would have called
         ----------------------------------------------------------------------------*/
         private async void DoManual(object sender, EventArgs e)
         {
