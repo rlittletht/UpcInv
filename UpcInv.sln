@@ -1,7 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalUpc", "UniversalUpc\UniversalUpc.csproj", "{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}"
 EndProject
@@ -65,10 +63,6 @@ Global
 		DebugStageHostStageSvcProdData|ARM = DebugStageHostStageSvcProdData|ARM
 		DebugStageHostStageSvcProdData|x64 = DebugStageHostStageSvcProdData|x64
 		DebugStageHostStageSvcProdData|x86 = DebugStageHostStageSvcProdData|x86
-		Droid|Any CPU = Droid|Any CPU
-		Droid|ARM = Droid|ARM
-		Droid|x64 = Droid|x64
-		Droid|x86 = Droid|x86
 		LocalDebug|Any CPU = LocalDebug|Any CPU
 		LocalDebug|ARM = LocalDebug|ARM
 		LocalDebug|x64 = LocalDebug|x64
@@ -147,18 +141,6 @@ Global
 		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.DebugStageHostStageSvcProdData|x86.ActiveCfg = Debug|x86
 		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.DebugStageHostStageSvcProdData|x86.Build.0 = Debug|x86
 		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.DebugStageHostStageSvcProdData|x86.Deploy.0 = Debug|x86
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|Any CPU.ActiveCfg = Debug|x86
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|Any CPU.Build.0 = Debug|x86
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|Any CPU.Deploy.0 = Debug|x86
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|ARM.ActiveCfg = Debug|ARM
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|ARM.Build.0 = Debug|ARM
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|ARM.Deploy.0 = Debug|ARM
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|x64.ActiveCfg = Debug|x64
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|x64.Build.0 = Debug|x64
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|x64.Deploy.0 = Debug|x64
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|x86.ActiveCfg = Debug|x86
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|x86.Build.0 = Debug|x86
-		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.Droid|x86.Deploy.0 = Debug|x86
 		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.LocalDebug|Any CPU.ActiveCfg = Release|x64
 		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.LocalDebug|Any CPU.Build.0 = Release|x64
 		{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}.LocalDebug|Any CPU.Deploy.0 = Release|x64
@@ -265,18 +247,6 @@ Global
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|x86.ActiveCfg = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|x86.Build.0 = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.DebugStageHostStageSvcProdData|x86.Deploy.0 = Debug|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|Any CPU.ActiveCfg = DebugApk|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|Any CPU.Build.0 = DebugApk|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|Any CPU.Deploy.0 = DebugApk|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|ARM.ActiveCfg = DebugApk|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|ARM.Build.0 = DebugApk|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|ARM.Deploy.0 = DebugApk|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|x64.ActiveCfg = DebugApk|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|x64.Build.0 = DebugApk|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|x64.Deploy.0 = DebugApk|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|x86.ActiveCfg = DebugApk|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|x86.Build.0 = DebugApk|Any CPU
-		{F42C5D83-D50D-499C-BF05-B73666D60D85}.Droid|x86.Deploy.0 = DebugApk|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.LocalDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.LocalDebug|Any CPU.Build.0 = Debug|Any CPU
 		{F42C5D83-D50D-499C-BF05-B73666D60D85}.LocalDebug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -365,14 +335,6 @@ Global
 		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.DebugStageHostStageSvcProdData|x64.Build.0 = Debug|Any CPU
 		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.DebugStageHostStageSvcProdData|x86.ActiveCfg = Debug|Any CPU
 		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.DebugStageHostStageSvcProdData|x86.Build.0 = Debug|Any CPU
-		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.Droid|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.Droid|Any CPU.Build.0 = Debug|Any CPU
-		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.Droid|ARM.ActiveCfg = Debug|Any CPU
-		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.Droid|ARM.Build.0 = Debug|Any CPU
-		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.Droid|x64.ActiveCfg = Debug|Any CPU
-		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.Droid|x64.Build.0 = Debug|Any CPU
-		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.Droid|x86.ActiveCfg = Debug|Any CPU
-		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.Droid|x86.Build.0 = Debug|Any CPU
 		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.LocalDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.LocalDebug|Any CPU.Build.0 = Debug|Any CPU
 		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.LocalDebug|ARM.ActiveCfg = Debug|Any CPU
@@ -445,14 +407,6 @@ Global
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|x64.Build.0 = Debug|Any CPU
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|x86.ActiveCfg = Debug|Any CPU
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|x86.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|Any CPU.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|Any CPU.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|ARM.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|ARM.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|x64.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|x64.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|x86.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|x86.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalDebug|Any CPU.Build.0 = Debug|Any CPU
 		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalDebug|ARM.ActiveCfg = Debug|Any CPU
@@ -525,14 +479,6 @@ Global
 		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.DebugStageHostStageSvcProdData|x64.Build.0 = Debug|Any CPU
 		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.DebugStageHostStageSvcProdData|x86.ActiveCfg = Debug|Any CPU
 		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.DebugStageHostStageSvcProdData|x86.Build.0 = Debug|Any CPU
-		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.Droid|Any CPU.ActiveCfg = Debug|Any CPU
-		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.Droid|Any CPU.Build.0 = Debug|Any CPU
-		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.Droid|ARM.ActiveCfg = Debug|Any CPU
-		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.Droid|ARM.Build.0 = Debug|Any CPU
-		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.Droid|x64.ActiveCfg = Debug|Any CPU
-		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.Droid|x64.Build.0 = Debug|Any CPU
-		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.Droid|x86.ActiveCfg = Debug|Any CPU
-		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.Droid|x86.Build.0 = Debug|Any CPU
 		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.LocalDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.LocalDebug|Any CPU.Build.0 = Debug|Any CPU
 		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.LocalDebug|ARM.ActiveCfg = Debug|Any CPU
@@ -605,14 +551,6 @@ Global
 		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.DebugStageHostStageSvcProdData|x64.Build.0 = Debug|Any CPU
 		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.DebugStageHostStageSvcProdData|x86.ActiveCfg = Debug|Any CPU
 		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.DebugStageHostStageSvcProdData|x86.Build.0 = Debug|Any CPU
-		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.Droid|Any CPU.ActiveCfg = Debug|Any CPU
-		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.Droid|Any CPU.Build.0 = Debug|Any CPU
-		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.Droid|ARM.ActiveCfg = Debug|Any CPU
-		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.Droid|ARM.Build.0 = Debug|Any CPU
-		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.Droid|x64.ActiveCfg = Debug|Any CPU
-		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.Droid|x64.Build.0 = Debug|Any CPU
-		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.Droid|x86.ActiveCfg = Debug|Any CPU
-		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.Droid|x86.Build.0 = Debug|Any CPU
 		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.LocalDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.LocalDebug|Any CPU.Build.0 = Debug|Any CPU
 		{E57B6A49-44DF-4D70-97D1-8F8638A4E685}.LocalDebug|ARM.ActiveCfg = Debug|Any CPU
