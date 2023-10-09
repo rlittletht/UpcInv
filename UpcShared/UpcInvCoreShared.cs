@@ -105,7 +105,7 @@ namespace UpcShared
         private void EnsureServiceConnection()
         {
             if (m_api == null)
-                m_api = new WebApi(new WebApiInterop("https://thetasoft2.azurewebsites.net/UpcApi", null));
+                m_api = new WebApi(new WebApiInterop("https://upcinv-api.azurewebsites.net", null));
         }
 
         /*----------------------------------------------------------------------------
