@@ -27,7 +27,7 @@
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content">
 						<TextView
-							android:text="Code"
+							android:text="Code2"
 							android:textAppearance="?android:attr/textAppearanceSmall"
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
@@ -188,7 +188,7 @@
 			<androidx.fragment.app.FragmentContainerView
 				android:id="@+id/frameScanner"
 				android:layout_width="wrap_content"
-				android:layout_height="250dip"/>
+				android:layout_height="250dip"/> <!-- if you change this, change the constant in MainActivity.cs -->
 		</LinearLayout>
 		<TextView
 			android:id="@+id/tvStatus"
