@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 19
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalUpc", "UniversalUpc\UniversalUpc.csproj", "{C4B60C66-BAC6-4CDD-A40C-6917B56A7889}"
 EndProject
@@ -15,8 +16,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroidUpc", "DroidUpc\DroidUpc.csproj", "{F42C5D83-D50D-499C-BF05-B73666D60D85}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bulker", "Bulker\Bulker.csproj", "{6FD0ED2F-1156-424E-B35C-1AB71345B726}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpcApi", "UpcApi\UpcApi.csproj", "{91D7AD8B-4646-435F-BA19-B1E089D74D41}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UpcShared", "UpcShared\UpcShared.csproj", "{85C5DE2B-7D29-4744-9406-98858DBC5B33}"
 EndProject
@@ -404,86 +403,6 @@ Global
 		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.ReleaseStageHostStageSvcProdData|x64.Build.0 = Debug|Any CPU
 		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.ReleaseStageHostStageSvcProdData|x86.ActiveCfg = Release|Any CPU
 		{6FD0ED2F-1156-424E-B35C-1AB71345B726}.ReleaseStageHostStageSvcProdData|x86.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureRelease|Any CPU.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureRelease|ARM.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureRelease|ARM.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureRelease|x64.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureRelease|x64.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureRelease|x86.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureRelease|x86.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureStagingDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureStagingDebug|Any CPU.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureStagingDebug|ARM.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureStagingDebug|ARM.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureStagingDebug|x64.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureStagingDebug|x64.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureStagingDebug|x86.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.AzureStagingDebug|x86.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Debug|ARM.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Debug|x64.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Debug|x86.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|Any CPU.ActiveCfg = DebugStageHostStageSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|Any CPU.Build.0 = DebugStageHostStageSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|ARM.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|ARM.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|x64.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|x64.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|x86.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugLocalHostLocalSvcProdData|x86.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|Any CPU.ActiveCfg = DebugStageHostStageSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|Any CPU.Build.0 = DebugStageHostStageSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|ARM.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|ARM.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|x64.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|x64.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|x86.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.DebugStageHostStageSvcProdData|x86.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|Any CPU.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|Any CPU.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|ARM.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|ARM.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|x64.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|x64.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|x86.ActiveCfg = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Droid|x86.Build.0 = DebugLocalHostLocalSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalDebug|Any CPU.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalDebug|ARM.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalDebug|ARM.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalDebug|x64.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalDebug|x64.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalDebug|x86.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalDebug|x86.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalStaging|Any CPU.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalStaging|Any CPU.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalStaging|ARM.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalStaging|ARM.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalStaging|x64.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalStaging|x64.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalStaging|x86.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.LocalStaging|x86.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Release|ARM.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Release|ARM.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Release|x64.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Release|x64.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Release|x86.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.Release|x86.Build.0 = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.ReleaseStageHostStageSvcProdData|Any CPU.ActiveCfg = DebugStageHostStageSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.ReleaseStageHostStageSvcProdData|Any CPU.Build.0 = DebugStageHostStageSvcProdData|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.ReleaseStageHostStageSvcProdData|ARM.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.ReleaseStageHostStageSvcProdData|ARM.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.ReleaseStageHostStageSvcProdData|x64.ActiveCfg = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.ReleaseStageHostStageSvcProdData|x64.Build.0 = Debug|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.ReleaseStageHostStageSvcProdData|x86.ActiveCfg = Release|Any CPU
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41}.ReleaseStageHostStageSvcProdData|x86.Build.0 = Release|Any CPU
 		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.AzureRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.AzureRelease|Any CPU.Build.0 = Release|Any CPU
 		{85C5DE2B-7D29-4744-9406-98858DBC5B33}.AzureRelease|ARM.ActiveCfg = Release|Any CPU
@@ -653,7 +572,6 @@ Global
 		{BEB10E52-5010-496D-8082-8B96F4F03ECA} = {6430A3F6-293B-47DD-8348-CD45AB493E6D}
 		{F42C5D83-D50D-499C-BF05-B73666D60D85} = {6430A3F6-293B-47DD-8348-CD45AB493E6D}
 		{6FD0ED2F-1156-424E-B35C-1AB71345B726} = {6430A3F6-293B-47DD-8348-CD45AB493E6D}
-		{91D7AD8B-4646-435F-BA19-B1E089D74D41} = {4517830F-4898-40D5-8447-720D70EE8568}
 		{85C5DE2B-7D29-4744-9406-98858DBC5B33} = {B8E8A0B3-8914-4784-A820-A9D362E13A6E}
 		{E57B6A49-44DF-4D70-97D1-8F8638A4E685} = {4517830F-4898-40D5-8447-720D70EE8568}
 	EndGlobalSection
