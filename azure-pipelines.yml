@@ -16,6 +16,7 @@ steps:
 - script: |
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
+    echo sdk root is $ANDROID_SDK_ROOT
   displayName: 'Run a multi-line script'
 
 - task: NuGetCommand@2
@@ -25,12 +26,12 @@ steps:
   displayName: 'NuGet restore'
 
 - script: |
-    C:\Android\android-sdk\cmdline-tools\latest\bin\sdkmanager "platforms;android-34"
-  displayName: install
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools;platforms;android-34"
+    displayName: 'install'
 
 - script: |
-    C:\Android\android-sdk\cmdline-tools\latest\bin\sdkmanager --list_installed
-  displayName: check the installed 
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --list_installed
+    displayName: 'check the installed'
 
 - task: DotNetCoreCLI@2
   inputs:
