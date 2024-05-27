@@ -25,6 +25,10 @@ steps:
   displayName: 'NuGet restore'
 
 - script: |
+    C:\Android\android-sdk\cmdline-tools\latest\bin\sdkmanager "platforms;android-34"
+  displayName: install
+
+- script: |
     C:\Android\android-sdk\cmdline-tools\latest\bin\sdkmanager --list_installed
   displayName: check the installed 
 
