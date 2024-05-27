@@ -34,6 +34,11 @@ steps:
     ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --list_installed
   displayName: 'check the installed'
 
+- script: |
+    dotnet workload install android
+    dotnet workload restore
+  displayName: 'install workloads'
+  
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
