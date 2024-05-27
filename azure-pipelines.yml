@@ -26,12 +26,13 @@ steps:
   displayName: 'NuGet restore'
 
 - script: |
-    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools" "platforms;android-34"
-    displayName: 'install'
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools"
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platforms;android-34"
+  displayName: 'install'
 
 - script: |
     ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --list_installed
-    displayName: 'check the installed'
+  displayName: 'check the installed'
 
 - task: DotNetCoreCLI@2
   inputs:
