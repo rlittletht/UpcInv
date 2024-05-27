@@ -209,6 +209,12 @@ namespace UpcShared
         ----------------------------------------------------------------------------*/
         public async Task<bool> CreateDvd(string sScanCode, string sTitle, Guid crids)
         {
+            if (sTitle.StartsWith("!!") || sScanCode.StartsWith("!!"))
+            {
+                m_lp.LogEvent(crids, EventType.Error, $"invalid title {sTitle} or scanCode {sScanCode}");
+                return false;
+            }
+
             EnsureServiceConnection();
             USR usr = await m_api.CreateDvd(sScanCode, sTitle);
 
@@ -254,6 +260,12 @@ namespace UpcShared
         ----------------------------------------------------------------------------*/
         public async Task<bool> UpdateBookScan(string sScanCode, string sTitle, string sLocation, Guid crids)
         {
+            if (sTitle.StartsWith("!!") || sScanCode.StartsWith("!!"))
+            {
+                m_lp.LogEvent(crids, EventType.Error, $"invalid title {sTitle} or scanCode {sScanCode}");
+                return false;
+            }
+
             EnsureServiceConnection();
             USR usr = await m_api.UpdateBookScan(sScanCode, sTitle, sLocation);
 
@@ -274,6 +286,12 @@ namespace UpcShared
         ----------------------------------------------------------------------------*/
         public async Task<bool> CreateBook(string sScanCode, string sTitle, string sLocation, Guid crids)
         {
+            if (sTitle.StartsWith("!!") || sScanCode.StartsWith("!!"))
+            {
+                m_lp.LogEvent(crids, EventType.Error, $"invalid title {sTitle} or scanCode {sScanCode}");
+                return false;
+            }
+            
             EnsureServiceConnection();
             USR usr;
 
