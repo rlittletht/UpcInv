@@ -11,6 +11,7 @@ using Android;
 using Android.Media;
 using AndroidX.Core.Content;
 using Android.Views;
+using Com.Microsoft.Appcenter.Ingestion.Models.Json;
 using TCore.Logging;
 using TCore.StatusBox;
 using Microsoft.AppCenter;
@@ -19,6 +20,7 @@ using Microsoft.AppCenter.Crashes;
 using UpcShared;
 using Xamarin.Essentials;
 using ActionBar = Android.App.ActionBar;
+using EventType = UpcShared.EventType;
 using IStatusReporting = UpcShared.IStatusReporting;
 
 namespace DroidUpc
@@ -28,6 +30,8 @@ namespace DroidUpc
 
     public partial class MainActivity : AppCompatActivity
     {
+        private static float s_dipScannerFrameHeight = 250;
+
         UpcAlert m_upca;
         private UpcInvCore m_upccCore;
         private Scanner m_ups;
@@ -79,39 +83,89 @@ namespace DroidUpc
         // right aspect ration on the control
         private CameraResolution lastResolutionSet;
 
+        public int convertDipToPixels(float dips)
+        {
+            return (int)(dips * DeviceDisplay.MainDisplayInfo.Density  + 0.5f);
+        }
+
         public CameraResolution SelectLowestResolutionMatchingDisplayAspectRatio(
 	        List<CameraResolution> availableResolutions)
         {
+            frameWidth = DeviceDisplay.MainDisplayInfo.Width;
+            frameHeight = convertDipToPixels(s_dipScannerFrameHeight);
+
 	        CameraResolution result = null;
 	        //a tolerance of 0.1 should not be visible to the user
 	        double aspectTolerance = 0.1;
-	        var displayOrientationHeight = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait
-		        ? DeviceDisplay.MainDisplayInfo.Height
-		        : DeviceDisplay.MainDisplayInfo.Width;
-	        var displayOrientationWidth = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait
-		        ? DeviceDisplay.MainDisplayInfo.Width
-		        : DeviceDisplay.MainDisplayInfo.Height;
 
-	        //calculating our targetRatio
-	        var targetRatio = displayOrientationHeight / displayOrientationWidth;
-	        var targetHeight = displayOrientationHeight;
-	        var minDiff = double.MaxValue;
+#if UseFullScreen
+            double mainDisplayWidth = DeviceDisplay.MainDisplayInfo.Width;
+            double mainDisplayHeight = DeviceDisplay.MainDisplayInfo.Height;
+            double displayOrientationHeight = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait
+		        ? mainDisplayHeight
+                : mainDisplayWidth;
+	        double displayOrientationWidth = DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Portrait
+		        ? mainDisplayWidth
+                : mainDisplayHeight;
 
-	        //camera API lists all available resolutions from highest to lowest, perfect for us
-	        //making use of this sorting, following code runs some comparisons to select the lowest
-	        //resolution that matches the screen aspect ratio and lies within tolerance
-	        //selecting the lowest makes Qr detection actual faster most of the time
+            Android.Util.Log.Debug(MobileBarcodeScanner.TAG, $"frameWidth: {frameWidth}, frameHeight: {frameHeight}");
+#else
+            double displayOrientationWidth = frameWidth;
+            double displayOrientationHeight = frameHeight;
+#endif
+
+            double targetRatio = displayOrientationHeight / displayOrientationWidth;
+	        double targetHeight = displayOrientationHeight;
+	        double minDiff = double.MaxValue;
+
+#if DEBUGDISPLAY
+            Android.Util.Log.Debug(MobileBarcodeScanner.TAG, $"width: {mainDisplayWidth}, height: {mainDisplayHeight}, orientation: {DeviceDisplay.MainDisplayInfo.Orientation}, targetRatio: {targetRatio}");
+            
+            foreach (CameraResolution r in availableResolutions)
+            {
+                Android.Util.Log.Debug(MobileBarcodeScanner.TAG, $"available resolution: {r.Width} x {r.Height}");
+            }
+#endif
+            //camera API lists all available resolutions from highest to lowest, perfect for us
+            //making use of this sorting, following code runs some comparisons to select the lowest
+            //resolution that matches the screen aspect ratio and lies within tolerance
+            //selecting the lowest makes Qr detection actual faster most of the time
             // (make sure we at least get 600 pixels on the width)
-	        foreach (var r in availableResolutions.Where(r =>
-		        (Math.Abs(((double) r.Width / r.Height) - targetRatio) < aspectTolerance) && r.Width > 600))
-	        {
-		        //slowly going down the list to the lowest matching solution with the correct aspect ratio
-		        if (Math.Abs(r.Height - targetHeight) < minDiff)
-			        minDiff = Math.Abs(r.Height - targetHeight);
-		        result = r;
-	        }
+            foreach (CameraResolution rActual in availableResolutions)
+            {
+                CameraResolution r = new CameraResolution();
 
-	        if (result == null)
+                // compensate for phone resolutions being flipped...
+                if (rActual.Width > rActual.Height)
+                {
+                    r.Width = rActual.Height;
+                    r.Height = rActual.Width;
+                }
+                else
+                {
+                    r.Height = rActual.Height;
+                    r.Width = rActual.Width;
+                }
+
+                double ratio = ((double)r.Height / r.Width);
+
+#if DEBUGDISPLAY
+                Android.Util.Log.Debug(MobileBarcodeScanner.TAG, $"checking {r.Width} x {r.Height} ({ratio})");
+#endif
+                if ((Math.Abs(ratio - targetRatio) < aspectTolerance) && r.Width > 600)
+                {
+
+                    //slowly going down the list to the lowest matching solution with the correct aspect ratio
+                    if (Math.Abs(r.Height - targetHeight) < minDiff)
+                        minDiff = Math.Abs(r.Height - targetHeight);
+                    result = rActual;
+                }
+            }
+
+#if DEBUGDISPLAY
+            Android.Util.Log.Debug(MobileBarcodeScanner.TAG, $"result: {result}");
+#endif
+            if (result == null)
 	        {
 		        var smallestDiff = availableResolutions.OrderBy(s =>
 		        {
@@ -119,11 +173,14 @@ namespace DroidUpc
 				        ? (double) s.Width / s.Height
 				        : (double) s.Height / s.Width;
 			        return Math.Abs(
-				        ratio = (DeviceDisplay.MainDisplayInfo.Height / DeviceDisplay.MainDisplayInfo.Width));
+				        ratio - targetRatio);
 
 		        }).FirstOrDefault();
 
-		        result = new CameraResolution()
+#if DEBUGDISPLAY
+                Android.Util.Log.Debug(MobileBarcodeScanner.TAG, $"result null, smallestDiff: {smallestDiff.Width} x {smallestDiff.Height}");
+#endif
+                result = new CameraResolution()
 		        {
 			        Width = smallestDiff.Width,
 			        Height = smallestDiff.Height
@@ -137,6 +194,8 @@ namespace DroidUpc
 			return result;
         }
 
+        private double frameWidth;
+        private double frameHeight;
 
         void SetupScannerFragment()
         {
@@ -148,11 +207,10 @@ namespace DroidUpc
 
             options.CameraResolutionSelector = new MobileBarcodeScanningOptions.CameraResolutionSelectorDelegate(SelectLowestResolutionMatchingDisplayAspectRatio);
 
-            options.ScanningArea = ScanningArea.From(0f, 0.49f, 1f, 0.51f);
-            
-            m_ups.SetupScanner(options, true);
-
             m_frmScanner = FindViewById<FrameLayout>(Resource.Id.frameScanner);
+            options.ScanningArea = ScanningArea.From(0f, 0.49f, 1f, 0.51f);
+
+            m_ups.SetupScanner(options, true);
 
             SupportFragmentManager.BeginTransaction().Add(Resource.Id.frameScanner, m_ups.Fragment).Commit();
 
@@ -209,6 +267,7 @@ namespace DroidUpc
             SetupScannerFragment();
             InitializeApplication();
             DoServiceHeartbeat();
+
             // SetFocus(m_ebScanCode, false);
         }
 
