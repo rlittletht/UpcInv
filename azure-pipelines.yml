@@ -36,9 +36,8 @@ steps:
 
 - script: |
     dotnet workload install android
-    dotnet workload restore
   displayName: 'install workloads'
-  
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
