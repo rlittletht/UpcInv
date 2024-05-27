@@ -48,6 +48,8 @@ public class Scanner // UPS
         m_scannerControl.TopText = null;
         m_scannerControl.BottomText = null;
         m_scannerControl.ScanningOptions = options ?? new MobileBarcodeScanningOptions();
+//        m_scannerControl.ScanningOptions.ZoomInToPreserveAspectRatio = false;
+
         // m_scannerControl.ContinuousScanning = fContinuous;
         m_options = options;
     }

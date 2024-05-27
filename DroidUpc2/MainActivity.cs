@@ -335,10 +335,10 @@ public class MainActivity : Activity, IAppContext
                 // start scanner here so we can get lastResolutionSet populated
                 m_ups.StartScanner(m_droid.ScannerControlDispatchScanCode);
 
-                ViewGroup.LayoutParams? newParams = m_resolutionSelector?.GetUpdatedLayoutParametersIfNecessary(m_frmScanner.LayoutParameters);
-
-                if (newParams != null)
-                    m_frmScanner.LayoutParameters = newParams;
+//                ViewGroup.LayoutParams? newParams = m_resolutionSelector?.GetUpdatedLayoutParametersIfNecessary(m_frmScanner.LayoutParameters);
+//
+//                if (newParams != null)
+//                    m_frmScanner.LayoutParameters = newParams;
 
                 FragmentManager.BeginTransaction().Show(m_ups.Fragment).Commit();
                 m_isr.AddMessage(AlertType.Drink, "Turning Scanner on");

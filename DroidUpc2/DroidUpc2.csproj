@@ -39,7 +39,7 @@
   <ItemGroup>
     <PackageReference Include="TCore.Logging" Version="1.4.0.0" />
     <PackageReference Include="TCore.StatusResult" Version="2.0.1" />
-    <PackageReference Include="TCore.ZXing.Net.Mobile" Version="4.0.0" />
+    <PackageReference Include="TCore.ZXing.Net.Mobile" Version="4.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UpcApi\UpcApi.csproj" />
