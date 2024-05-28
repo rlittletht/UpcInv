@@ -41,13 +41,6 @@ steps:
   displayName: 'install workloads'
 
 - task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    feedsToUse: config
-    nugetConfigPath: 'nuget.config'
-    projects: '**/*.sln'
-
-- task: DotNetCoreCLI@2
   displayName: dotnet build
   inputs:
     projects: '**/DroidUpc2.csproj'
