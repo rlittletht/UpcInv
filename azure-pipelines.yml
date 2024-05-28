@@ -43,7 +43,7 @@ steps:
   inputs:
     command: 'restore'
     feedsToUse: config
-    projects: '**/DroidUpc2.csproj'
+    projects: '**/*.sln'
 
 - task: DotNetCoreCLI@2
   displayName: dotnet build
