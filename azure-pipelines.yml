@@ -19,12 +19,19 @@ steps:
     echo sdk root is $ANDROID_SDK_ROOT
   displayName: 'Run a multi-line script'
 
+- task: UseDotNet@2
+  displayName: Switch .NET Core version
+  inputs:
+    version: 8.x
+
 - task: NuGetCommand@2
   inputs:
       feedsToUse: config
       restoreSolution: '**/*.sln'
       noCache: true
   displayName: 'NuGet restore'
+
+
 
 - script: |
     ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools"
