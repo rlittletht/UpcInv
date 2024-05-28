@@ -1,0 +1,54 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+    echo sdk root is $ANDROID_SDK_ROOT
+  displayName: 'Run a multi-line script'
+
+- task: UseDotNet@2
+  displayName: Switch .NET Core version
+  inputs:
+    version: 8.x
+
+- task: NuGetCommand@2
+  inputs:
+      feedsToUse: config
+      restoreSolution: '**/*.sln'
+      noCache: true
+  displayName: 'NuGet restore'
+
+
+
+- script: |
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools"
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platforms;android-34"
+  displayName: 'install'
+
+- script: |
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --list_installed
+  displayName: 'check the installed'
+
+- script: |
+    dotnet workload install android
+    dotnet workload list
+  displayName: 'install workloads'
+
+- task: DotNetCoreCLI@2
+  displayName: dotnet build
+  inputs:
+    projects: '**/DroidUpc2.csproj'
+    arguments: '-c Debug -f net8.0-android'

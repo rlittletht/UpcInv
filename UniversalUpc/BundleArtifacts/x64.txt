@@ -1,2 +1,2 @@
-MainPackage=d:\dev\UpcInv\UniversalUpc\bin\x64\Release\UniversalUpc_1.2.6.0_x64.appx
-SymbolPackage=d:\dev\UpcInv\UniversalUpc\obj\x64\Release\Symbols\UniversalUpc_1.2.6.0_x64.appxsym
+MainPackage=d:\dev\UpcInv\UniversalUpc\bin\x64\Release\UniversalUpc_1.2.8.0_x64.appx
+SymbolPackage=d:\dev\UpcInv\UniversalUpc\obj\x64\Release\Symbols\UniversalUpc_1.2.8.0_x64.appxsym
