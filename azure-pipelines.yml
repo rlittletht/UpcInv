@@ -21,7 +21,8 @@ steps:
 
 - task: NuGetCommand@2
   inputs:
-      restoreSolution: '--/--.sln'
+      feedsToUse: config
+      restoreSolution: '**/*.sln'
       noCache: true
   displayName: 'NuGet restore'
 
