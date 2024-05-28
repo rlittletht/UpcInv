@@ -37,6 +37,7 @@ steps:
 
 - script: |
     dotnet workload install android
+    dotnet workload list
   displayName: 'install workloads'
 
 - task: DotNetCoreCLI@2
