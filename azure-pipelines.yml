@@ -15,8 +15,8 @@ pool:
 steps:
 - script: |
     echo apksignerKeystoreFile: '$(keystore.secureFilePath)'
-    echo apksignerKeystorePassword: '$[AndroidSigning.keystorePassword]'
-    echo apksignerKeystoreAlias: '$[AndroidSigning.keystoreAlias]'
+    echo apksignerKeystorePassword: '$(AndroidSigning.keystorePasword)'
+    echo apksignerKeystoreAlias: '$(AndroidSigning.keystoreAlias)'
   displayName: 'Check vars and echo'
 
 - script: echo Hello, world!
@@ -63,6 +63,8 @@ steps:
 
 - script: |
     echo Test: $(RL.keystore.secureFilePath)
+    echo apksignerKeystorePassword: '$(AndroidSigning.keystorePassword)'
+    echo apksignerKeystoreAlias: '$(AndroidSigning.keystoreAlias)'
   displayName: test keystore path
 
 
@@ -71,6 +73,6 @@ steps:
   inputs:
     apkFiles: '**/*.apk'
     apksignerKeystoreFile: 'RL.keystore'
-    apksignerKeystorePassword: '''$(AndroidSigning.keystorePassword)'''
+    apksignerKeystorePassword: '$(AndroidSigning.keystorePassword)'
     apksignerKeystoreAlias: '''$(AndroidSigning.keystoreAlias)'''
     apksignerArguments: '-verbose'
