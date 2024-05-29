@@ -3,52 +3,73 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger: none
+trigger:
+- noXamarin
 
+variables:
+- group: AndroidSigning
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
+- script: |
+    echo apksignerKeystoreFile: '$(keystore.secureFilePath)'
+    echo apksignerKeystorePassword: '$[AndroidSigning.keystorePassword]'
+    echo apksignerKeystoreAlias: '$[AndroidSigning.keystoreAlias]'
+
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
-    echo sdk root is $ANDROID_SDK_ROOT
   displayName: 'Run a multi-line script'
-
-- task: UseDotNet@2
-  displayName: Switch .NET Core version
-  inputs:
-    version: 8.x
 
 - task: NuGetCommand@2
   inputs:
-      feedsToUse: config
-      restoreSolution: '**/*.sln'
+      restoreSolution: '--/--.sln'
       noCache: true
   displayName: 'NuGet restore'
 
-
-
 - script: |
-    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools"
-    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platforms;android-34"
-  displayName: 'install'
+    C:\Android\android-sdk\cmdline-tools\latest\bin\sdkmanager --list_installed
+  displayName: check the installed 
 
-- script: |
-    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --list_installed
-  displayName: 'check the installed'
-
-- script: |
-    dotnet workload install android
-    dotnet workload list
-  displayName: 'install workloads'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/DroidUpc2.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: dotnet build
   inputs:
     projects: '**/DroidUpc2.csproj'
     arguments: '-c Debug -f net8.0-android'
+
+
+- task: DownloadSecureFile@1
+  name: keystore
+  displayName: 'Download keystore for signing'
+  inputs:
+    secureFile: 'RL.keystore'
+
+- task: Gradle@3
+  inputs:
+    workingDirectory: ''
+    gradleWrapperFile: 'gradlew'
+    gradleOptions: '-Xmx3072m'
+    tasks: 'assembleDebug'
+
+- script: |
+    echo Test: $(keystore.secureFilePath)
+  displayName: test keystore path
+
+
+- task: AndroidSigning@3
+  displayName: Sign APK
+  inputs:
+    apksignerKeystoreFile: '$(keystore.secureFilePath)'
+    apksignerKeystorePassword: '$[AndroidSigning.keystorePassword]'
+    apksignerKeystoreAlias: '$[AndroidSigning.keystoreAlias]'
+    apksignerArguments: '-verbose'
