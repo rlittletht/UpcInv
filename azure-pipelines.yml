@@ -34,7 +34,7 @@ steps:
   displayName: 'NuGet restore'
 
 - script: |
-    C:/Android/android-sdk/cmdline-tools/latest/bin/sdkmanager --list_installed
+    echo sdkmanager --list_installed
   displayName: check the installed 
 
 - task: DotNetCoreCLI@2
