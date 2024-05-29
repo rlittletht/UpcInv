@@ -65,11 +65,3 @@ steps:
     echo Test: $(keystore.secureFilePath)
   displayName: test keystore path
 
-
-- task: AndroidSigning@3
-  displayName: Sign APK
-  inputs:
-    apksignerKeystoreFile: '$(keystore.secureFilePath)'
-    apksignerKeystorePassword: '$[AndroidSigning.keystorePassword]'
-    apksignerKeystoreAlias: '$[AndroidSigning.keystoreAlias]'
-    apksignerArguments: '-verbose'
