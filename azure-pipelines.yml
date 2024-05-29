@@ -29,19 +29,25 @@ steps:
 
 - task: NuGetCommand@2
   inputs:
-      restoreSolution: '--/--.sln'
+      feedsToUse: config
+      restoreSolution: '**/*.sln'
       noCache: true
   displayName: 'NuGet restore'
 
 - script: |
-    echo sdkmanager --list_installed
-  displayName: check the installed 
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools"
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platforms;android-34"
+  displayName: install sdks
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    projects: '**/DroidUpc2.csproj'
+- script: |
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --list_installed
+  displayName: 'check the installed'
 
+- script: |
+    dotnet workload install android
+    dotnet workload list
+  displayName: 'install workloads'
+  
 - task: DotNetCoreCLI@2
   displayName: dotnet build
   inputs:
