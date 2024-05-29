@@ -17,6 +17,7 @@ steps:
     echo apksignerKeystoreFile: '$(keystore.secureFilePath)'
     echo apksignerKeystorePassword: '$[AndroidSigning.keystorePassword]'
     echo apksignerKeystoreAlias: '$[AndroidSigning.keystoreAlias]'
+  displayName: 'Check vars and echo'
 
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
@@ -33,7 +34,7 @@ steps:
   displayName: 'NuGet restore'
 
 - script: |
-    C:\Android\android-sdk\cmdline-tools\latest\bin\sdkmanager --list_installed
+    C:/Android/android-sdk/cmdline-tools/latest/bin/sdkmanager --list_installed
   displayName: check the installed 
 
 - task: DotNetCoreCLI@2
@@ -62,6 +63,14 @@ steps:
     tasks: 'assembleDebug'
 
 - script: |
-    echo Test: $(keystore.secureFilePath)
+    echo Test: $(RL.keystore.secureFilePath)
   displayName: test keystore path
 
+
+- task: AndroidSigning@3
+  displayName: Sign APK
+  inputs:
+    apksignerKeystoreFile: '$(RL.keystore.secureFilePath)'
+    apksignerKeystorePassword: '$[AndroidSigning.keystorePassword]'
+    apksignerKeystoreAlias: '$[AndroidSigning.keystoreAlias]'
+    apksignerArguments: '-verbose'
