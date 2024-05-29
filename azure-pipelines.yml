@@ -6,6 +6,9 @@
 trigger:
 - noXamarin
 
+variables:
+- group: AndroidSigning
+
 pool:
   vmImage: ubuntu-latest
 
@@ -38,3 +41,30 @@ steps:
   inputs:
     projects: '**/DroidUpc2.csproj'
     arguments: '-c Debug -f net8.0-android'
+
+
+- task: DownloadSecureFile@1
+  name: keystore
+  displayName: 'Download keystore for signing'
+  inputs:
+    secureFile: 'RL.keystore'
+
+- task: Gradle@3
+  inputs:
+    workingDirectory: ''
+    gradleWrapperFile: 'gradlew'
+    gradleOptions: '-Xmx3072m'
+    tasks: 'assembleDebug'
+
+- script: |
+    echo Test: $(keystore.secureFilePath)
+  displayName: test keystore path
+
+
+- task: AndroidSigning@3
+  displayName: Sign APK
+  inputs:
+    apksignerKeystoreFile: '$(keystore.secureFilePath)'
+    apksignerKeystorePassword: '$[AndroidSigning.keystorePassword]'
+    apksignerKeystoreAlias: '$[AndroidSigning.keystoreAlias]'
+    apksignerArguments: '-verbose'
