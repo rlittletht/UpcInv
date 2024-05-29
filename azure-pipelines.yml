@@ -48,19 +48,19 @@ steps:
     projects: '**/DroidUpc2.csproj'
     arguments: '-c Debug -f net8.0-android'
 
-
-- task: DownloadSecureFile@1
-  name: keystore
-  displayName: 'Download keystore for signing'
-  inputs:
-    secureFile: 'RL.keystore'
-
 - task: Gradle@3
   inputs:
     workingDirectory: ''
     gradleWrapperFile: 'gradlew'
     gradleOptions: '-Xmx3072m'
     tasks: 'assembleDebug'
+
+
+- task: DownloadSecureFile@1
+  name: keystore
+  displayName: 'Download keystore for signing'
+  inputs:
+    secureFile: 'RL.keystore'
 
 - script: |
     echo Test: $(RL.keystore.secureFilePath)
@@ -70,7 +70,7 @@ steps:
 - task: AndroidSigning@3
   displayName: Sign APK
   inputs:
-    apksignerKeystoreFile: '$(RL.keystore.secureFilePath)'
+    apksignerKeystoreFile: RL.keystore
     apksignerKeystorePassword: '$[AndroidSigning.keystorePassword]'
     apksignerKeystoreAlias: '$[AndroidSigning.keystoreAlias]'
     apksignerArguments: '-verbose'
