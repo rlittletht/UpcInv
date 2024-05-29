@@ -63,8 +63,8 @@ steps:
 
 - script: |
     echo Test: $(RL.keystore.secureFilePath)
-    echo apksignerKeystorePassword: '$(AndroidSigning.keystorePassword)'
-    echo apksignerKeystoreAlias: '$(AndroidSigning.keystoreAlias)'
+    echo apksignerKeystorePassword: '$(keystorePassword)'
+    echo apksignerKeystoreAlias: '$(keystoreAlias)'
   displayName: test keystore path
 
 
@@ -73,6 +73,6 @@ steps:
   inputs:
     apkFiles: '**/*.apk'
     apksignerKeystoreFile: 'RL.keystore'
-    apksignerKeystorePassword: '$(AndroidSigning.keystorePassword)'
-    apksignerKeystoreAlias: '''$(AndroidSigning.keystoreAlias)'''
+    apksignerKeystorePassword: $(keystorePassword)
+    apksignerKeystoreAlias: $(keystoreAlias)
     apksignerArguments: '-verbose'
