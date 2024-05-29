@@ -15,8 +15,8 @@ pool:
 steps:
 - script: |
     echo apksignerKeystoreFile: '$(keystore.secureFilePath)'
-    echo apksignerKeystorePassword: '$(AndroidSigning.keystorePasword)'
-    echo apksignerKeystoreAlias: '$(AndroidSigning.keystoreAlias)'
+    echo apksignerKeystorePassword: '$(keystorePassword)'
+    echo apksignerKeystoreAlias: '$(keystoreAlias)'
   displayName: 'Check vars and echo'
 
 - script: echo Hello, world!
