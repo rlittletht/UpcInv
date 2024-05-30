@@ -27,6 +27,11 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
+- task: UseDotNet@2
+  displayName: Switch .NET Core version
+  inputs:
+    version: 8.x
+
 - task: NuGetCommand@2
   inputs:
       feedsToUse: config
