@@ -84,6 +84,6 @@ steps:
 
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '$(Pipeline.Workspace)'
-    artifact: 'signed_apk'
+    targetPath: '$(Pipeline.Workspace)/**/*.apk'
+    artifact: 'AndroidApps'
     publishLocation: 'pipeline'
