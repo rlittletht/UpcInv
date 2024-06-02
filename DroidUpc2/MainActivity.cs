@@ -341,7 +341,7 @@ public class MainActivity : Activity, IAppContext
 //                    m_frmScanner.LayoutParameters = newParams;
 
                 FragmentManager.BeginTransaction().Show(m_ups.Fragment).Commit();
-                m_isr.AddMessage(AlertType.Drink, "Turning Scanner on");
+                m_isr.AddMessage(AlertType.None, "Turning Scanner on");
                 m_fScannerOn = true;
             }
         }

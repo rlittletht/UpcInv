@@ -11,8 +11,9 @@ namespace DroidUpc2;
 
 public class DroidUpc(IAppContext m_droidContext, UpcAlert m_upca, IStatusReporting m_isr, ILogProvider m_lp)
 {
-    private List<string> m_plsProcessing;
-    private UpcInvCore.ADAS m_adasCurrent;
+    private List<string> m_plsProcessing = new List<string>();
+    private UpcInvCore.ADAS m_adasCurrent = UpcInvCore.ADAS.Generic;
+
     private UpcInvCore m_upccCore = new UpcInvCore(m_upca, m_isr, m_lp);
 
     #region Public Commands
@@ -362,7 +363,7 @@ public class DroidUpc(IAppContext m_droidContext, UpcAlert m_upca, IStatusReport
                         else
                         {
                             m_droidContext.SetTextElementValue(DroidUITextElement.Title, sTitle, ThreadPolicy.Async);
-                            m_droidContext.SetFocusOnTextElement(DroidUITextElement.ScanCode, true);
+                            m_droidContext.SetFocusOnTextElement(DroidUITextElement.ScanCode, false);
                         }
                     });
 
@@ -417,7 +418,7 @@ public class DroidUpc(IAppContext m_droidContext, UpcAlert m_upca, IStatusReport
                         else
                         {
                             m_droidContext.SetTextElementValue(DroidUITextElement.Title, sTitle, ThreadPolicy.Async);
-                            m_droidContext.SetFocusOnTextElement(DroidUITextElement.ScanCode, true);
+                            m_droidContext.SetFocusOnTextElement(DroidUITextElement.ScanCode, false);
                         }
                     });
 
