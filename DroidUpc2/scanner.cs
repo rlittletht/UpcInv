@@ -2,43 +2,44 @@
 using Android.Util;
 using Android.Views;
 using ZXing.Mobile;
+using Exception = Java.Lang.Exception;
 
 namespace DroidUpc2;
 
 public class Scanner // UPS
 {
-    private ZXingScannerFragment m_scannerControl;
+    private readonly ZXingScannerFragment m_scannerControl;
+    private ScanCompleteDelegate? m_onScanComplete;
+    public ScanCompleteDelegate OnScanComplete => m_onScanComplete ?? new ScanCompleteDelegate((_) => { });
+    private MobileBarcodeScanningOptions _Options => m_options ?? throw new Exception("options not set");
+    private MobileBarcodeScanningOptions? m_options;
 
     public Fragment Fragment => m_scannerControl;
     public ZXingScannerFragment ScannerFragment => m_scannerControl;
 
     public Scanner(Android.App.Application app)
     {
-//            MobileBarcodeScanner.Initialize(app);
-        // m_scanner = new MobileBarcodeScanner();
-//            m_scanner.Dispatcher = dispatcher; // this is what they did in the sample -- don't know why its necessary...
         m_scannerControl = new ZXingScannerFragment();
 
     }
 
     public void StartScanner(ScanCompleteDelegate scd)
     {
-        m_scdNotify = scd;
+        m_onScanComplete = scd;
 
         m_scannerControl.StartScanning(async (result) =>
                                        {
                                            string msg = "Found Barcode: " + result.Text;
 
-                                           await Task.Run(() => m_scdNotify(result));
-                                       }, m_options);
+                                           await Task.Run(() => OnScanComplete(result));
+                                       }, _Options);
     }
 
     public void StopScanner()
     {
         m_scannerControl.StopScanning();
+        m_onScanComplete = null;
     }
-
-    public ScanCompleteDelegate m_scdNotify;
 
     public delegate void ScanCompleteDelegate(ZXing.Result result);
 
@@ -48,11 +49,7 @@ public class Scanner // UPS
         m_scannerControl.TopText = null;
         m_scannerControl.BottomText = null;
         m_scannerControl.ScanningOptions = options ?? new MobileBarcodeScanningOptions();
-//        m_scannerControl.ScanningOptions.ZoomInToPreserveAspectRatio = false;
 
-        // m_scannerControl.ContinuousScanning = fContinuous;
         m_options = options;
     }
-
-    private MobileBarcodeScanningOptions m_options;
 }

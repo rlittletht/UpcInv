@@ -16,11 +16,11 @@ namespace DroidUpc
 {
     public class UpcAlert : IAlert
     {
-        private SoundPool m_sp;
-        private Activity m_act;
+        private readonly SoundPool? m_sp;
+        private readonly Activity m_act;
         private Handler m_handler;
 
-        private Dictionary<AlertType, int> m_mpAlertMedia;
+        private readonly Dictionary<AlertType, int> m_mpAlertMedia = new Dictionary<AlertType, int>();
 
         private async Task<int> LoadSoundFile(SoundPool sp, string v, AssetManager? assets = null)
         {
@@ -45,7 +45,7 @@ namespace DroidUpc
 
         async Task<SoundPool> LoadEffects(AssetManager assets)
         {
-            SoundPool sp = new SoundPool.Builder().SetMaxStreams(2).Build();
+            SoundPool sp = new SoundPool.Builder()?.SetMaxStreams(2)?.Build() ?? throw new Exception("Failed to create SoundPool");
 
             m_mpAlertMedia.Add(AlertType.GoodInfo, await LoadSoundFile(sp, "exclamation.wav", assets));
             m_mpAlertMedia.Add(AlertType.Duplicate, await LoadSoundFile(sp, "doh.wav"));
@@ -59,14 +59,16 @@ namespace DroidUpc
 
         public UpcAlert(Activity act, Handler handler)
         {
-            m_mpAlertMedia = new Dictionary<AlertType, int>();
             m_act = act;
             m_handler = handler;
 
-            Task<SoundPool> tsp = LoadEffects(act.Assets);
+            if (act.Assets != null)
+            {
+                Task<SoundPool> tsp = LoadEffects(act.Assets);
 
-            tsp.Wait();
-            m_sp = tsp.Result;
+                tsp.Wait();
+                m_sp = tsp.Result;
+            }
         }
 
         public void DoAlert(AlertType at)
@@ -90,7 +92,7 @@ namespace DroidUpc
             float maxVolume = (float)audioManager.GetStreamMaxVolume(Android.Media.Stream.Music);
             float volume = actualVolume / maxVolume;
 
-            m_sp.Play(m_mpAlertMedia[at], volume, volume, 1, 0, 1f);
+            m_sp?.Play(m_mpAlertMedia[at], volume, volume, 1, 0, 1f);
 //            });
         }
     }

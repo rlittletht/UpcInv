@@ -31,27 +31,37 @@ namespace DroidUpc2;
 public class MainActivity : Activity, IAppContext
 {
     private bool m_fScannerOn = false;
-    private Scanner m_ups;
-    private DroidUpc m_droid;
-    private UpcLogProvider m_lp;
-    private LogProvider m_logProviderActual;
-    private IStatusReporting m_isr;
-    private EditText m_ebTitle;
-    private EditText m_ebScanCode;
-    private EditText m_ebNotes;
-    private EditText m_ebLocation;
-    private CheckBox m_cbCheckOnly;
-    private TextView m_txtLocation;
-    private TextView m_txtBinCode;
-    private TextView m_txtRow;
-    private TextView m_txtColumn;
-    private EditText m_ebBinCode;
-    private EditText m_ebRow;
-    private EditText m_ebColumn;
-    private TextView m_txtStatus;
-    private FrameLayout m_frmScanner;
-    private Handler m_handlerAlert;
-    private UpcAlert m_upca;
+    private Scanner Scanner => m_scanner ?? throw new Exception("Scanner not created");
+    private Scanner? m_scanner;
+
+    private DroidUpc _Droid => m_droid ?? throw new Exception("_Droid used before initialized");
+    private DroidUpc? m_droid;
+
+    private UpcLogProvider _LogProvider => m_logProvider ?? throw new Exception("_LogProvider used before initialized");
+    private readonly UpcLogProvider? m_logProvider;
+
+    private IStatusReporting _StatusReporting => m_statusReporting ?? throw new Exception("_StatusReporting used before initialized");
+    private IStatusReporting? m_statusReporting;
+
+    private EditText? m_ebTitle;
+    private EditText? m_ebScanCode;
+    private EditText? m_ebNotes;
+    private EditText? m_ebLocation;
+    private CheckBox? m_cbCheckOnly;
+    private TextView? m_txtLocation;
+    private TextView? m_txtBinCode;
+    private TextView? m_txtRow;
+    private TextView? m_txtColumn;
+    private EditText? m_ebBinCode;
+    private EditText? m_ebRow;
+    private EditText? m_ebColumn;
+    private TextView? m_txtStatus;
+
+    private Handler _AlertHandler => m_alertHandler ?? throw new Exception("_AlertHandler used before initialized");
+    private Handler? m_alertHandler;
+
+    private UpcAlert _UpcAlert => m_upcAlert ?? throw new Exception("_UpcAlert used before initialized");
+    private UpcAlert? m_upcAlert;
 
     private Dictionary<DroidUITextElement, int> m_textElementIds = new Dictionary<DroidUITextElement, int>();
     private Dictionary<DroidUILabelElement, int> m_labelElementIds = new Dictionary<DroidUILabelElement, int>();
@@ -61,8 +71,8 @@ public class MainActivity : Activity, IAppContext
 
     public MainActivity()
     {
-        m_logProviderActual = new LogProvider(null);
-        m_lp = new UpcLogProvider(m_logProviderActual);
+        LogProvider? mLogProviderActual = new(null);
+        m_logProvider = new UpcLogProvider(mLogProviderActual);
     }
 
     protected override void OnCreate(Bundle? savedInstanceState)
@@ -84,8 +94,6 @@ public class MainActivity : Activity, IAppContext
     public void InitializeOnCreate()
     {
         SetupElementMaps();
-
-        m_frmScanner = GetResource<FrameLayout>(Resource.Id.frameScanner);
         SetupScannerFragment();
 
         m_txtLocation = GetResource<TextView>(Resource.Id.tvLocationLabel);
@@ -101,13 +109,13 @@ public class MainActivity : Activity, IAppContext
         m_ebBinCode = GetResource<EditText>(Resource.Id.ebBin);
         m_ebRow = GetResource<EditText>(Resource.Id.ebRow);
         m_ebColumn = GetResource<EditText>(Resource.Id.ebColumn);
-        m_handlerAlert = new Handler();
-        m_upca = new UpcAlert(this, m_handlerAlert);
+        m_alertHandler = new Handler();
+        m_upcAlert = new UpcAlert(this, _AlertHandler);
 
         TextView tv = GetResource<TextView>(Resource.Id.tvLog);
-        StatusBox sb = new StatusBox(tv, m_upca, this);
-        m_isr = sb;
-        m_droid = new DroidUpc(this, m_upca, m_isr, m_lp);
+        StatusBox sb = new StatusBox(tv, _UpcAlert, this);
+        m_statusReporting = sb;
+        m_droid = new DroidUpc(this, _UpcAlert, _StatusReporting, _LogProvider);
     }
 
     void SetupMainViewAndEvents()
@@ -115,17 +123,17 @@ public class MainActivity : Activity, IAppContext
         Spinner spinner = GetResource<Spinner>(Resource.Id.spinType);
 
         spinner.Adapter = new UpcTypeSpinnerAdapter(this);
-        spinner.ItemSelected += m_droid.SetNewMediaType;
+        spinner.ItemSelected += _Droid.SetNewMediaType;
 
         Button buttonScan = GetResource<Button>(Resource.Id.buttonScan);
         // can't use our convenient m_pbManual and m_ebScancode because we haven't
         // set those up yet...
-        GetResource<Button>(Resource.Id.buttonManual).Click += m_droid.DoManual;
+        GetResource<Button>(Resource.Id.buttonManual).Click += _Droid.DoManual;
 
         GetResource<EditText>(Resource.Id.ebCode).KeyPress +=
             async (object? sender, View.KeyEventArgs args) =>
             {
-                await DoKeyPressCommon("", sender!, args, null, m_droid.DispatchScanCode, null);
+                await DoKeyPressCommon("", sender!, args, null, _Droid.DispatchScanCode, null);
             };
 
         GetResource<EditText>(Resource.Id.ebBin).KeyPress +=
@@ -133,7 +141,7 @@ public class MainActivity : Activity, IAppContext
             {
                 // We're going to cleverly lie here and pass in the scancode control since
                 // enter here means we might be ready to complete the scancode...
-                await DoKeyPressCommon("", m_ebScanCode, args, null, m_droid.DispatchScanCode, null);
+                await DoKeyPressCommon("", m_ebScanCode, args, null, _Droid.DispatchScanCode, null);
             };
 
         GetResource<EditText>(Resource.Id.ebColumn).KeyPress +=
@@ -143,8 +151,8 @@ public class MainActivity : Activity, IAppContext
                     "C_",
                     sender,
                     args,
-                    m_droid.ZeroPrefixString,
-                    m_droid.DispatchScanCode,
+                    _Droid.ZeroPrefixString,
+                    _Droid.DispatchScanCode,
                     () => SetFocus(m_ebRow, true));
             };
 
@@ -155,8 +163,8 @@ public class MainActivity : Activity, IAppContext
                     "R_",
                     sender,
                     args,
-                    m_droid.ZeroPrefixString,
-                    m_droid.DispatchScanCode,
+                    _Droid.ZeroPrefixString,
+                    _Droid.DispatchScanCode,
                     () => SetFocus(m_ebBinCode, true));
             };
 
@@ -182,7 +190,7 @@ public class MainActivity : Activity, IAppContext
     {
         EnsurePermissions(new string[] { Android.Manifest.Permission.Camera });
 
-        m_ups = new Scanner(Application!);
+        m_scanner = new Scanner(Application!);
 
         MobileBarcodeScanningOptions options = new MobileBarcodeScanningOptions();
 
@@ -194,9 +202,9 @@ public class MainActivity : Activity, IAppContext
 
         options.ScanningArea = ScanningArea.From(0f, 0.49f, 1f, 0.51f);
 
-        m_ups.SetupScanner(options, true);
+        Scanner.SetupScanner(options, true);
 
-        FragmentManager?.BeginTransaction()?.Add(Resource.Id.frameScanner, m_ups.Fragment)?.Hide(m_ups.Fragment)?.Commit();
+        FragmentManager?.BeginTransaction()?.Add(Resource.Id.frameScanner, Scanner.Fragment)?.Hide(Scanner.Fragment)?.Commit();
     }
 
     private void SetupElementMaps()
@@ -222,14 +230,14 @@ public class MainActivity : Activity, IAppContext
 
     async void DoServiceHeartbeat()
     {
-        m_isr.AddMessage(AlertType.None, "Checking server for heartbeat...");
+        _StatusReporting.AddMessage(AlertType.None, "Checking server for heartbeat...");
 
-        ServiceStatus status = await m_droid.GetServiceStatusHeartBeat();
+        ServiceStatus status = await _Droid.GetServiceStatusHeartBeat();
 
         if (status == ServiceStatus.Running)
-            m_isr.AddMessage(AlertType.None, "Server is running.");
+            _StatusReporting.AddMessage(AlertType.None, "Server is running.");
         else
-            m_isr.AddMessage(AlertType.Halt, "Server is not running!");
+            _StatusReporting.AddMessage(AlertType.Halt, "Server is not running!");
     }
 
     internal T GetResource<T>(int resourceId, [CallerMemberName] string? resourceName = null) where T : Android.Views.View
@@ -242,7 +250,7 @@ public class MainActivity : Activity, IAppContext
         switch (element)
         {
             case DroidUICheckboxElement.CheckOnly:
-                return m_cbCheckOnly;
+                return m_cbCheckOnly ?? throw new Exception("trying to checkbox before initialized");
             default:
                 throw new Exception("unknown checkbox element");
         }
@@ -253,15 +261,15 @@ public class MainActivity : Activity, IAppContext
         switch (element)
         {
             case DroidUILabelElement.BinCode:
-                return m_txtBinCode;
+                return m_txtBinCode ?? throw new Exception("trying to get text view before initialized");
             case DroidUILabelElement.Row:
-                return m_txtRow;
+                return m_txtRow ?? throw new Exception("trying to get text view before initialized");
             case DroidUILabelElement.Column:
-                return m_txtColumn;
+                return m_txtColumn ?? throw new Exception("trying to get text view before initialized");
             case DroidUILabelElement.Location:
-                return m_txtLocation;
+                return m_txtLocation ?? throw new Exception("trying to get text view before initialized");
             case DroidUILabelElement.Status:
-                return m_txtStatus;
+                return m_txtStatus ?? throw new Exception("trying to get text view before initialized");
             default:
                 throw new Exception("unknown textview element");
         }
@@ -272,21 +280,21 @@ public class MainActivity : Activity, IAppContext
         switch (element)
         {
             case DroidUITextElement.Location:
-                return m_ebLocation;
+                return m_ebLocation ?? throw new Exception("trying to get text element before initialized");
             case DroidUITextElement.BinCode:
-                return m_ebBinCode;
+                return m_ebBinCode ?? throw new Exception("trying to get text element before initialized");
             case DroidUITextElement.Row:
-                return m_ebRow;
+                return m_ebRow ?? throw new Exception("trying to get text element before initialized");
             case DroidUITextElement.Column:
-                return m_ebColumn;
+                return m_ebColumn ?? throw new Exception("trying to get text element before initialized");
             case DroidUITextElement.Notes:
-                return m_ebNotes;
+                return m_ebNotes ?? throw new Exception("trying to get text element before initialized");
             case DroidUITextElement.ScanCode:
-                return m_ebScanCode;
+                return m_ebScanCode ?? throw new Exception("trying to get text element before initialized");
             case DroidUITextElement.Title:
-                return m_ebTitle;
+                return m_ebTitle ?? throw new Exception("trying to get text element before initialized");
             case DroidUITextElement.TastingNotes:
-                return m_ebNotes;
+                return m_ebNotes ?? throw new Exception("trying to get text element before initialized");
             default:
                 throw new Exception("unknown edittextelement");
         }
@@ -333,24 +341,24 @@ public class MainActivity : Activity, IAppContext
             else
             {
                 // start scanner here so we can get lastResolutionSet populated
-                m_ups.StartScanner(m_droid.ScannerControlDispatchScanCode);
+                Scanner.StartScanner(_Droid.ScannerControlDispatchScanCode);
 
-//                ViewGroup.LayoutParams? newParams = m_resolutionSelector?.GetUpdatedLayoutParametersIfNecessary(m_frmScanner.LayoutParameters);
+//                ViewGroup.LayoutParams? newParams = m_resolutionSelector?.GetUpdatedLayoutParametersIfNecessary(_ScannerFrameLayout.LayoutParameters);
 //
 //                if (newParams != null)
-//                    m_frmScanner.LayoutParameters = newParams;
+//                    _ScannerFrameLayout.LayoutParameters = newParams;
 
-                FragmentManager.BeginTransaction().Show(m_ups.Fragment).Commit();
-                m_isr.AddMessage(AlertType.None, "Turning Scanner on");
+                FragmentManager?.BeginTransaction()?.Show(Scanner.Fragment)?.Commit();
+                _StatusReporting.AddMessage(AlertType.None, "Turning Scanner on");
                 m_fScannerOn = true;
             }
         }
         else
         {
-            m_ups.StopScanner();
-            m_isr.AddMessage(AlertType.Duplicate, "Turning Scanner off");
+            Scanner.StopScanner();
+            _StatusReporting.AddMessage(AlertType.None, "Turning Scanner off");
 
-            FragmentManager.BeginTransaction().Hide(m_ups.Fragment).Commit();
+            FragmentManager?.BeginTransaction()?.Hide(Scanner.Fragment)?.Commit();
             m_fScannerOn = false;
         }
     }
@@ -375,24 +383,27 @@ public class MainActivity : Activity, IAppContext
         await Task.Run(() => mres.Wait());
     }
 
-    void SetFocus(EditText eb, bool fWantKeyboard)
+    void SetFocus(EditText? eb, bool fWantKeyboard)
     {
+        if (eb == null)
+            return;
+
         RunOnUiThread(
             () =>
             {
                 eb.RequestFocus();
                 eb.SelectAll();
 
-                InputMethodManager imm =
-                    (InputMethodManager)GetSystemService(global::Android.Content.Context.InputMethodService);
+                InputMethodManager? imm =
+                    (InputMethodManager?)GetSystemService(global::Android.Content.Context.InputMethodService);
 
                 if (fWantKeyboard)
                 {
-                    imm.ShowSoftInput(eb, ShowFlags.Implicit);
+                    imm?.ShowSoftInput(eb, ShowFlags.Implicit);
                 }
                 else
                 {
-                    imm.HideSoftInputFromWindow(eb.WindowToken, 0);
+                    imm?.HideSoftInputFromWindow(eb.WindowToken, 0);
                 }
             });
     }
@@ -404,7 +415,7 @@ public class MainActivity : Activity, IAppContext
     ----------------------------------------------------------------------------*/
     private async Task DoKeyPressCommon(
         string sPrefix,
-        object sender,
+        object? sender,
         View.KeyEventArgs eventArgs,
         DroidUpc.AdjustTextDelegate? adjustText,
         DroidUpc.DispatchDelegate? dispatch,
@@ -427,11 +438,13 @@ public class MainActivity : Activity, IAppContext
 
                         CorrelationID crid = new CorrelationID();
 
-                        m_lp.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", sResultText);
+                        _LogProvider.LogEvent(crid, EventType.Information, "Dispatching ScanCode: {0}", sResultText);
 
                         await RunOnUiThreadAsync(() => eb.Text = $"{sPrefix}{sResultText}");
 
-                        await dispatch?.Invoke(eb.Text, m_cbCheckOnly.Checked, crid);
+                        if (dispatch != null)
+                            await dispatch.Invoke(eb.Text ?? "", m_cbCheckOnly?.Checked ?? false, crid);
+
                         afterOnEnter?.Invoke();
                     }
                 }
@@ -445,28 +458,25 @@ public class MainActivity : Activity, IAppContext
     delegate void ActivityResultDelegate(Intent? intent, Result resultCode);
 
 
-    private Dictionary<int, ActivityResultDelegate> m_activityDelegates =
-        new Dictionary<int, ActivityResultDelegate>();
+    private readonly Dictionary<int, ActivityResultDelegate?> m_activityDelegates = new();
 
     void RegisterActivityDelegate(int requestCode, ActivityResultDelegate del)
     {
-        if (!m_activityDelegates.ContainsKey(requestCode))
-            m_activityDelegates.Add(requestCode, null);
-
+        m_activityDelegates.TryAdd(requestCode, null);
         m_activityDelegates[requestCode] = del;
     }
 
     protected override void OnActivityResult(int requestCode, Result resultCode, Intent? data)
     {
-        if (m_activityDelegates.ContainsKey(requestCode))
-            m_activityDelegates[requestCode](data, resultCode);
+        if (m_activityDelegates.TryGetValue(requestCode, out ActivityResultDelegate? _delegate))
+            _delegate?.Invoke(data, resultCode);
 
         base.OnActivityResult(requestCode, resultCode, data);
     }
 
     public UpcInvCore.ADAS AdasCurrent()
     {
-        Spinner spinner = FindViewById<Spinner>(Resource.Id.spinType);
+        Spinner spinner = FindViewById<Spinner>(Resource.Id.spinType) ?? throw new Exception("could not get spinner control");
 
         return (UpcInvCore.ADAS)spinner.SelectedItemPosition;
     }
@@ -503,12 +513,12 @@ public class MainActivity : Activity, IAppContext
                 m_txtLocation.Visibility = visLocation;
                 m_ebLocation.Visibility = visLocation;
                 m_ebNotes.Visibility = visNotes;
-                m_txtBinCode.Visibility = visBin;
-                m_txtColumn.Visibility = visBin;
-                m_txtRow.Visibility = visBin;
-                m_ebBinCode.Visibility = visBin;
-                m_ebColumn.Visibility = visBin;
-                m_ebRow.Visibility = visBin;
+                m_txtBinCode!.Visibility = visBin;
+                m_txtColumn!.Visibility = visBin;
+                m_txtRow!.Visibility = visBin;
+                m_ebBinCode!.Visibility = visBin;
+                m_ebColumn!.Visibility = visBin;
+                m_ebRow!.Visibility = visBin;
 
             });
     }

@@ -262,7 +262,7 @@ public class DroidUpc(IAppContext m_droidContext, UpcAlert m_upca, IStatusReport
 
         dispatch the wine code (drink the wine, or look it up)
     ----------------------------------------------------------------------------*/
-    async void DispatchWineScanCode(string sResultText, string sBinCode, bool fCheckOnly, CorrelationID crid)
+    async void DispatchWineScanCode(string sResultText, string? sBinCode, bool fCheckOnly, CorrelationID crid)
     {
         string sScanCode = sResultText;
 
@@ -273,7 +273,7 @@ public class DroidUpc(IAppContext m_droidContext, UpcAlert m_upca, IStatusReport
 
         // now handle this scan code
 
-        m_droidContext.SetTextElementValue(DroidUITextElement.ScanCode, sScanCode, ThreadPolicy.Sync);
+        await m_droidContext.SetTextElementValue(DroidUITextElement.ScanCode, sScanCode, ThreadPolicy.Sync);
 
         // The removal of the reentrancy guard will happen asynchronously
         await m_upccCore.DoHandleWineScanCode(
@@ -339,7 +339,7 @@ public class DroidUpc(IAppContext m_droidContext, UpcAlert m_upca, IStatusReport
 
         // now handle this scan code
 
-        m_droidContext.SetTextElementValue(DroidUITextElement.ScanCode, sIsbn13, ThreadPolicy.Sync);
+        await m_droidContext.SetTextElementValue(DroidUITextElement.ScanCode, sIsbn13, ThreadPolicy.Sync);
 
         // The removal of the reentrancy guard will happen asynchronously
         await m_upccCore.DoHandleBookScanCode(
@@ -372,7 +372,7 @@ public class DroidUpc(IAppContext m_droidContext, UpcAlert m_upca, IStatusReport
                     fResult ? EventType.Information : EventType.Error,
                     "FinalScanCodeCleanup: {0}: {1}",
                     fResult,
-                    sTitle);
+                    sTitle);    
                 FinishCode(sIsbn13, CorrelationID.FromCrids(crids));
             });
     }
@@ -394,7 +394,7 @@ public class DroidUpc(IAppContext m_droidContext, UpcAlert m_upca, IStatusReport
         }
         // now handle this scan code
 
-        m_droidContext.SetTextElementValue(DroidUITextElement.ScanCode, sCode, ThreadPolicy.Sync);
+        await m_droidContext.SetTextElementValue(DroidUITextElement.ScanCode, sCode, ThreadPolicy.Sync);
 
         // The removal of the reentrancy guard will happen asynchronously
         await m_upccCore.DoHandleDvdScanCode(

@@ -9,7 +9,7 @@ using UpcShared;
 
 namespace TCore.StatusBox
 {
-    class StatusBox(TextView m_tv, IAlert? m_ia, Activity m_act) : IStatusReporting
+    class StatusBox(TextView textView, IAlert? m_ia, Activity m_act) : IStatusReporting
     {
         private readonly bool m_fInit = true;
 
@@ -26,11 +26,11 @@ namespace TCore.StatusBox
             string s = String.Format(sMessage, rgo);
             m_act.RunOnUiThread(() =>
             {
-                s2 = m_tv.Text;
+                s2 = textView.Text ?? "";
 
                 s = s + "\n" + s2;
 
-                m_tv.Text = s;
+                textView.Text = s;
             });
         }
     }

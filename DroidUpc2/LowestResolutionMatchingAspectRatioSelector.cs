@@ -100,7 +100,7 @@ public class LowestResolutionMatchingAspectRatioSelector(Activity m_activity)
                 };
         }
 
-        return result;
+        return result!;
     }
 
     /*----------------------------------------------------------------------------
