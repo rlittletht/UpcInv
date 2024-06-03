@@ -72,8 +72,9 @@ steps:
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(Pipeline.Workspace)'
-    Contents: '**/*.apk'
+    Contents: '**/bin/**/*.apk'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts'
+    flattenFolders: true
 
 - task: PublishPipelineArtifact@1
   inputs:
