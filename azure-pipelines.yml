@@ -60,19 +60,6 @@ steps:
     arguments: '-c Debug -f net8.0-android'
 
 
-- task: DownloadSecureFile@1
-  name: keystore
-  displayName: 'Download keystore for signing'
-  inputs:
-    secureFile: 'RL.keystore'
-
-- script: |
-    echo Test: $(RL.keystore.secureFilePath)
-    echo apksignerKeystorePassword: '$(keystorePassword)'
-    echo apksignerKeystoreAlias: '$(keystoreAlias)'
-  displayName: test keystore path
-
-
 - task: AndroidSigning@3
   displayName: 'Sign APK'
   inputs:
@@ -84,6 +71,6 @@ steps:
 
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '$(Pipeline.Workspace)/**/*.apk'
-    artifact: 'AndroidApps'
+    targetPath: '$(Pipeline.Workspace)'
+    artifact: 'signed_apk'
     publishLocation: 'pipeline'
