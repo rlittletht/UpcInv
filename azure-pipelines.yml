@@ -69,8 +69,14 @@ steps:
     apksignerKeystoreAlias: $(keystoreAlias)
     apksignerArguments: '-verbose'
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Pipeline.Workspace)'
+    Contents: '**/*.apk'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts'
+
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '$(Pipeline.Workspace)'
+    targetPath: '$(Build.ArtifactStagingDirectory)/artifacts'
     artifact: 'signed_apk'
     publishLocation: 'pipeline'
