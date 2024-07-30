@@ -24,14 +24,15 @@
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
     <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
-    <PackageCertificateThumbprint>AF243BFD4A27141D4160FCCBF22FFFAE350AA0B7</PackageCertificateThumbprint>
-    <AppInstallerUri>https://thetasoft2.azurewebsites.net/UpcInv.Appx</AppInstallerUri>
+    <PackageCertificateThumbprint>E4982D231A3126600D3FB2DE68EC494AE661B1B5</PackageCertificateThumbprint>
+    <AppInstallerUri>https://black.traynrex.com/UniversalUpc</AppInstallerUri>
     <AppInstallerUpdateFrequency>0</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxPackageDir>d:\websites\black.traynrex.com\publish\UniversalUpc</AppxPackageDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
