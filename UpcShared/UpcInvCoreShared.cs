@@ -700,6 +700,16 @@ namespace UpcShared
 
             if (wni != null)
             {
+                if (fInventory)
+                {
+                    if (sBinCode.Length != 8)
+                    {
+                        m_isr.AddMessage(AlertType.BadInfo, "Invalid bincode: {0}", sBinCode);
+                        await del(workId, sCode, crids, null, false);
+                        return;
+                    }
+                }
+
                 string sOriginalCode = sCode;
 
                 // we want to refresh the code to what we just retrieved, but first we have to capture the 
@@ -779,8 +789,8 @@ namespace UpcShared
 
             if (fResult)
             {
-                m_lp.LogEvent(crids, EventType.Verbose, "{1}Successfully updated inventory for wine for {0}", sCode, sCheck);
-                m_isr.AddMessage(fErrorSoundsOnly ? AlertType.None : AlertType.GoodInfo, "{1}{0}: Updated inventory for wine!", wni.Wine, sCheck);
+                m_lp.LogEvent(crids, EventType.Verbose, $"{sCheck}Successfully updated inventory for wine for {sCode} (bin: {sBinCode})");
+                m_isr.AddMessage(fErrorSoundsOnly ? AlertType.None : AlertType.GoodInfo, $"{sCheck}{wni.Wine}: Updated inventory for wine (bin={sBinCode})!");
             }
             else
             {
