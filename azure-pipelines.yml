@@ -81,3 +81,4 @@ steps:
     targetPath: '$(Build.ArtifactStagingDirectory)/artifacts'
     artifact: 'signed_apk'
     publishLocation: 'pipeline'
+
