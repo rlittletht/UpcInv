@@ -13,6 +13,12 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+- script: |
+    echo apksignerKeystoreFile: '$(keystore.secureFilePath)'
+    echo apksignerKeystorePassword: '$(keystorePassword)'
+    echo apksignerKeystoreAlias: '$(keystoreAlias)'
+  displayName: 'Check vars and echo'
+
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
@@ -21,21 +27,32 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
+- task: UseDotNet@2
+  displayName: Switch .NET Core version
+  inputs:
+    version: 8.x
+
 - task: NuGetCommand@2
   inputs:
-      restoreSolution: '--/--.sln'
+      feedsToUse: config
+      restoreSolution: '**/*.sln'
       noCache: true
   displayName: 'NuGet restore'
 
 - script: |
-    C:\Android\android-sdk\cmdline-tools\latest\bin\sdkmanager --list_installed
-  displayName: check the installed 
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools"
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platforms;android-34"
+  displayName: install sdks
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    projects: '**/DroidUpc2.csproj'
+- script: |
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --list_installed
+  displayName: 'check the installed'
 
+- script: |
+    dotnet workload install android
+    dotnet workload list
+  displayName: 'install workloads'
+  
 - task: DotNetCoreCLI@2
   displayName: dotnet build
   inputs:
@@ -43,28 +60,24 @@ steps:
     arguments: '-c Debug -f net8.0-android'
 
 
-- task: DownloadSecureFile@1
-  name: keystore
-  displayName: 'Download keystore for signing'
-  inputs:
-    secureFile: 'RL.keystore'
-
-- task: Gradle@3
-  inputs:
-    workingDirectory: ''
-    gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
-    tasks: 'assembleDebug'
-
-- script: |
-    echo Test: $(keystore.secureFilePath)
-  displayName: test keystore path
-
-
 - task: AndroidSigning@3
-  displayName: Sign APK
+  displayName: 'Sign APK'
   inputs:
-    apksignerKeystoreFile: '$(keystore.secureFilePath)'
-    apksignerKeystorePassword: '$[AndroidSigning.keystorePassword]'
-    apksignerKeystoreAlias: '$[AndroidSigning.keystoreAlias]'
+    apkFiles: '**/*.apk'
+    apksignerKeystoreFile: 'RL.keystore'
+    apksignerKeystorePassword: $(keystorePassword)
+    apksignerKeystoreAlias: $(keystoreAlias)
     apksignerArguments: '-verbose'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Pipeline.Workspace)'
+    Contents: '**/bin/**/*.apk'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts'
+    flattenFolders: true
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)/artifacts'
+    artifact: 'signed_apk'
+    publishLocation: 'pipeline'
