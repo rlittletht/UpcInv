@@ -148,7 +148,13 @@ namespace UniversalUpc
             {
                 txtStatus.Text = "result != null, format = " + result.BarcodeFormat + ", text = " + result.Text;
                 if (!m_fErrorSoundsOnly)
-                    m_upca.Play(AlertType.GoodInfo);
+                {
+                    try
+                    {
+                        m_upca.Play(AlertType.GoodInfo);
+                    }
+                    catch { }
+                }
             }
             else
             {
@@ -189,7 +195,11 @@ namespace UniversalUpc
 
             if (result == null)
             {
-                m_upca.Play(AlertType.BadInfo);
+                try
+                {
+                    m_upca.Play(AlertType.BadInfo);
+                }
+                catch { }
                 m_lp.LogEvent(crid, EventType.Error, "result == null");
                 ebScanCode.Text = "";
                 return;

@@ -28,7 +28,7 @@ namespace UniversalUpc
             return i;
         }
 
-        async void LoadEffects()
+        async Task LoadEffects()
         {
             m_mpAlertMedia.Add(AlertType.GoodInfo, await LoadSoundFile("Exclamation.wav"));
             m_mpAlertMedia.Add(AlertType.Duplicate, await LoadSoundFile("doh.wav"));
@@ -50,7 +50,11 @@ namespace UniversalUpc
 
         public void DoAlert(AlertType at)
         {
-            Play(at);
+            try
+            {
+                Play(at);
+            }
+            catch { }
         }
 
         public void Play(AlertType at)
@@ -61,6 +65,7 @@ namespace UniversalUpc
             m_player.Source = m_mpAlertMedia[at];
             m_player.Play();
         }
+
 #if none
         void DoAlert(AlertType at, string s)
 		{
