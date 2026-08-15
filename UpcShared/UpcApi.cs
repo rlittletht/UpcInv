@@ -76,7 +76,7 @@ namespace UpcApi.Proxy
 
         public async Task<string> FetchTitleFromISBN13(string Code)
         {
-            return await Generic<string>("api/Upc/FetchTitleFromISBN13?Code={0}", Code ?? "");
+            return await Generic<string>("api/Upc/FetchTitleFromISBN13?ScanCode={0}", Code ?? "");
         }
 
         #endregion

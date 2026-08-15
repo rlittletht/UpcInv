@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <array name="type_icons">
+        <item>@drawable/books</item>
+        <item>@drawable/dvds</item>
+        <item>@drawable/upc</item>
+        <item>@drawable/wine</item>
+    </array>
+</resources>

@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-- noXamarin
+- master
 
 variables:
 - group: AndroidSigning
@@ -81,3 +81,4 @@ steps:
     targetPath: '$(Build.ArtifactStagingDirectory)/artifacts'
     artifact: 'signed_apk'
     publishLocation: 'pipeline'
+

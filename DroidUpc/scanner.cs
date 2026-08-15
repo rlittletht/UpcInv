@@ -1,8 +1,9 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Android.Views;
+using Android.Widget;
 using AndroidX.Fragment.App;
 using Xamarin.Essentials;
 using ZXing.Mobile;
@@ -22,19 +23,20 @@ namespace DroidUpc
             // m_scanner = new MobileBarcodeScanner();
 //            m_scanner.Dispatcher = dispatcher; // this is what they did in the sample -- don't know why its necessary...
             m_scannerControl = new ZXingScannerFragment();
-
         }
 
         public void StartScanner(ScanCompleteDelegate scd)
         {
             m_scdNotify = scd;
 
-            m_scannerControl.StartScanning(async (result) =>
-            {
-                var msg = "Found Barcode: " + result.Text;
+            m_scannerControl.StartScanning(
+                async (result) =>
+                {
+                    var msg = "Found Barcode: " + result.Text;
 
-                await Task.Run(() => m_scdNotify(result));
-            }, m_options);
+                    await Task.Run(() => m_scdNotify(result));
+                },
+                m_options);
         }
 
         public void StopScanner()
